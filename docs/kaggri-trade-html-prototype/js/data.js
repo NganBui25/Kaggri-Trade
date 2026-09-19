@@ -151,12 +151,12 @@ window.KAGGRI_DATA = {
       images: [
         {
           id: "main",
-          src: "../vendor-ui/home-hero.png",
-          position: "43% 72%",
+          src: "../shared/images/carrot.png",
+          position: "center 56%",
           icon: "🥕",
           label: "Cà rốt baby Đà Lạt",
           alt: "Cà rốt tươi trong bộ sưu tập nông sản",
-          credit: "Ảnh sản phẩm minh họa của Kaggri-Trade"
+          credit: "Ảnh sản phẩm do người bán cung cấp"
         }
       ],
       quality: [
@@ -170,8 +170,8 @@ window.KAGGRI_DATA = {
     {
       id: "p3",
       vendorId: "v2",
-      name: "Ớt chuông Sweet Palermo vàng",
-      sku: "SKU-DOND-PPR-003",
+      name: "Xà lách thủy canh Đà Lạt",
+      sku: "SKU-DOND-LET-003",
       unit: "kg",
       qty: 180,
       minQty: 50,
@@ -187,26 +187,26 @@ window.KAGGRI_DATA = {
       images: [
         {
           id: "main",
-          src: "../vendor-ui/home-hero.png",
-          position: "91% 55%",
-          icon: "🫑",
-          label: "Ớt chuông vàng",
-          alt: "Ớt chuông vàng tươi trong bộ sưu tập nông sản",
-          credit: "Ảnh sản phẩm minh họa của Kaggri-Trade"
+          src: "../shared/images/lettuce.png",
+          position: "center",
+          icon: "🥬",
+          label: "Xà lách thủy canh Đà Lạt",
+          alt: "Xà lách xanh tươi do nhà cung cấp đăng bán",
+          credit: "Ảnh sản phẩm do người bán cung cấp"
         }
       ],
       quality: [
-        ["Quy cách", "Hộp carton 5kg"],
-        ["Thuộc tính NCC công bố", "Brix 9.5+"],
+        ["Quy cách", "Thùng carton 5kg"],
+        ["Phương pháp trồng", "Thủy canh kiểm soát"],
         ["Tình trạng", "Đã cập nhật theo tồn khả dụng"]
       ],
-      image: "🫑",
+      image: "🥬",
       note: ""
     },
     {
       id: "p4",
       vendorId: "v2",
-      name: "Cà chua bi Socola Cherry Đà Lạt",
+      name: "Cà chua đỏ Đà Lạt",
       sku: "SKU-DOND-TOM-004",
       unit: "kg",
       qty: 120,
@@ -223,12 +223,12 @@ window.KAGGRI_DATA = {
       images: [
         {
           id: "main",
-          src: "../vendor-ui/home-hero.png",
-          position: "74% 55%",
+          src: "../shared/images/tomato.png",
+          position: "center 44%",
           icon: "🍅",
-          label: "Cà chua bi Đà Lạt",
-          alt: "Cà chua chín đỏ trong bộ sưu tập nông sản",
-          credit: "Ảnh sản phẩm minh họa của Kaggri-Trade"
+          label: "Cà chua đỏ Đà Lạt",
+          alt: "Cà chua chín đỏ do nhà cung cấp đăng bán",
+          credit: "Ảnh sản phẩm do người bán cung cấp"
         }
       ],
       quality: [
