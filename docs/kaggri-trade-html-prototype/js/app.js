@@ -24,14 +24,17 @@
     ? normalizedRequestedScreen
     : "b02";
   const catalog = H.cloneProducts(DATA.products);
-  const detailProduct = H.cloneProducts([DATA.products.find((product) => product.id === "p1")])[0];
+  const requestedProductId = new URLSearchParams(location.search).get("product");
+  const detailSource = DATA.products.find((product) => product.id === requestedProductId)
+    || DATA.products[0];
+  const detailProduct = H.cloneProducts([detailSource])[0];
 
   const state = {
     screen: initialScreen,
     catalog,
     productDetail: detailProduct,
     selectedProductImage: 0,
-    cart: H.cloneProducts(DATA.products.filter((product) => product.id !== "p1")),
+    cart: H.cloneProducts(DATA.products.filter((product) => product.id !== detailProduct.id)),
     parentOrder: null,
     vendorOrders: [],
     paymentAttempts: [],
@@ -397,7 +400,7 @@
     addToCart() {
       if (!requireBuyer("addToCart")) return;
       ensureDetailProductInCart();
-      toast("Đã thêm Bắp cải vào giỏ hàng");
+      toast(`Đã thêm ${state.productDetail.name} vào giỏ hàng`);
       route("b04");
     },
 

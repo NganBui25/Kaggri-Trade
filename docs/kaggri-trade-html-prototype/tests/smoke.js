@@ -158,7 +158,7 @@ const createRuntime = () => {
   let currentHash = "";
   let intervalStarts = 0;
   const runtime = {
-    console, Intl, Object, Number, String, Math, location,
+    console, Intl, Object, Number, String, Math, URLSearchParams, location,
     prompt: () => null,
     setInterval: () => { intervalStarts += 1; return intervalStarts; },
     clearInterval() {},

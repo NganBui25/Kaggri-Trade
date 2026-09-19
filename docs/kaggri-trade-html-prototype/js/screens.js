@@ -49,7 +49,8 @@
   ).size;
 
   const b02 = (state) => {
-    const product = H.productById(state.cart, "p1") || state.productDetail;
+    const product = H.productById(state.cart, state.productDetail.id) || state.productDetail;
+    const vendor = H.vendorById(product.vendorId);
     const activeTier = H.priceTierForQuantity(product);
     const productImages = product.images?.length
       ? product.images
@@ -60,17 +61,17 @@
     const selectedImage = productImages[selectedImageIndex];
 
     return C.pageShell(`
-      <div class="breadcrumb">Trang chủ / Nông sản Đà Lạt / Bắp cải sạch VietGAP</div>
+      <div class="breadcrumb">Trang chủ / Nông sản đang bán / ${H.escapeHtml(product.name)}</div>
 
       <section class="product-intro">
         <div class="product-intro-copy">
-          <span class="showcase-eyebrow">Nông sản Đà Lạt · Hồ sơ đã xác minh</span>
+          <span class="showcase-eyebrow">Nông sản từ Vendor · Hồ sơ đã xác minh</span>
           <h1>${H.escapeHtml(product.name)}</h1>
-          <p>Cung ứng trực tiếp bởi ${H.escapeHtml(H.vendorById("v1").shortName)}.</p>
+          <p>Cung ứng trực tiếp bởi ${H.escapeHtml(vendor.shortName)}.</p>
         </div>
         <div class="product-assurance" aria-label="Thông tin xác minh nhanh">
-          <span><i>✓</i><b>VietGAP</b><small>Đã xác minh</small></span>
-          <span><i>⌖</i><b>Lạc Dương</b><small>Lâm Đồng</small></span>
+          <span><i>✓</i><b>${H.escapeHtml(vendor.certification.split(" /")[0])}</b><small>Đã xác minh</small></span>
+          <span><i>⌖</i><b>${H.escapeHtml(vendor.location.split(",")[0])}</b><small>${H.escapeHtml(vendor.location.split(",").slice(1).join(",").trim())}</small></span>
           <span><i>▣</i><b>${productImages.length} ảnh</b><small>Do NCC cung cấp</small></span>
         </div>
       </section>
@@ -89,7 +90,7 @@
                   onclick="window.Kaggri.selectProductImage(${index})"
                 >
                   <span>${image.src
-                    ? `<img src="${H.escapeHtml(image.src)}" alt="" loading="lazy" />`
+                    ? `<img src="${H.escapeHtml(image.src)}" alt="" loading="lazy" style="object-position:${H.escapeHtml(image.position || "center")}" />`
                     : H.escapeHtml(image.icon || "▧")}</span>
                   <small>${H.escapeHtml(image.label)}</small>
                 </button>
@@ -98,7 +99,7 @@
             <div class="gallery-stage" role="tabpanel">
               <span class="gallery-count">${selectedImageIndex + 1} / ${productImages.length}</span>
               ${selectedImage.src
-                ? `<img src="${H.escapeHtml(selectedImage.src)}" alt="${H.escapeHtml(selectedImage.alt)}" />`
+                ? `<img src="${H.escapeHtml(selectedImage.src)}" alt="${H.escapeHtml(selectedImage.alt)}" style="object-position:${H.escapeHtml(selectedImage.position || "center")}" />`
                 : `<div class="gallery-placeholder" role="img" aria-label="${H.escapeHtml(selectedImage.alt)}">${H.escapeHtml(selectedImage.icon)}</div>`}
               <div class="gallery-caption">
                 <strong>${H.escapeHtml(selectedImage.label)}</strong>
@@ -113,8 +114,8 @@
                 <div class="avatar">LD</div>
                 <div>
                   <span class="compact-label">Nhà cung cấp</span>
-                  <strong>${H.escapeHtml(H.vendorById("v1").name)}</strong>
-                  <div class="muted">${H.escapeHtml(H.vendorById("v1").location)}</div>
+                  <strong>${H.escapeHtml(vendor.name)}</strong>
+                  <div class="muted">${H.escapeHtml(vendor.location)}</div>
                 </div>
                 <span class="chip chip-success">Đã xác minh</span>
               </div>
@@ -158,9 +159,9 @@
 
           <label for="b02-quantity">Số lượng đặt dự kiến</label>
           <div class="qty-control big">
-            <button type="button" aria-label="Giảm số lượng" onclick="window.Kaggri.changeQty('p1', -10)">−</button>
-            <input id="b02-quantity" inputmode="decimal" value="${product.qty}" onchange="window.Kaggri.setQty('p1', this.value)" />
-            <button type="button" aria-label="Tăng số lượng" onclick="window.Kaggri.changeQty('p1', 10)">+</button>
+            <button type="button" aria-label="Giảm số lượng" onclick="window.Kaggri.changeQty('${H.escapeHtml(product.id)}', -10)">−</button>
+            <input id="b02-quantity" inputmode="decimal" value="${product.qty}" onchange="window.Kaggri.setQty('${H.escapeHtml(product.id)}', this.value)" />
+            <button type="button" aria-label="Tăng số lượng" onclick="window.Kaggri.changeQty('${H.escapeHtml(product.id)}', 10)">+</button>
             <span>${H.escapeHtml(product.unit)}</span>
           </div>
 

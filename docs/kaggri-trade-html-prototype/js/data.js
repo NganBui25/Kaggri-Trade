@@ -141,8 +141,24 @@ window.KAGGRI_DATA = {
       minQty: 80,
       available: 650,
       unitPrice: 22000,
+      priceTiers: [
+        { minQty: 80, maxQty: 199, unitPrice: 24000 },
+        { minQty: 200, maxQty: 499, unitPrice: 22000 },
+        { minQty: 500, maxQty: null, unitPrice: 20500 }
+      ],
       oldUnitPrice: null,
       amount: 4400000,
+      images: [
+        {
+          id: "main",
+          src: "../vendor-ui/home-hero.png",
+          position: "43% 72%",
+          icon: "🥕",
+          label: "Cà rốt baby Đà Lạt",
+          alt: "Cà rốt tươi trong bộ sưu tập nông sản",
+          credit: "Ảnh sản phẩm minh họa của Kaggri-Trade"
+        }
+      ],
       quality: [
         ["Chứng nhận", "GLOBALG.A.P. IFA"],
         ["Quy cách", "Thùng carton 10kg"],
@@ -161,8 +177,24 @@ window.KAGGRI_DATA = {
       minQty: 50,
       available: 180,
       unitPrice: 45000,
+      priceTiers: [
+        { minQty: 50, maxQty: 99, unitPrice: 48000 },
+        { minQty: 100, maxQty: 199, unitPrice: 45000 },
+        { minQty: 200, maxQty: null, unitPrice: 42000 }
+      ],
       oldUnitPrice: null,
       amount: 8100000,
+      images: [
+        {
+          id: "main",
+          src: "../vendor-ui/home-hero.png",
+          position: "91% 55%",
+          icon: "🫑",
+          label: "Ớt chuông vàng",
+          alt: "Ớt chuông vàng tươi trong bộ sưu tập nông sản",
+          credit: "Ảnh sản phẩm minh họa của Kaggri-Trade"
+        }
+      ],
       quality: [
         ["Quy cách", "Hộp carton 5kg"],
         ["Thuộc tính NCC công bố", "Brix 9.5+"],
@@ -181,8 +213,24 @@ window.KAGGRI_DATA = {
       minQty: 50,
       available: 520,
       unitPrice: 35500,
+      priceTiers: [
+        { minQty: 50, maxQty: 99, unitPrice: 38000 },
+        { minQty: 100, maxQty: 299, unitPrice: 35500 },
+        { minQty: 300, maxQty: null, unitPrice: 33000 }
+      ],
       oldUnitPrice: 32000,
       amount: 4260000,
+      images: [
+        {
+          id: "main",
+          src: "../vendor-ui/home-hero.png",
+          position: "74% 55%",
+          icon: "🍅",
+          label: "Cà chua bi Đà Lạt",
+          alt: "Cà chua chín đỏ trong bộ sưu tập nông sản",
+          credit: "Ảnh sản phẩm minh họa của Kaggri-Trade"
+        }
+      ],
       quality: [
         ["Quy cách", "Thùng 12 hộp 500g"],
         ["Trạng thái giá", "Giá mới đã xác nhận"]
