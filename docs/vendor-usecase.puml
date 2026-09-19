@@ -1,0 +1,63 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam usecase {
+  BackgroundColor #F5FAFF
+  BorderColor #305A78
+}
+
+actor "Vendor\n(chủ hộ kinh doanh)" as Vendor
+
+rectangle "Kaggri-Trade — phạm vi Vendor" {
+  usecase "Đăng ký / đăng nhập" as Auth
+  usecase "Nộp / bổ sung hồ sơ\nxét duyệt" as Apply
+  usecase "Theo dõi trạng thái\nhồ sơ" as Review
+  usecase "Quản lý hồ sơ Vendor" as Profile
+  usecase "Quản lý sản phẩm\nvà giá sỉ" as Product
+  usecase "Công bố / ẩn\nsản phẩm" as Publish
+  usecase "Ghi nhận biến động\nvà xem tồn kho" as Inventory
+  usecase "Quản lý lô hàng" as Lot
+  usecase "Xem Vendor Order" as Order
+  usecase "Xác nhận / từ chối\nVendor Order" as Confirm
+  usecase "Cập nhật chuẩn bị\nvà giao hàng" as Fulfil
+  usecase "Quét QR lô\nkhi xuất" as QR
+  usecase "Phản hồi đề nghị\nsubscription" as Subscription
+  usecase "Phản hồi dispute" as Dispute
+  usecase "Xem settlement" as Settlement
+  usecase "Xem báo cáo\nVendor" as Report
+  usecase "Phản hồi đánh giá" as Rating
+  usecase "Xem thông báo" as Notify
+  usecase "Ghi lý do từ chối" as Reason
+  usecase "Kiểm tra quyền và\ntrạng thái Vendor" as Eligible
+}
+
+Vendor -- Auth
+Vendor -- Apply
+Vendor -- Review
+Vendor -- Profile
+Vendor -- Product
+Vendor -- Publish
+Vendor -- Inventory
+Vendor -- Lot
+Vendor -- Order
+Vendor -- Confirm
+Vendor -- Fulfil
+Vendor -- QR
+Vendor -- Subscription
+Vendor -- Dispute
+Vendor -- Settlement
+Vendor -- Report
+Vendor -- Rating
+Vendor -- Notify
+
+Publish ..> Eligible : <<include>>
+Confirm ..> Eligible : <<include>>
+Reason ..> Confirm : <<extend>>\n[khi từ chối]
+QR ..> Fulfil : <<extend>>\n[khi xuất lô bằng QR]
+
+note bottom of Vendor
+  Một tài khoản Vendor gắn với một hộ kinh doanh/trang trại.
+  Công bố và nhận đơn sau khi được duyệt.
+end note
+@enduml

@@ -1,0 +1,77 @@
+@startuml
+title Kaggri-Trade - Bao gia va giao nhan qua hang van chuyen
+autonumber
+actor Buyer
+participant "Checkout" as UI
+participant "Order Service" as Order
+participant "Shipping Service" as Shipping
+participant "Carrier Adapter" as Adapter
+participant "Hang van chuyen" as Carrier
+participant "Payment Service" as Payment
+actor Vendor
+
+Buyer -> UI : Chon dia chi, ngay nhan
+UI -> Order : Xac thuc gio, tach theo Vendor
+loop Moi DeliveryBatch (Vendor + ngay + dia chi)
+  Order -> Shipping : getQuotes(dia chi, kien, ngay, nhiet do bat buoc)
+  Shipping -> Adapter : quote(request)
+  Adapter -> Carrier : API bao gia
+  Carrier --> Adapter : Toc do, nhiet do, phi, ETA, han quote
+  Adapter --> Shipping : Quote chuan hoa
+  Shipping -> Shipping : Loc dich vu dap ung nhiet do va ngay giao
+  Shipping --> Order : Cac lua chon hop le + phi Buyer tra
+end
+Order --> UI : Phi, ETA, nhiet do theo batch; tong checkout
+Buyer -> UI : Chon lua chon van chuyen va xac nhan
+UI -> Order : Checkout(quote IDs)
+Order -> Shipping : Kiem tra quote con han, du lieu khong doi
+Shipping --> Order : Ket qua kiem tra
+alt Quote het han / du lieu doi
+  Order --> UI : Tong moi, yeu cau Buyer xac nhan
+else Quote hop le
+  Order -> Order : Luu snapshot phi; tao Parent/Vendor Orders
+  Order -> Payment : Tao giao dich voi tong da xac nhan
+  Payment --> Order : Ket qua thanh toan da xac minh
+  Order --> UI : Ma don va trang thai
+end
+
+group Chi khi thanh toan thanh cong va Vendor xac nhan
+Vendor -> Order : Xac nhan va dong goi
+Order -> Shipping : Kiem tra kien thuc te va chenh lech phi
+Shipping --> Order : Phi du kien moi
+Order -> Shipping : Tao van don(kien thuc te, idempotency key)
+Shipping -> Adapter : createShipment
+Adapter -> Carrier : API tao van don
+Carrier --> Adapter : Ma van don, nhan, phi thuc te
+Adapter --> Shipping : Shipment da tao
+Shipping --> Order : Tracking + chenh lech phi
+alt Phi thuc te cao hon quote
+  Order -> Order : Ghi no chenh lech cho Vendor
+else Phi thuc te thap hon quote
+  Order -> Order : Ghi co chenh lech cho Vendor
+end
+Order --> Vendor : Nhan va ban giao hang
+Vendor -> Order : Quet lo / xac nhan ban giao
+
+Carrier -> Adapter : Webhook trang thai
+Adapter -> Shipping : Event da xac thuc
+Shipping -> Shipping : Chong trung, anh xa va luu event
+Shipping -> Order : Cap nhat tracking
+Order --> Buyer : Thong bao theo tung DeliveryBatch
+alt Giao thanh cong
+  Carrier -> Adapter : Webhook DELIVERED
+  Adapter -> Shipping : Event da xac thuc
+  Shipping -> Order : Hang bao da giao
+  Buyer -> Order : Xac nhan so luong, chat luong
+  alt Hang thieu / hong
+    Order -> Order : Tao bien ban va dispute
+  else Dat yeu cau
+    Order -> Order : Hoan thanh theo chinh sach
+  end
+else Giao that bai / hoan hang
+  Carrier -> Adapter : Su kien hoan hang + phi hoan
+  Adapter -> Shipping : Phi hoan da xac thuc
+  Shipping -> Order : Ghi no phi hoan cho Vendor
+end
+end
+@enduml

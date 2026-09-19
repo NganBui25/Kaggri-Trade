@@ -1,0 +1,17 @@
+# Local agent and workflow files
+.agents/
+_bmad/
+_bmad-output/
+
+# Generated previews and working artifacts
+tmp/
+output/
+tools/
+
+# Source archives already extracted into docs
+docs/*.7z
+docs/*.zip
+
+# Common local files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đăng nhập · Kaggri-Trade</title>
+  <style>
+    :root{font-family:Inter,"Segoe UI",Arial,sans-serif;color:#19392d;background:#fbfaf6}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px}main{width:min(430px,100%);background:white;border:1px solid #dce9e0;border-radius:16px;padding:32px;box-shadow:0 18px 50px #11452a12}a{color:#0d623b}h1{margin:8px 0;font-size:29px}p{color:#617468;line-height:1.5}label{display:block;font-weight:700;font-size:13px;margin:16px 0 6px}input,select{width:100%;min-height:44px;padding:10px;border:1px solid #bbd2c2;border-radius:8px;font:inherit}button{width:100%;min-height:46px;margin-top:22px;background:#0d623b;border:0;border-radius:8px;color:white;font:inherit;font-weight:700;cursor:pointer}.links{display:flex;justify-content:space-between;gap:12px;margin-top:20px;font-size:13px}.hint{font-size:12px}
+  </style>
+</head>
+<body>
+  <main>
+    <a href="vendor-ui/home.html">← Trang chủ</a>
+    <h1 id="title">Đăng nhập</h1>
+    <p id="description">Chọn vai trò để tiếp tục trong bản mẫu Kaggri-Trade.</p>
+    <form id="auth-form">
+      <label for="role">Vai trò</label>
+      <select id="role" name="role"><option value="buyer">Người mua (Buyer)</option><option value="vendor">Người bán (Vendor)</option></select>
+      <label for="email">Email (không bắt buộc trong bản mẫu)</label>
+      <input id="email" name="email" type="text" autocomplete="email" placeholder="ban@example.com">
+      <label for="password">Mật khẩu (không bắt buộc trong bản mẫu)</label>
+      <input id="password" name="password" type="password" autocomplete="current-password">
+      <button type="submit" id="submit">Đăng nhập</button>
+    </form>
+    <div class="links"><a id="switch-mode" href="?mode=register">Đăng ký tài khoản</a><a href="kaggri-trade-html-prototype/index.html#b02">Xem sản phẩm với tư cách khách</a></div>
+    <p class="hint">Bản mẫu giao diện: thông tin nhập không được xác thực hay gửi đi. Vai trò được lưu trong phiên trình duyệt.</p>
+  </main>
+  <script src="shared/auth.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const register = params.get('mode') === 'register';
+    const role = params.get('role');
+    if (role === 'vendor' || role === 'buyer') document.getElementById('role').value = role;
+    const switchLink = document.getElementById('switch-mode');
+    const updateSwitchLink = chosenRole => {
+      const next = params.get('next');
+      switchLink.href = '?mode=' + (register ? 'login' : 'register') + '&role=' + chosenRole + (next ? '&next=' + encodeURIComponent(next) : '');
+    };
+    updateSwitchLink(document.getElementById('role').value);
+    if (register) {
+      document.getElementById('title').textContent = 'Đăng ký';
+      document.getElementById('submit').textContent = 'Đăng ký';
+      document.getElementById('switch-mode').textContent = 'Đã có tài khoản? Đăng nhập';
+      document.getElementById('password').autocomplete = 'new-password';
+    }
+    document.getElementById('role').addEventListener('change', event => {
+      updateSwitchLink(event.target.value);
+    });
+    document.getElementById('auth-form').addEventListener('submit', event => {
+      event.preventDefault();
+      const chosenRole = document.getElementById('role').value;
+      KaggriAuth.signIn(chosenRole);
+      if (chosenRole !== 'buyer') KaggriAuth.takePendingAction();
+      const requested = params.get('next');
+      const safeNext = requested && KaggriAuth.safeDestination(requested, chosenRole);
+      const destination = safeNext || (chosenRole === 'vendor' ? 'vendor-ui/index.html#overview' : 'vendor-ui/home.html');
+      location.href = KaggriAuth.withRole(destination, chosenRole);
+    });
+  </script>
+</body>
+</html>

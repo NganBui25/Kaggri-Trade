@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d623b">
+  <title>Kaggri-Trade · Kênh bán của trang trại</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app"></div>
+  <div id="overlay-root"></div>
+  <div id="toast-root" aria-live="polite"></div>
+  <script src="../shared/auth.js"></script>
+  <script>
+    if (KaggriAuth.role() === 'vendor') {
+      const appScript = document.createElement('script');
+      appScript.src = 'app.js';
+      document.body.appendChild(appScript);
+    } else {
+      location.replace('../auth.html?role=vendor&next=' + encodeURIComponent(location.href));
+    }
+  </script>
+</body>
+</html>

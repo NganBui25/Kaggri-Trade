@@ -1,0 +1,55 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam usecase {
+  BackgroundColor #F5FAFF
+  BorderColor #305A78
+}
+
+actor "Khách" as Guest
+actor "Buyer" as Buyer
+actor "Cổng thanh toán\nsandbox" as Gateway
+
+rectangle "Kaggri-Trade — phạm vi Buyer" {
+  usecase "Đăng ký / đăng nhập" as UCAuth
+  usecase "Tìm và lọc sản phẩm" as UCSearch
+  usecase "Xem sản phẩm / Vendor" as UCView
+  usecase "Quản lý giỏ hàng" as UCCart
+  usecase "Checkout nhiều Vendor" as UCCheckout
+  usecase "Kiểm tra MOQ, giá, tồn" as UCValidate
+  usecase "Tạo parent / sub-order" as UCSplit
+  usecase "Thanh toán" as UCPay
+  usecase "Xem đơn / giao dịch" as UCOrders
+  usecase "Theo dõi giao nhận" as UCTrack
+  usecase "Xác nhận nhận hàng" as UCReceive
+  usecase "Quản lý đơn định kỳ" as UCSub
+  usecase "Mở / theo dõi khiếu nại" as UCDispute
+  usecase "Đánh giá Vendor" as UCRate
+  usecase "Quản lý hồ sơ Buyer" as UCProfile
+  usecase "Xem báo cáo mua hàng" as UCReport
+  usecase "Xem thông báo" as UCNotify
+}
+
+Guest -- UCAuth
+Guest -- UCSearch
+Guest -- UCView
+Buyer -- UCSearch
+Buyer -- UCView
+Buyer -- UCCart
+Buyer -- UCCheckout
+Buyer -- UCOrders
+Buyer -- UCTrack
+Buyer -- UCReceive
+Buyer -- UCSub
+Buyer -- UCDispute
+Buyer -- UCRate
+Buyer -- UCNotify
+Buyer -- UCProfile
+Buyer -- UCReport
+Gateway -- UCPay
+
+UCCheckout ..> UCValidate : <<include>>
+UCCheckout ..> UCSplit : <<include>>
+UCCheckout ..> UCPay : <<include>>
+@enduml

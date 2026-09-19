@@ -1,0 +1,53 @@
+@startuml
+title Kaggri-Trade - Quy trinh tinh phi van chuyen
+start
+:Tach gio theo Vendor, ngay giao,
+dia chi va dich vu thanh DeliveryBatch;
+repeat
+  :Lay dia chi lay/nhan, ngay giao cua batch,
+  kien du kien va yeu cau bao quan;
+  :Goi hang van chuyen lay nhieu quote;
+  :Loc theo nhiet do bat buoc,
+  toc do kha dung va ngay giao;
+  if (Co dich vu va quote hop le?) then (Co)
+    :Tinh phi Buyer = phi hang + phi xu ly
+    - tro gia/khuyen mai;
+    :Hien cac lua chon phi, ETA,
+    nhiet do va toc do cho Buyer;
+  else (Khong)
+    :De xuat doi dia chi/ngay hoac tu giao
+    voi bang phi da cong bo;
+    if (Co phuong an duoc xac nhan?) then (Co)
+      :Hien phi va ETA cho Buyer;
+    else (Khong)
+      :Dung checkout cho Vendor Order nay;
+      stop
+    endif
+  endif
+repeat while (Con DeliveryBatch?) is (Co) not (Het)
+:Buyer chon lua chon cho tung batch
+va xac nhan tong;
+if (Quote con han va du lieu khong doi?) then (Co)
+  :Luu snapshot phi va thu tien;
+else (Khong)
+  :Bao gia lai va yeu cau xac nhan tong moi;
+  stop
+endif
+:Vendor xac nhan, dong goi;
+if (Phi thuc te tang?) then (Co)
+  :Ghi no chenh lech cho Vendor;
+else (Khong)
+  :Ghi co chenh lech giam cho Vendor;
+endif
+:Tao van don bang idempotency key;
+:Nhan webhook/truy van tracking;
+:Neu hoan hang, ghi no phi hoan cho Vendor;
+:Hang bao da giao;
+:Buyer kiem so luong va chat luong;
+if (Co van de?) then (Co)
+  :Tao bien ban/dispute;
+else (Khong)
+  :Hoan thanh va doi soat;
+endif
+stop
+@enduml
