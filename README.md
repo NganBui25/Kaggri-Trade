@@ -9,6 +9,3 @@ cd docs
 python -m http.server 8080
 ```
 
-Mở <http://localhost:8080/> trong trình duyệt.
-
-Xem thêm hướng dẫn và giới hạn của prototype tại [`docs/README.md`](docs/README.md).
