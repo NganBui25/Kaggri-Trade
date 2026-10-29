@@ -22,7 +22,7 @@
     <p id="description">Chọn vai trò để tiếp tục trong bản mẫu Kaggri-Trade.</p>
     <form id="auth-form">
       <label for="role">Vai trò</label>
-      <select id="role" name="role"><option value="buyer">Người mua (Buyer)</option><option value="vendor">Người bán (Vendor)</option></select>
+      <select id="role" name="role"><option value="buyer">Người mua (Buyer)</option><option value="vendor">Người bán (Vendor)</option><option value="admin">Quản trị viên (Admin)</option></select>
       <label for="email">Email (không bắt buộc trong bản mẫu)</label>
       <input id="email" name="email" type="text" autocomplete="email" placeholder="ban@example.com">
       <label for="password">Mật khẩu (không bắt buộc trong bản mẫu)</label>
@@ -37,7 +37,7 @@
     const params = new URLSearchParams(location.search);
     const register = params.get('mode') === 'register';
     const role = params.get('role');
-    if (role === 'vendor' || role === 'buyer') document.getElementById('role').value = role;
+    if (role === 'vendor' || role === 'buyer' || role === 'admin') document.getElementById('role').value = role;
     const switchLink = document.getElementById('switch-mode');
     const updateSwitchLink = chosenRole => {
       const next = params.get('next');
@@ -60,7 +60,12 @@
       if (chosenRole !== 'buyer') KaggriAuth.takePendingAction();
       const requested = params.get('next');
       const safeNext = requested && KaggriAuth.safeDestination(requested, chosenRole);
-      const destination = safeNext || (chosenRole === 'vendor' ? 'vendor-ui/index.html#overview' : 'vendor-ui/home.html');
+      let destination = safeNext;
+      if (!destination) {
+        if (chosenRole === 'admin') destination = 'admin-ui/index.html#dashboard';
+        else if (chosenRole === 'vendor') destination = 'vendor-ui/index.html#overview';
+        else destination = 'vendor-ui/home.html';
+      }
       location.href = KaggriAuth.withRole(destination, chosenRole);
     });
   </script>

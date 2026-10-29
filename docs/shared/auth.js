@@ -18,10 +18,10 @@ window.KaggriAuth = (() => {
   const role = () => {
     const fromUrl = new URLSearchParams(location.search).get('demoRole');
     const value = fromUrl || readStorage(key) || readWindowState().role;
-    return value === 'buyer' || value === 'vendor' ? value : null;
+    return value === 'buyer' || value === 'vendor' || value === 'admin' ? value : null;
   };
   const signIn = value => {
-    if (value !== 'buyer' && value !== 'vendor') return;
+    if (value !== 'buyer' && value !== 'vendor' && value !== 'admin') return;
     writeStorage(key, value);
     writeWindowState({ ...readWindowState(), role: value });
   };
@@ -54,6 +54,7 @@ window.KaggriAuth = (() => {
       const pathname = url.pathname.replaceAll('\\', '/');
       if (chosenRole === 'buyer' && /\/kaggri-trade-html-prototype\/index\.html$/.test(pathname)) return url.href;
       if (chosenRole === 'vendor' && /\/vendor-ui\/index\.html$/.test(pathname)) return url.href;
+      if (chosenRole === 'admin' && /\/admin-ui\/index\.html$/.test(pathname)) return url.href;
     } catch (_) { /* Invalid destination uses the role default. */ }
     return null;
   };
