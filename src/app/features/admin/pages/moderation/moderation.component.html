@@ -1,0 +1,263 @@
+@if (!canAccess()) {
+  <!-- 403 Forbidden Screen for Finance Admin (Section 0.2) -->
+  <app-admin-forbidden moduleName="Phân hệ Kiểm duyệt nội dung (Bị chặn với vai trò Tài chính)" />
+} @else {
+  <div class="space-y-6">
+    
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
+            Kiểm Duyệt Sản Phẩm & Đánh Giá (Moderation)
+          </h1>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 text-[#08492d] border border-emerald-300">
+            Bảo vệ người tiêu dùng
+          </span>
+        </div>
+        <p class="text-xs text-stone-500 mt-1">
+          Lọc các nội dung vi phạm tiêu chuẩn an toàn thực phẩm, lạm dụng khuyến mãi ảo hoặc ngôn từ phản cảm.
+        </p>
+      </div>
+
+      @if (!canModerate()) {
+        <span class="px-3 py-1.5 rounded-xl bg-stone-100 text-stone-600 text-xs font-bold border border-stone-200">
+          👁️ Chế độ chỉ xem
+        </span>
+      }
+    </div>
+
+    <!-- Tabs Bar -->
+    <div class="flex items-center gap-2 border-b border-[#edf1ea] pb-2 text-xs font-bold">
+      <button
+        type="button"
+        (click)="activeTab.set('products')"
+        class="pb-2 px-3 border-b-2 transition-all cursor-pointer whitespace-nowrap"
+        [class.text-[#0d623b]]="activeTab() === 'products'"
+        [class.border-[#0d623b]]="activeTab() === 'products'"
+        [class.border-transparent]="activeTab() !== 'products'"
+      >
+        Sản phẩm cảnh báo vi phạm ({{ products().length }})
+      </button>
+
+      <button
+        type="button"
+        (click)="activeTab.set('reviews')"
+        class="pb-2 px-3 border-b-2 transition-all cursor-pointer whitespace-nowrap"
+        [class.text-[#0d623b]]="activeTab() === 'reviews'"
+        [class.border-[#0d623b]]="activeTab() === 'reviews'"
+        [class.border-transparent]="activeTab() !== 'reviews'"
+      >
+        Đánh giá & phản hồi bất thường ({{ reviews().length }})
+      </button>
+    </div>
+
+    <!-- TAB 1: Products Moderation -->
+    @if (activeTab() === 'products') {
+      <div class="bg-white rounded-3xl border border-[#dce9e0] shadow-xs overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-[#fbfaf6] border-b border-[#edf1ea] text-stone-500 font-extrabold uppercase tracking-wider text-[11px]">
+              <tr>
+                <th class="py-3.5 px-4">Mã kiểm duyệt</th>
+                <th class="py-3.5 px-4">Tên sản phẩm</th>
+                <th class="py-3.5 px-4">Người bán</th>
+                <th class="py-3.5 px-4">Dấu hiệu cảnh báo</th>
+                <th class="py-3.5 px-4">Mức độ</th>
+                <th class="py-3.5 px-4">Trạng thái</th>
+                <th class="py-3.5 px-4 text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#edf1ea]">
+              @for (p of products(); track p.id) {
+                <tr class="hover:bg-[#fcfdfa] transition-colors">
+                  <td class="py-3.5 px-4 font-mono font-bold text-[#08492d]">
+                    {{ p.id }}
+                    <span class="block text-[10px] text-stone-400 font-normal">{{ p.reportedAt }}</span>
+                  </td>
+
+                  <td class="py-3.5 px-4 font-bold text-stone-900">
+                    {{ p.product }}
+                  </td>
+
+                  <td class="py-3.5 px-4 text-stone-700">
+                    {{ p.vendor }}
+                  </td>
+
+                  <td class="py-3.5 px-4 text-stone-600 max-w-[260px]">
+                    {{ p.flag }}
+                    @if (p.reason) {
+                      <span class="block text-[10px] text-rose-600 font-semibold italic mt-0.5">Lý do: {{ p.reason }}</span>
+                    }
+                  </td>
+
+                  <td class="py-3.5 px-4">
+                    <span
+                      class="px-2 py-0.5 rounded text-[10px] font-bold"
+                      [ngClass]="{
+                        'bg-rose-100 text-rose-900': p.severity === 'Nghiêm trọng' || p.severity === 'Cao',
+                        'bg-amber-100 text-amber-900': p.severity === 'Trung bình',
+                        'bg-stone-100 text-stone-700': p.severity === 'Thấp'
+                      }"
+                    >
+                      {{ p.severity }}
+                    </span>
+                  </td>
+
+                  <td class="py-3.5 px-4">
+                    <span
+                      class="px-2.5 py-1 rounded-full text-[10px] font-bold"
+                      [ngClass]="p.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-900' : p.status === 'HIDDEN' ? 'bg-rose-100 text-rose-900' : 'bg-amber-100 text-amber-900'"
+                    >
+                      {{ p.statusLabel }}
+                    </span>
+                  </td>
+
+                  <!-- Action Buttons (Fix ADM-R19, ADM-35, ADM-36) -->
+                  <td class="py-3.5 px-4 text-right">
+                    <div class="flex items-center justify-end gap-1.5">
+                      @if (canModerate()) {
+                        @if (p.status === 'PENDING') {
+                          <button
+                            type="button"
+                            (click)="onApproveProduct(p.id)"
+                            class="px-2.5 py-1 rounded-lg bg-[#0d623b] hover:bg-[#08492d] text-white font-bold transition-all cursor-pointer shadow-2xs"
+                          >
+                            Duyệt
+                          </button>
+
+                          <button
+                            type="button"
+                            (click)="openHideModal('product', p.id, p.product)"
+                            class="px-2.5 py-1 rounded-lg border border-amber-300 hover:bg-amber-50 text-amber-800 font-bold transition-all cursor-pointer"
+                          >
+                            Ẩn
+                          </button>
+                        } @else if (p.status === 'HIDDEN') {
+                          <!-- Fix ADM-R19, ADM-36: Products already hidden only have "Bỏ ẩn" -->
+                          <button
+                            type="button"
+                            (click)="onUnhideProduct(p.id)"
+                            class="px-2.5 py-1 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-[#08492d] font-bold transition-all cursor-pointer"
+                          >
+                            Bỏ ẩn
+                          </button>
+                        }
+
+                        <!-- Super Admin terminate vendor button (Fix ADM-R19) -->
+                        @if (canTerminate() && p.severity === 'Nghiêm trọng') {
+                          <button
+                            type="button"
+                            (click)="terminateVendor(p.vendorId, p.vendor)"
+                            class="px-2.5 py-1 rounded-lg border border-rose-300 hover:bg-rose-50 text-rose-700 font-bold transition-all cursor-pointer"
+                          >
+                            Chấm dứt NCC
+                          </button>
+                        }
+                      }
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    <!-- TAB 2: Reviews Moderation -->
+    @if (activeTab() === 'reviews') {
+      <div class="bg-white rounded-3xl border border-[#dce9e0] shadow-xs overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-[#fbfaf6] border-b border-[#edf1ea] text-stone-500 font-extrabold uppercase tracking-wider text-[11px]">
+              <tr>
+                <th class="py-3.5 px-4">Mã</th>
+                <th class="py-3.5 px-4">Bên đánh giá → Bên nhận</th>
+                <th class="py-3.5 px-4">Số sao & Nội dung</th>
+                <th class="py-3.5 px-4">Mức độ</th>
+                <th class="py-3.5 px-4">Trạng thái</th>
+                <th class="py-3.5 px-4 text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#edf1ea]">
+              @for (r of reviews(); track r.id) {
+                <tr class="hover:bg-[#fcfdfa] transition-colors">
+                  <td class="py-3.5 px-4 font-mono font-bold text-[#08492d]">
+                    {{ r.id }}
+                    <span class="block text-[10px] text-stone-400 font-normal">{{ r.reportedAt }}</span>
+                  </td>
+
+                  <td class="py-3.5 px-4 space-y-0.5">
+                    <strong class="font-bold text-stone-900 block truncate max-w-[200px]">{{ r.fromBuyer }}</strong>
+                    <span class="text-stone-500 text-[11px] block truncate max-w-[200px]">→ {{ r.toVendor }}</span>
+                  </td>
+
+                  <td class="py-3.5 px-4 max-w-[320px]">
+                    <div class="flex items-center gap-1 font-bold text-amber-500 mb-0.5">
+                      @for (star of [1,2,3,4,5]; track star) {
+                        <span>{{ star <= r.rating ? '★' : '☆' }}</span>
+                      }
+                      <span class="text-stone-500 text-[11px] ml-1">({{ r.rating }}/5)</span>
+                    </div>
+                    <p class="text-stone-700 leading-snug">{{ r.content }}</p>
+                  </td>
+
+                  <td class="py-3.5 px-4">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-900">
+                      {{ r.severity }}
+                    </span>
+                  </td>
+
+                  <td class="py-3.5 px-4">
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold" [ngClass]="r.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-900' : r.status === 'HIDDEN' ? 'bg-rose-100 text-rose-900' : 'bg-amber-100 text-amber-900'">
+                      {{ r.statusLabel }}
+                    </span>
+                  </td>
+
+                  <td class="py-3.5 px-4 text-right">
+                    <div class="flex items-center justify-end gap-1.5">
+                      @if (canModerate() && r.status === 'PENDING') {
+                        <button
+                          type="button"
+                          (click)="onApproveReview(r.id)"
+                          class="px-2.5 py-1 rounded-lg bg-[#0d623b] hover:bg-[#08492d] text-white font-bold transition-all cursor-pointer shadow-2xs"
+                        >
+                          Giữ nguyên
+                        </button>
+
+                        <button
+                          type="button"
+                          (click)="openHideModal('review', r.id, r.id)"
+                          class="px-2.5 py-1 rounded-lg border border-rose-300 hover:bg-rose-50 text-rose-700 font-bold transition-all cursor-pointer"
+                        >
+                          Ẩn đánh giá
+                        </button>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    <!-- Hide Reason Modal -->
+    @if (hideTarget(); as target) {
+      <app-admin-reason-modal
+        [title]="target.type === 'product' ? 'Ẩn sản phẩm vi phạm' : 'Ẩn đánh giá không chuẩn mực'"
+        [subtitle]="target.name"
+        confirmText="Xác nhận ẩn nội dung"
+        confirmButtonClass="bg-rose-600 hover:bg-rose-700 text-white"
+        placeholder="Nêu rõ vi phạm chính sách kiểm duyệt (tối thiểu 10 ký tự)..."
+        [minLength]="10"
+        (confirm)="onHideConfirm($event)"
+        (cancel)="closeHideModal()"
+      />
+    }
+
+  </div>
+}
+

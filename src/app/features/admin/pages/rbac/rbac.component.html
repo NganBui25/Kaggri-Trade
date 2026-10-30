@@ -1,0 +1,496 @@
+<div class="p-6 max-w-7xl mx-auto space-y-6">
+  <!-- 403 Guard (Section 0.2: Ops & Finance Admin blocked) -->
+  @if (!canAccess()) {
+    <app-admin-forbidden />
+  } @else {
+    <!-- Top Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 text-xs text-stone-500 mb-1">
+          <span>Quản trị hệ thống</span>
+          <span>/</span>
+          <span class="text-emerald-700 font-medium">Bảo mật & Phân quyền</span>
+        </div>
+        <h1 class="text-2xl font-bold text-stone-900 tracking-tight flex items-center gap-2">
+          Quản trị Phân quyền (RBAC)
+        </h1>
+        <p class="text-sm text-stone-500 mt-0.5">
+          Kiểm soát ma trận đặc quyền, phân tách trách nhiệm (SoD) và quản lý tài khoản quản trị hệ thống.
+        </p>
+      </div>
+
+      <!-- Action Button -->
+      @if (canEdit()) {
+        <button
+          (click)="openNewRoleModal()"
+          class="px-4 py-2 bg-emerald-800 text-white rounded-lg text-sm font-medium hover:bg-emerald-900 transition flex items-center gap-2 shadow-sm shadow-emerald-900/10"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          <span>+ Định nghĩa vai trò mới</span>
+        </button>
+      }
+    </div>
+
+    <!-- Segregation of Duties Banner (Rule D1 - D4) -->
+    <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 flex items-start gap-3">
+      <div class="p-1.5 bg-indigo-100 text-indigo-800 rounded-lg shrink-0">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+      </div>
+      <div class="text-xs text-indigo-900 leading-relaxed">
+        <span class="font-bold">Nguyên tắc Phân tách Trách nhiệm (Segregation of Duties - SoD):</span>
+        Sàn Kaggri tuân thủ tiêu chuẩn tài chính khắt khe: <strong>Vận hành (Ops)</strong> chỉ phê duyệt hồ sơ và phán quyết tranh chấp; <strong>Tài chính (Finance)</strong> chỉ đối soát và thực thi lệnh giải ngân; <strong>Tuân thủ (Compliance)</strong> giám sát độc lập; và chỉ <strong>Super Admin</strong> mới có quyền can thiệp cấp cao hoặc chấm dứt hợp tác nhà cung cấp.
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="flex items-center gap-2 border-b border-stone-200">
+      <button
+        (click)="activeTab.set('matrix')"
+        [class.text-emerald-800]="activeTab() === 'matrix'"
+        [class.border-emerald-800]="activeTab() === 'matrix'"
+        [class.text-stone-500]="activeTab() !== 'matrix'"
+        [class.border-transparent]="activeTab() !== 'matrix'"
+        class="pb-3 px-4 font-semibold text-sm border-b-2 transition flex items-center gap-2"
+      >
+        <span>Ma trận phân quyền (Role Matrix)</span>
+      </button>
+
+      <button
+        (click)="activeTab.set('users')"
+        [class.text-emerald-800]="activeTab() === 'users'"
+        [class.border-emerald-800]="activeTab() === 'users'"
+        [class.text-stone-500]="activeTab() !== 'users'"
+        [class.border-transparent]="activeTab() !== 'users'"
+        class="pb-3 px-4 font-semibold text-sm border-b-2 transition flex items-center gap-2"
+      >
+        <span>Danh sách Quản trị viên</span>
+        <span class="text-xs px-2 py-0.5 rounded-full" [class.bg-emerald-100]="activeTab() === 'users'" [class.text-emerald-800]="activeTab() === 'users'" [class.bg-stone-100]="activeTab() !== 'users'">
+          {{ adminUsers().length }}
+        </span>
+      </button>
+
+      <button
+        (click)="activeTab.set('roles')"
+        [class.text-emerald-800]="activeTab() === 'roles'"
+        [class.border-emerald-800]="activeTab() === 'roles'"
+        [class.text-stone-500]="activeTab() !== 'roles'"
+        [class.border-transparent]="activeTab() !== 'roles'"
+        class="pb-3 px-4 font-semibold text-sm border-b-2 transition flex items-center gap-2"
+      >
+        <span>Vai trò & Quyền hạn</span>
+        <span class="text-xs px-2 py-0.5 rounded-full" [class.bg-emerald-100]="activeTab() === 'roles'" [class.text-emerald-800]="activeTab() === 'roles'" [class.bg-stone-100]="activeTab() !== 'roles'">
+          {{ roles().length }}
+        </span>
+      </button>
+    </div>
+
+    <!-- TAB 1: ROLE MATRIX (Fix ADM-R23) -->
+    @if (activeTab() === 'matrix') {
+      <div class="bg-white rounded-xl border border-stone-200/80 shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-stone-200 bg-stone-50/50 flex items-center justify-between">
+          <div>
+            <h2 class="font-bold text-stone-900 text-sm">Bảng đối soát ma trận phân quyền hệ thống</h2>
+            <p class="text-xs text-stone-500">So sánh quyền hạn theo từng phân hệ cho 4 vai trò cốt lõi.</p>
+          </div>
+          <div class="flex items-center gap-3 text-xs">
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Toàn quyền (FULL)</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Chỉ xem (VIEW)</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-stone-300"></span> Bị chặn (NONE)</span>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-stone-600">
+            <thead class="bg-stone-50/75 border-b border-stone-200 text-xs font-semibold text-stone-600 uppercase tracking-wider">
+              <tr>
+                <th class="py-3.5 px-4">Phân hệ chức năng</th>
+                <th class="py-3.5 px-4 text-center">Super Admin</th>
+                <th class="py-3.5 px-4 text-center">Vận hành (Ops)</th>
+                <th class="py-3.5 px-4 text-center">Tài chính (Finance)</th>
+                <th class="py-3.5 px-4 text-center">Tuân thủ (Compliance)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-stone-100 text-xs">
+              @for (mod of modules; track mod.key) {
+                <tr class="hover:bg-stone-50/60 transition-colors">
+                  <td class="py-3.5 px-4">
+                    <div class="font-medium text-stone-900">{{ mod.label }}</div>
+                    <div class="text-[11px] text-stone-400 font-mono">{{ mod.key }} ({{ mod.category }})</div>
+                  </td>
+
+                  <!-- Super Admin -->
+                  <td class="py-3.5 px-4 text-center">
+                    <span class="inline-flex px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                      Toàn quyền
+                    </span>
+                  </td>
+
+                  <!-- Ops Admin -->
+                  <td class="py-3.5 px-4 text-center">
+                    @if (['kyc', 'accounts-vendor', 'accounts-buyer', 'disputes', 'moderation', 'categories'].includes(mod.key)) {
+                      <span class="inline-flex px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        Toàn quyền
+                      </span>
+                    } @else if (['dashboard', 'reports', 'transactions', 'settlements'].includes(mod.key)) {
+                      <span class="inline-flex px-2.5 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                        Chỉ xem
+                      </span>
+                    } @else {
+                      <span class="inline-flex px-2.5 py-1 rounded-full text-[11px] font-semibold bg-stone-100 text-stone-400 border border-stone-200">
+                        Không có quyền
+                      </span>
+                    }
+                  </td>
+
+                  <!-- Finance Admin -->
+                  <td class="py-3.5 px-4 text-center">
+                    @if (['transactions', 'refunds', 'settlements'].includes(mod.key)) {
+                      <span class="inline-flex px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        Toàn quyền
+                      </span>
+                    } @else if (['dashboard', 'reports', 'kyc', 'accounts-vendor', 'accounts-buyer', 'disputes'].includes(mod.key)) {
+                      <span class="inline-flex px-2.5 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                        Chỉ xem
+                      </span>
+                    } @else {
+                      <span class="inline-flex px-2.5 py-1 rounded-full text-[11px] font-semibold bg-stone-100 text-stone-400 border border-stone-200">
+                        Không có quyền
+                      </span>
+                    }
+                  </td>
+
+                  <!-- Compliance Admin -->
+                  <td class="py-3.5 px-4 text-center">
+                    @if (mod.key === 'audit') {
+                      <span class="inline-flex px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        Toàn quyền (Xuất CSV)
+                      </span>
+                    } @else if (['categories', 'config', 'refunds'].includes(mod.key)) {
+                      <span class="inline-flex px-2.5 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                        Chỉ xem
+                      </span>
+                    } @else {
+                      <span class="inline-flex px-2.5 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                        Chỉ xem
+                      </span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    <!-- TAB 2: ADMIN USERS TABLE (Fix ADM-R24, ADM-33) -->
+    @if (activeTab() === 'users') {
+      <div class="bg-white rounded-xl border border-stone-200/80 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-stone-600">
+            <thead class="bg-stone-50/75 border-b border-stone-200 text-xs font-semibold text-stone-600 uppercase tracking-wider">
+              <tr>
+                <th class="py-3.5 px-4">Quản trị viên</th>
+                <th class="py-3.5 px-4">Email liên hệ</th>
+                <th class="py-3.5 px-4 text-center">Vai trò hiện tại</th>
+                <th class="py-3.5 px-4">Đăng nhập gần nhất</th>
+                <th class="py-3.5 px-4 text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-stone-100">
+              @for (user of adminUsers(); track user.id) {
+                <tr class="hover:bg-stone-50/60 transition-colors">
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-9 h-9 rounded-full bg-emerald-800 text-white font-bold text-xs flex items-center justify-center shrink-0">
+                        {{ user.avatar }}
+                      </div>
+                      <div>
+                        <div class="font-medium text-stone-900">{{ user.name }}</div>
+                        <div class="font-mono text-xs text-stone-400">{{ user.id }}</div>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td class="py-3.5 px-4 text-stone-600 font-mono text-xs">
+                    {{ user.email }}
+                  </td>
+
+                  <td class="py-3.5 px-4 text-center">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
+                      [class.bg-purple-100]="user.role === 'SUPER_ADMIN'"
+                      [class.text-purple-800]="user.role === 'SUPER_ADMIN'"
+                      [class.bg-blue-100]="user.role === 'OPS_ADMIN'"
+                      [class.text-blue-800]="user.role === 'OPS_ADMIN'"
+                      [class.bg-emerald-100]="user.role === 'FIN_ADMIN'"
+                      [class.text-emerald-800]="user.role === 'FIN_ADMIN'"
+                      [class.bg-amber-100]="user.role === 'COMP_ADMIN'"
+                      [class.text-amber-800]="user.role === 'COMP_ADMIN'"
+                    >
+                      {{ user.roleLabel }}
+                    </span>
+                  </td>
+
+                  <td class="py-3.5 px-4 text-xs text-stone-500 font-mono">
+                    {{ user.lastLogin }}
+                  </td>
+
+                  <td class="py-3.5 px-4 text-right">
+                    @if (canEdit()) {
+                      <button
+                        (click)="openAssignUserModal(user)"
+                        class="px-3 py-1.5 text-xs font-medium text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg transition"
+                      >
+                        Đổi vai trò
+                      </button>
+                    } @else {
+                      <span class="text-xs text-stone-400 italic">Chỉ xem</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    <!-- TAB 3: ROLES DEFINITIONS (Fix ADM-R25) -->
+    @if (activeTab() === 'roles') {
+      <div class="bg-white rounded-xl border border-stone-200/80 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-stone-600">
+            <thead class="bg-stone-50/75 border-b border-stone-200 text-xs font-semibold text-stone-600 uppercase tracking-wider">
+              <tr>
+                <th class="py-3.5 px-4">Mã vai trò</th>
+                <th class="py-3.5 px-4">Tên vai trò</th>
+                <th class="py-3.5 px-4">Mô tả thẩm quyền</th>
+                <th class="py-3.5 px-4 text-center">Trạng thái</th>
+                <th class="py-3.5 px-4 text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-stone-100">
+              @for (r of roles(); track r.id) {
+                <tr class="hover:bg-stone-50/60 transition-colors">
+                  <td class="py-3.5 px-4 font-mono text-xs font-bold text-stone-700">
+                    {{ r.code }}
+                  </td>
+                  <td class="py-3.5 px-4 font-medium text-stone-900">
+                    {{ r.name }}
+                  </td>
+                  <td class="py-3.5 px-4 text-xs text-stone-500 max-w-md">
+                    {{ r.description }}
+                  </td>
+                  <td class="py-3.5 px-4 text-center">
+                    @if (r.status === 'active') {
+                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                        Hoạt động
+                      </span>
+                    } @else {
+                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800">
+                        <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
+                        Vô hiệu hóa
+                      </span>
+                    }
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    @if (canEdit()) {
+                      @if (r.code === 'SUPER_ADMIN') {
+                        <span class="text-xs text-stone-400 italic" title="Vai trò cốt lõi không thể tắt">Khóa cố định</span>
+                      } @else {
+                        <button
+                          (click)="openDeactivateRoleModal(r)"
+                          [class.text-rose-600]="r.status === 'active'"
+                          [class.hover:bg-rose-50]="r.status === 'active'"
+                          [class.text-emerald-700]="r.status !== 'active'"
+                          [class.hover:bg-emerald-50]="r.status !== 'active'"
+                          class="px-2.5 py-1 text-xs font-medium rounded-lg transition border border-stone-200"
+                        >
+                          {{ r.status === 'active' ? 'Vô hiệu hóa' : 'Kích hoạt lại' }}
+                        </button>
+                      }
+                    } @else {
+                      <span class="text-xs text-stone-400 italic">Chỉ xem</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  }
+
+  <!-- MODAL: DEFINE NEW ROLE -->
+  @if (showNewRoleModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+      <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-stone-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-stone-100 flex items-center justify-between bg-stone-50/50">
+          <h3 class="font-bold text-stone-900 text-base">Định nghĩa vai trò mới</h3>
+          <button (click)="closeNewRoleModal()" class="text-stone-400 hover:text-stone-600 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="p-6 space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
+              Tên vai trò <span class="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              [ngModel]="newRoleName()"
+              (ngModelChange)="newRoleName.set($event)"
+              placeholder="VD: Kiểm duyệt viên Nông sản..."
+              class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-sm text-stone-800 focus:bg-white focus:border-emerald-600 focus:outline-none transition"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
+              Mô tả trách nhiệm & Phạm vi
+            </label>
+            <textarea
+              rows="3"
+              [ngModel]="newRoleDesc()"
+              (ngModelChange)="newRoleDesc.set($event)"
+              placeholder="Mô tả thẩm quyền hạn mức của vai trò này..."
+              class="w-full px-3.5 py-2 bg-stone-50 border border-stone-200 rounded-lg text-sm text-stone-800 focus:bg-white focus:border-emerald-600 focus:outline-none transition"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="px-6 py-4 bg-stone-50 border-t border-stone-100 flex items-center justify-end gap-3">
+          <button
+            (click)="closeNewRoleModal()"
+            class="px-4 py-2 border border-stone-200 rounded-lg text-sm font-medium text-stone-600 hover:bg-white transition"
+          >
+            Hủy
+          </button>
+          <button
+            (click)="submitCreateRole()"
+            [disabled]="!newRoleName().trim()"
+            class="px-5 py-2 bg-emerald-800 text-white rounded-lg text-sm font-medium hover:bg-emerald-900 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+          >
+            Tạo vai trò
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- MODAL: ASSIGN USER ROLE (Fix ADM-R24, ADM-34) -->
+  @if (assignTargetUser(); as target) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+      <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-stone-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-stone-100 flex items-center justify-between bg-stone-50/50">
+          <h3 class="font-bold text-stone-900 text-base">Phân bổ lại vai trò quản trị</h3>
+          <button (click)="closeAssignUserModal()" class="text-stone-400 hover:text-stone-600 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="p-6 space-y-4">
+          <div class="p-3 bg-stone-50 rounded-xl border border-stone-200 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-emerald-800 text-white font-bold flex items-center justify-center shrink-0">
+              {{ target.avatar }}
+            </div>
+            <div>
+              <div class="font-semibold text-stone-900">{{ target.name }}</div>
+              <div class="text-xs text-stone-500">{{ target.email }}</div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
+              Chọn vai trò mới
+            </label>
+            <select
+              [ngModel]="selectedNewRole()"
+              (ngModelChange)="selectedNewRole.set($event)"
+              class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-sm text-stone-800 focus:bg-white focus:border-emerald-600 focus:outline-none transition"
+            >
+              <option value="SUPER_ADMIN">Quản trị viên Tối cao (Super Admin)</option>
+              <option value="OPS_ADMIN">Quản trị viên Vận hành (Ops Admin)</option>
+              <option value="FIN_ADMIN">Quản trị viên Tài chính (Finance Admin)</option>
+              <option value="COMP_ADMIN">Quản trị viên Tuân thủ (Compliance Admin)</option>
+            </select>
+          </div>
+
+          @if (target.role === 'SUPER_ADMIN' && selectedNewRole() !== 'SUPER_ADMIN') {
+            <div class="p-3 bg-rose-50 border border-rose-200 rounded-lg text-xs text-rose-800">
+              <strong>⚠️ Chú ý bảo vệ Super Admin (Quy tắc ADM-34):</strong> Bạn đang giáng cấp một tài khoản Super Admin. Hệ thống sẽ từ chối nếu đây là Super Admin duy nhất còn lại.
+            </div>
+          }
+        </div>
+
+        <div class="px-6 py-4 bg-stone-50 border-t border-stone-100 flex items-center justify-end gap-3">
+          <button
+            (click)="closeAssignUserModal()"
+            class="px-4 py-2 border border-stone-200 rounded-lg text-sm font-medium text-stone-600 hover:bg-white transition"
+          >
+            Hủy
+          </button>
+          <button
+            (click)="submitAssignUserRole()"
+            class="px-5 py-2 bg-emerald-800 text-white rounded-lg text-sm font-medium hover:bg-emerald-900 transition shadow-sm"
+          >
+            Xác nhận thay đổi
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- MODAL: TOGGLE ROLE STATUS (Fix ADM-R25) -->
+  @if (deactivateTargetRole(); as r) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+      <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-stone-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-stone-100 flex items-center justify-between bg-stone-50/50">
+          <h3 class="font-bold text-stone-900 text-base">
+            {{ r.status === 'active' ? 'Vô hiệu hóa' : 'Kích hoạt lại' }} vai trò
+          </h3>
+          <button (click)="closeDeactivateRoleModal()" class="text-stone-400 hover:text-stone-600 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="p-6 space-y-4">
+          <p class="text-sm text-stone-700 leading-relaxed">
+            Bạn có chắc chắn muốn {{ r.status === 'active' ? 'vô hiệu hóa' : 'kích hoạt lại' }} vai trò <strong>"{{ r.name }}"</strong> ({{ r.code }}) không?
+          </p>
+        </div>
+
+        <div class="px-6 py-4 bg-stone-50 border-t border-stone-100 flex items-center justify-end gap-3">
+          <button
+            (click)="closeDeactivateRoleModal()"
+            class="px-4 py-2 border border-stone-200 rounded-lg text-sm font-medium text-stone-600 hover:bg-white transition"
+          >
+            Đóng
+          </button>
+          <button
+            (click)="executeToggleRole()"
+            [class.bg-rose-600]="r.status === 'active'"
+            [class.bg-emerald-800]="r.status !== 'active'"
+            class="px-5 py-2 text-white rounded-lg text-sm font-medium transition shadow-sm"
+          >
+            Xác nhận
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+

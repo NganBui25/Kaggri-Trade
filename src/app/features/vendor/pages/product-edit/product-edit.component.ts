@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { VendorDataService } from '../../services/vendor-data.service';
 import { VendorProduct } from '../../models/vendor.model';
 import { PriceTier } from '../../../../shared/models/product.model';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { ToastService } from '../../../../shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-vendor-product-edit',
@@ -18,7 +18,7 @@ export class VendorProductEditComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly vendorData = inject(VendorDataService);
-  private readonly notification = inject(NotificationService);
+  private readonly notification = inject(ToastService);
 
   isEditMode = signal(false);
   productId = signal<string | null>(null);

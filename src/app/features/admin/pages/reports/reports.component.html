@@ -1,0 +1,270 @@
+<div class="p-6 max-w-7xl mx-auto space-y-6">
+  <!-- 403 Guard -->
+  @if (!canAccess()) {
+    <app-admin-forbidden />
+  } @else {
+    <!-- Top Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 text-xs text-stone-500 mb-1">
+          <span>Quản trị hệ thống</span>
+          <span>/</span>
+          <span class="text-emerald-700 font-medium">Báo cáo & Phân tích</span>
+        </div>
+        <h1 class="text-2xl font-bold text-stone-900 tracking-tight flex items-center gap-2">
+          Báo cáo Phân tích Hoạt động Toàn sàn
+        </h1>
+        <p class="text-sm text-stone-500 mt-0.5">
+          Theo dõi tổng sản lượng giao dịch GMV, doanh thu phí sàn, tỷ lệ khiếu nại và xếp hạng nhà cung cấp.
+        </p>
+      </div>
+
+      <!-- Period Switcher & Export -->
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- Period Switcher -->
+        <div class="flex items-center bg-stone-100 p-1 rounded-xl border border-stone-200">
+          <button
+            (click)="selectedPeriod.set('7d')"
+            [class.bg-white]="selectedPeriod() === '7d'"
+            [class.text-stone-900]="selectedPeriod() === '7d'"
+            [class.shadow-sm]="selectedPeriod() === '7d'"
+            [class.text-stone-600]="selectedPeriod() !== '7d'"
+            class="px-3 py-1 rounded-lg text-xs font-semibold transition"
+          >
+            7 ngày
+          </button>
+          <button
+            (click)="selectedPeriod.set('30d')"
+            [class.bg-white]="selectedPeriod() === '30d'"
+            [class.text-stone-900]="selectedPeriod() === '30d'"
+            [class.shadow-sm]="selectedPeriod() === '30d'"
+            [class.text-stone-600]="selectedPeriod() !== '30d'"
+            class="px-3 py-1 rounded-lg text-xs font-semibold transition"
+          >
+            30 ngày
+          </button>
+          <button
+            (click)="selectedPeriod.set('90d')"
+            [class.bg-white]="selectedPeriod() === '90d'"
+            [class.text-stone-900]="selectedPeriod() === '90d'"
+            [class.shadow-sm]="selectedPeriod() === '90d'"
+            [class.text-stone-600]="selectedPeriod() !== '90d'"
+            class="px-3 py-1 rounded-lg text-xs font-semibold transition"
+          >
+            Quý này
+          </button>
+        </div>
+
+        <button
+          (click)="exportReport()"
+          class="px-4 py-2 bg-emerald-800 text-white rounded-lg text-xs font-medium hover:bg-emerald-900 transition flex items-center gap-2 shadow-sm shadow-emerald-900/10"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          <span>Xuất báo cáo</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- TOP KPI CARDS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Total GMV -->
+      <div class="bg-white p-5 rounded-2xl border border-stone-200/85 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Tổng sản lượng GMV</span>
+          <span class="inline-flex items-center text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+            {{ summaryMetrics().growthGmv }} ↗
+          </span>
+        </div>
+        <div class="text-2xl font-extrabold text-stone-900 tracking-tight">
+          {{ summaryMetrics().gmv | number }} đ
+        </div>
+        <p class="text-[11px] text-stone-400 mt-1">So với cùng kỳ trước đó</p>
+      </div>
+
+      <!-- Orders count -->
+      <div class="bg-white p-5 rounded-2xl border border-stone-200/85 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Số đơn hàng B2B</span>
+          <span class="inline-flex items-center text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+            {{ summaryMetrics().growthOrders }} ↗
+          </span>
+        </div>
+        <div class="text-2xl font-extrabold text-stone-900 tracking-tight">
+          {{ summaryMetrics().orders | number }} đơn
+        </div>
+        <p class="text-[11px] text-stone-400 mt-1">Đơn thanh toán hoàn tất</p>
+      </div>
+
+      <!-- Platform fee revenue -->
+      <div class="bg-white p-5 rounded-2xl border border-stone-200/85 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Doanh thu phí sàn</span>
+          <span class="inline-flex items-center text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+            5.0% tiêu chuẩn
+          </span>
+        </div>
+        <div class="text-2xl font-extrabold text-emerald-800 tracking-tight">
+          {{ summaryMetrics().feeRevenue | number }} đ
+        </div>
+        <p class="text-[11px] text-stone-400 mt-1">Thu nhập giữ lại của Kaggri</p>
+      </div>
+
+      <!-- Dispute Rate & SLA -->
+      <div class="bg-white p-5 rounded-2xl border border-stone-200/85 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Tỷ lệ khiếu nại sàn</span>
+          <span class="inline-flex items-center text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+            SLA an toàn
+          </span>
+        </div>
+        <div class="text-2xl font-extrabold text-stone-900 tracking-tight">
+          {{ summaryMetrics().disputeRate }}%
+        </div>
+        <p class="text-[11px] text-stone-400 mt-1">Thời gian giải quyết TB: <strong>{{ summaryMetrics().avgResolutionHours }}h</strong></p>
+      </div>
+    </div>
+
+    <!-- MAIN GRAPHS GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- CHART 1: GMV Trend Chart -->
+      <div class="bg-white rounded-2xl border border-stone-200/85 p-6 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <h2 class="font-bold text-stone-900 text-sm">Biểu đồ tăng trưởng GMV theo tuần</h2>
+            <span class="text-xs text-stone-500 font-mono">Đơn vị: Triệu VNĐ</span>
+          </div>
+          <p class="text-xs text-stone-500 mb-6">Diễn biến doanh số giao dịch nông sản thực nhận qua các tuần trong kỳ.</p>
+
+          <!-- CSS Bar Chart (Stable, responsive, no external dependencies) -->
+          <div class="h-56 flex items-end justify-between gap-4 pt-8 pb-4 border-b border-stone-100">
+            @for (bar of trendBars; track bar.label) {
+              <div class="flex-1 flex flex-col items-center gap-2 group">
+                <span class="text-xs font-bold text-stone-700 group-hover:text-emerald-700 transition font-mono">
+                  {{ bar.gmv }} tr
+                </span>
+                <div class="w-full bg-stone-100 rounded-t-lg relative overflow-hidden h-40 flex items-end">
+                  <div
+                    class="w-full bg-emerald-800 rounded-t-lg group-hover:bg-emerald-700 transition-all duration-300"
+                    [style.height]="bar.height"
+                  ></div>
+                </div>
+                <span class="text-xs font-semibold text-stone-600 mt-1">{{ bar.label }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="pt-4 flex items-center justify-between text-xs text-stone-500">
+          <span>Xu hướng: Tăng mạnh ở tuần cuối do mùa thu hoạch dứa & cà chua</span>
+          <span class="font-bold text-emerald-800">+14.2% GMV</span>
+        </div>
+      </div>
+
+      <!-- CHART 2: Category Share -->
+      <div class="bg-white rounded-2xl border border-stone-200/85 p-6 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <h2 class="font-bold text-stone-900 text-sm">Cơ cấu doanh thu theo nhóm nông sản</h2>
+            <span class="text-xs text-stone-500 font-mono">100% GMV</span>
+          </div>
+          <p class="text-xs text-stone-500 mb-6">Tỷ trọng đóng góp vào tổng giá trị giao dịch của từng phân loại sản phẩm.</p>
+
+          <!-- Category Progress Bars -->
+          <div class="space-y-4">
+            @for (cat of categoriesShare; track cat.name) {
+              <div>
+                <div class="flex items-center justify-between text-xs mb-1.5 font-medium">
+                  <span class="text-stone-800">{{ cat.name }}</span>
+                  <div class="flex items-center gap-2">
+                    <span class="text-stone-500">{{ cat.gmv | number }} đ</span>
+                    <span class="font-bold text-stone-900">{{ cat.percent }}%</span>
+                  </div>
+                </div>
+                <div class="w-full h-2.5 bg-stone-100 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full transition-all duration-500" [class]="cat.color" [style.width.%]="cat.percent"></div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500">
+          <span>Nhóm chủ lực: <strong>Rau củ hữu cơ</strong> chiếm tỷ trọng lớn nhất</span>
+          <span class="font-bold text-stone-700">4 Nhóm chính</span>
+        </div>
+      </div>
+
+      <!-- CHART 3: Vendor Score Distribution (Fix ADM-44) -->
+      <div class="bg-white rounded-2xl border border-stone-200/85 p-6 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <h2 class="font-bold text-stone-900 text-sm">Phân bố điểm uy tín Nhà bán (Vendor Score)</h2>
+            <span class="text-xs text-stone-500 font-mono">120 HTX / Trang trại</span>
+          </div>
+          <p class="text-xs text-stone-500 mb-5">Đánh giá dựa trên tỷ lệ giao đúng hẹn, tỷ lệ hủy đơn và chất lượng đóng gói.</p>
+
+          <div class="space-y-3.5">
+            @for (bucket of vendorScoreBuckets; track bucket.label) {
+              <div class="p-3 rounded-xl border border-stone-100 bg-stone-50/50 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-3 h-3 rounded-full"
+                    [class.bg-emerald-500]="bucket.status === 'emerald'"
+                    [class.bg-teal-500]="bucket.status === 'teal'"
+                    [class.bg-amber-500]="bucket.status === 'amber'"
+                    [class.bg-rose-500]="bucket.status === 'rose'"
+                  ></span>
+                  <span class="text-xs font-semibold text-stone-800">{{ bucket.label }}</span>
+                </div>
+
+                <div class="flex items-center gap-3 text-xs">
+                  <span class="font-bold text-stone-900">{{ bucket.count }} HTX</span>
+                  <span class="text-stone-400 font-mono">({{ bucket.percent }}%)</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-stone-100 text-xs text-stone-500">
+          * Điểm uy tín được tái tính toán tự động mỗi tuần theo công thức định sẵn tại mục Cấu hình hệ thống.
+        </div>
+      </div>
+
+      <!-- CHART 4: Dispute Causes Breakdown -->
+      <div class="bg-white rounded-2xl border border-stone-200/85 p-6 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <h2 class="font-bold text-stone-900 text-sm">Phân loại nguyên nhân Tranh chấp B2B</h2>
+            <span class="text-xs text-stone-500 font-mono">22 Vụ việc</span>
+          </div>
+          <p class="text-xs text-stone-500 mb-5">Thống kê lý do khiếu nại phát sinh trong 30 ngày gần nhất.</p>
+
+          <div class="space-y-4">
+            @for (cause of disputeBreakdown; track cause.reason) {
+              <div>
+                <div class="flex items-center justify-between text-xs mb-1 font-medium">
+                  <span class="text-stone-800 truncate max-w-xs">{{ cause.reason }}</span>
+                  <div class="flex items-center gap-2">
+                    <span class="text-stone-500">{{ cause.count }} vụ</span>
+                    <span class="font-bold text-stone-900">{{ cause.percent }}%</span>
+                  </div>
+                </div>
+                <div class="w-full h-2 bg-stone-100 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full transition-all duration-500" [class]="cause.color" [style.width.%]="cause.percent"></div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-stone-100 text-xs text-stone-500 flex items-center justify-between">
+          <span>Chất lượng hư hỏng là lý do chủ yếu do quá trình bảo quản vận chuyển nông sản</span>
+          <span class="font-bold text-rose-700">55% tổng số</span>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+

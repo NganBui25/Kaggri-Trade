@@ -1,0 +1,152 @@
+.story-wrapper {
+  margin-bottom: 2.5rem;
+}
+
+.story-card {
+  display: grid;
+  grid-template-columns: 1.15fr 2fr;
+  gap: 2rem;
+  align-items: center;
+  background-color: #eef2e9;
+  border-radius: 1.25rem;
+  border: 1px solid #e1e9dc;
+  padding: 2.25rem 2.75rem;
+  box-shadow: 0 4px 18px rgba(13, 98, 59, 0.04);
+}
+
+.story-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.story-heading {
+  font-family: 'Plus Jakarta Sans', 'Inter', 'Be Vietnam Pro', sans-serif;
+  font-size: clamp(1.85rem, 2.6vw, 2.35rem);
+  font-weight: 850;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: #08492d;
+  margin: 0 0 0.875rem 0;
+}
+
+.story-desc {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: #53685a;
+  max-width: 320px;
+  margin: 0 0 1.5rem 0;
+}
+
+.story-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #0d623b;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(13, 98, 59, 0.18);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #08492d;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(13, 98, 59, 0.22);
+  }
+
+  .arrow {
+    transition: transform 0.2s ease;
+  }
+
+  &:hover .arrow {
+    transform: translateX(3px);
+  }
+}
+
+.story-points {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+
+.story-point {
+  background: transparent;
+  border-left: 1px solid #d9e2d6;
+  text-align: center;
+  padding: 0.875rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.point-icon {
+  display: block;
+  font-size: 1.85rem;
+  color: #0d623b;
+  margin-bottom: 0.35rem;
+  line-height: 1;
+}
+
+.point-title {
+  display: block;
+  font-family: 'Plus Jakarta Sans', 'Inter', 'Be Vietnam Pro', sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: #19392d;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.25rem;
+}
+
+.point-subtitle {
+  display: block;
+  font-size: 0.72rem;
+  color: #718478;
+  line-height: 1.35;
+}
+
+@media (max-width: 1024px) {
+  .story-card {
+    grid-template-columns: 1fr;
+    padding: 2rem;
+    gap: 1.75rem;
+  }
+
+  .story-desc {
+    max-width: 100%;
+  }
+
+  .story-points {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+
+    .story-point {
+      border-left: none;
+      background-color: #ffffff;
+      border-radius: 0.875rem;
+      padding: 1.25rem 1rem;
+      border: 1px solid #e1e9dc;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .story-card {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .story-heading {
+    font-size: 1.75rem;
+  }
+
+  .story-points {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+

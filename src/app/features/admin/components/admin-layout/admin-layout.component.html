@@ -1,0 +1,210 @@
+<div class="min-h-screen bg-[#f8faf7] flex flex-col font-sans text-stone-900">
+  
+  <!-- TOPBAR -->
+  <header class="h-16 bg-white border-b border-[#dce9e0] sticky top-0 z-40 px-4 sm:px-6 flex items-center justify-between shadow-2xs">
+    
+    <!-- Left: Brand Logo & Mobile Toggle -->
+    <div class="flex items-center gap-3">
+      <button
+        type="button"
+        (click)="mobileSidebarOpen.set(!mobileSidebarOpen())"
+        class="lg:hidden p-2 rounded-xl text-stone-600 hover:bg-stone-100 transition-colors"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+
+      <a routerLink="/admin/dashboard" class="flex items-center gap-2.5 group">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#08492d] to-[#0d623b] text-white flex items-center justify-center font-extrabold text-base shadow-xs group-hover:scale-105 transition-transform">
+          K
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-extrabold text-[#08492d] text-base tracking-tight">KAGGRI</span>
+            <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-emerald-100 text-[#08492d] uppercase">Admin</span>
+          </div>
+          <p class="text-[10px] text-stone-400 font-medium leading-none">Cổng Quản Trị Hệ Thống Sàn B2B</p>
+        </div>
+      </a>
+    </div>
+
+    <!-- Middle: External Portals Navigation (Fix ADM-46, ADM-48) -->
+    <div class="hidden md:flex items-center gap-2 text-xs font-semibold">
+      <a
+        routerLink="/buyer/catalog"
+        class="px-3 py-1.5 rounded-xl border border-stone-200 hover:border-emerald-500 hover:bg-emerald-50/50 text-stone-600 hover:text-[#0d623b] transition-all flex items-center gap-1"
+      >
+        <span>Kênh Người mua</span>
+        <span class="text-[10px]">↗</span>
+      </a>
+
+      <a
+        routerLink="/vendor/dashboard"
+        class="px-3 py-1.5 rounded-xl border border-stone-200 hover:border-emerald-500 hover:bg-emerald-50/50 text-stone-600 hover:text-[#0d623b] transition-all flex items-center gap-1"
+      >
+        <span>Kênh Người bán</span>
+        <span class="text-[10px]">↗</span>
+      </a>
+    </div>
+
+    <!-- Right: Role Switcher & User Profile (Fix ADM-R02, ADM-02) -->
+    <div class="flex items-center gap-3">
+      
+      <!-- ROLE SWITCHER DROPDOWN (Fix ADM-R02) -->
+      <div class="relative">
+        <button
+          type="button"
+          (click)="roleDropdownOpen.set(!roleDropdownOpen())"
+          class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#e8f5ee] hover:bg-[#d8ece0] border border-emerald-300 text-[#08492d] text-xs font-extrabold transition-all shadow-2xs cursor-pointer"
+        >
+          <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+          <span class="hidden sm:inline">Vai trò:</span>
+          <span>{{ currentAdmin().roleLabel.split(' ')[0] }}</span>
+          <svg class="w-3.5 h-3.5 text-[#0d623b] transition-transform duration-200" [class.rotate-180]="roleDropdownOpen()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        @if (roleDropdownOpen()) {
+          <div
+            (click)="$event.stopPropagation()"
+            class="absolute right-0 mt-2 w-72 bg-white rounded-2xl border border-[#bbd2c2] shadow-xl p-2 z-50 animate-fadeIn space-y-1 text-xs"
+          >
+            <div class="px-3 py-2 border-b border-stone-100">
+              <span class="font-extrabold text-[#08492d] block">Chuyển đổi vai trò demo</span>
+              <p class="text-[11px] text-stone-500 mt-0.5">Thực nghiệm phân quyền theo Quyết định D1 - D8</p>
+            </div>
+
+            @for (opt of roleOptions; track opt.code) {
+              <button
+                type="button"
+                (click)="selectRole(opt.code)"
+                class="w-full text-left p-2.5 rounded-xl transition-all flex items-start gap-2.5 cursor-pointer"
+                [ngClass]="currentAdmin().role === opt.code ? 'bg-[#0d623b] text-white font-bold shadow-xs' : 'hover:bg-[#fbfaf6] text-stone-700'"
+              >
+                <span class="text-base">{{ opt.icon }}</span>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-1.5">
+                    <strong class="font-extrabold text-xs">{{ opt.label }}</strong>
+                    @if (currentAdmin().role === opt.code) {
+                      <span class="text-[10px] bg-white/20 px-1.5 rounded">Hiện tại</span>
+                    }
+                  </div>
+                  <p class="text-[10px] opacity-80 mt-0.5 leading-snug">{{ opt.desc }}</p>
+                </div>
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Notification Bell -->
+      <a
+        routerLink="/admin/notifications"
+        class="relative w-9 h-9 rounded-xl border border-stone-200 hover:border-emerald-500 hover:bg-stone-50 flex items-center justify-center text-stone-600 transition-colors cursor-pointer"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg>
+
+        @if (unreadNotificationCount() > 0) {
+          <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-600 text-white font-extrabold text-[9px] flex items-center justify-center">
+            {{ unreadNotificationCount() }}
+          </span>
+        }
+      </a>
+
+      <!-- User Profile & Logout (Fix ADM-02) -->
+      <div class="flex items-center gap-2 pl-2 border-l border-[#edf1ea]">
+        <div class="w-8 h-8 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-bold text-xs shadow-2xs">
+          {{ currentAdmin().avatar }}
+        </div>
+        <div class="hidden xl:block text-left">
+          <strong class="text-xs font-extrabold text-stone-900 block leading-tight">{{ currentAdmin().name }}</strong>
+          <span class="text-[10px] text-emerald-800 font-semibold leading-none">{{ currentAdmin().roleLabel }}</span>
+        </div>
+
+        <button
+          type="button"
+          (click)="logout()"
+          title="Đăng xuất khỏi phiên Quản trị"
+          class="p-1.5 rounded-lg text-stone-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN BODY LAYOUT (Sidebar + Content) -->
+  <div class="flex-1 flex overflow-hidden">
+    
+    <!-- SIDEBAR -->
+    <aside
+      class="w-64 bg-white border-r border-[#dce9e0] flex-shrink-0 flex flex-col justify-between overflow-y-auto transition-transform z-30 lg:translate-x-0"
+      [class.translate-x-0]="mobileSidebarOpen()"
+      [class.-translate-x-full]="!mobileSidebarOpen()"
+      [class.fixed]="true"
+      [class.inset-y-0]="true"
+      [class.pt-16]="true"
+      [class.lg:static]="true"
+      [class.lg:pt-0]="true"
+    >
+      <div class="p-4 space-y-6">
+        @for (grp of menuGroups(); track grp.title) {
+          <div class="space-y-1">
+            <span class="px-3 text-[10px] font-extrabold uppercase tracking-wider text-stone-400 block">
+              {{ grp.title }}
+            </span>
+
+            <div class="space-y-0.5 pt-1">
+              @for (item of grp.items; track item.id) {
+                <a
+                  [routerLink]="item.route"
+                  routerLinkActive="bg-[#0d623b] text-white font-bold shadow-xs"
+                  [routerLinkActiveOptions]="{ exact: item.route === '/admin/dashboard' }"
+                  class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-stone-600 hover:bg-[#fbfaf6] hover:text-[#08492d] transition-all group"
+                >
+                  <div class="flex items-center gap-2.5 min-w-0">
+                    <span class="text-sm flex-shrink-0">{{ item.icon }}</span>
+                    <span class="truncate">{{ item.label }}</span>
+                  </div>
+
+                  @if (item.badge && item.badge() > 0) {
+                    <span class="px-1.5 py-0.5 rounded-full text-[10px] font-extrabold flex-shrink-0 shadow-2xs" [ngClass]="item.badgeClass || 'bg-amber-100 text-amber-900'">
+                      {{ item.badge() }}
+                    </span>
+                  }
+                </a>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Sidebar Footer Info -->
+      <div class="p-4 border-t border-[#edf1ea] text-[11px] text-stone-400 space-y-2 bg-[#fcfdfa]">
+        <div class="flex items-center justify-between">
+          <span>Phiên bản Admin:</span>
+          <strong class="font-mono text-stone-600">v2.4-B2B</strong>
+        </div>
+        <div class="flex items-center justify-between">
+          <span>Tiêu chuẩn:</span>
+          <span class="text-emerald-700 font-bold">Kaggri Escrow</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN VIEW AREA -->
+    <main class="flex-1 overflow-y-auto bg-[#f8faf7] p-4 sm:p-6 lg:p-8">
+      <router-outlet />
+    </main>
+
+  </div>
+
+</div>
+

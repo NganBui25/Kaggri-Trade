@@ -7,7 +7,7 @@ import { BuyerDataService } from '../../services/buyer-data.service';
 import { OrderService } from '../../services/order.service';
 import { PaymentMethod, PaymentMethodId, BuyerOrder } from '../../../../shared/models/order.model';
 import { PricePipe, NumberDotPipe } from '../../../../shared/pipes/price.pipe';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { ToastService } from '../../../../shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-checkout',
@@ -21,7 +21,7 @@ export class CheckoutComponent implements OnDestroy {
   private readonly buyerData = inject(BuyerDataService);
   private readonly orderService = inject(OrderService);
   private readonly router = inject(Router);
-  private readonly notification = inject(NotificationService);
+  private readonly notification = inject(ToastService);
 
   paymentMethods = signal<PaymentMethod[]>([]);
   selectedMethod = signal<PaymentMethodId>('vietqr');

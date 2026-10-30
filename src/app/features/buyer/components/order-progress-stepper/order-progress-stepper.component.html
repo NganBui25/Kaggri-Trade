@@ -1,0 +1,308 @@
+<div class="bg-white rounded-3xl border border-[#dce9e0] shadow-xs overflow-hidden space-y-0">
+  
+  <!-- Header: Live Progress Status Banner -->
+  <div class="p-6 bg-gradient-to-r from-emerald-50/90 via-emerald-50/50 to-white border-b border-[#edf1ea]">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-[#0d623b] text-white shadow-xs">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+            </span>
+            Tiến độ đơn hàng: Bước {{ currentStepIndex() }}/6
+          </span>
+
+          <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100/80 text-emerald-900 border border-emerald-200">
+            {{ currentInspectedStep().label }}
+          </span>
+        </div>
+
+        <h3 class="text-lg sm:text-xl font-extrabold text-[#08492d]">
+          @if (currentStepIndex() === 1) {
+            Đơn mua đã được tạo thành công
+          } @else if (currentStepIndex() === 2) {
+            Chờ đối soát thanh toán ký quỹ Escrow
+          } @else if (currentStepIndex() === 3) {
+            Nhà cung cấp đã tiếp nhận & cam kết sản lượng
+          } @else if (currentStepIndex() === 4) {
+            Người bán đang thu hoạch & đóng thùng bảo quản
+          } @else if (currentStepIndex() === 5) {
+            Xe tải lạnh đang vận chuyển về kho nhận hàng
+          } @else {
+            Đơn hàng đã giao thành công & nghiệm thu hoàn tất
+          }
+        </h3>
+
+        <p class="text-xs text-stone-600 mt-1 max-w-2xl leading-relaxed">
+          {{ currentInspectedStep().fullDesc }}
+        </p>
+      </div>
+
+      <!-- Quick Metrics Pills -->
+      <div class="grid grid-cols-2 sm:grid-cols-2 gap-2 text-[11px] self-start md:self-auto min-w-[240px]">
+        <div class="p-2.5 rounded-xl bg-white/90 border border-emerald-100 shadow-2xs space-y-0.5">
+          <span class="text-stone-400 block font-medium">Mã vận đơn xe lạnh:</span>
+          <strong class="text-stone-900 font-mono font-bold block truncate">
+            {{ order.subOrders[0]?.trackingCode || 'TRK-COLD-2026' }}
+          </strong>
+        </div>
+
+        <div class="p-2.5 rounded-xl bg-white/90 border border-emerald-100 shadow-2xs space-y-0.5">
+          <span class="text-stone-400 block font-medium">Nhiệt độ thùng xe:</span>
+          <strong class="text-emerald-700 font-bold block">
+            ❄️ 3.5°C - 5.0°C (Chuẩn)
+          </strong>
+        </div>
+
+        <div class="p-2.5 rounded-xl bg-white/90 border border-emerald-100 shadow-2xs space-y-0.5">
+          <span class="text-stone-400 block font-medium">Dự kiến giao hàng:</span>
+          <strong class="text-stone-800 font-bold block truncate">
+            {{ order.subOrders[0]?.estimatedDelivery || '18/09/2026 05:30' }}
+          </strong>
+        </div>
+
+        <div class="p-2.5 rounded-xl bg-white/90 border border-emerald-100 shadow-2xs space-y-0.5">
+          <span class="text-stone-400 block font-medium">Bảo đảm Ký quỹ:</span>
+          <strong class="text-[#0d623b] font-bold block">
+            🔒 100% Escrow an toàn
+          </strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stepper Bar (6 Steps) - Enhanced based on user's prototype image -->
+  <div class="p-6 sm:p-8 bg-white overflow-x-auto">
+    <div class="min-w-[680px]">
+      <div class="relative flex items-center justify-between">
+        
+        <!-- Background Connecting Track Behind Circles -->
+        <div class="absolute left-6 right-6 top-5 -translate-y-1/2 h-1 bg-stone-200 z-0 rounded-full"></div>
+
+        <!-- Dynamic Filled Green Progress Track -->
+        <div
+          class="absolute left-6 top-5 -translate-y-1/2 h-1 bg-[#0d623b] z-0 rounded-full transition-all duration-500 ease-out"
+          [style.width.%]="(currentStepIndex() - 1) * 20"
+        ></div>
+
+        <!-- 6 Step Nodes -->
+        @for (step of steps(); track step.index) {
+          <div
+            (click)="selectStep(step.index)"
+            class="relative z-10 flex flex-col items-center group cursor-pointer"
+            style="width: 16.666%;"
+          >
+            <!-- Node Circle with Solid Background -->
+            <div
+              class="step-node"
+              [class.completed]="step.status === 'completed'"
+              [class.current]="step.status === 'current'"
+              [class.upcoming]="step.status === 'upcoming'"
+              [class.inspected]="inspectedStepIndex() === step.index && step.status !== 'current'"
+            >
+              @if (step.status === 'completed') {
+                <svg class="step-check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                </svg>
+              } @else if (step.status === 'current') {
+                <span class="step-num">{{ step.index }}</span>
+              } @else {
+                <span class="step-num">{{ step.index }}</span>
+              }
+            </div>
+
+            <!-- Step Label & Time -->
+            <div class="mt-2.5 text-center px-1">
+              <span
+                class="block text-xs transition-colors"
+                [ngClass]="{
+                  'font-bold text-[#08492d]': step.status === 'completed',
+                  'font-extrabold text-[#08492d]': step.status === 'current',
+                  'font-medium text-stone-400 group-hover:text-stone-600': step.status === 'upcoming'
+                }"
+              >
+                {{ step.label }}
+              </span>
+
+              @if (step.status === 'current') {
+                <span class="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-100 text-[#08492d]">
+                  Đang diễn ra
+                </span>
+              } @else if (step.status === 'completed') {
+                <span class="block text-[10px] text-emerald-800 font-semibold mt-0.5">
+                  ✓ Hoàn tất
+                </span>
+              } @else {
+                <span class="block text-[10px] text-stone-400 mt-0.5">
+                  Dự kiến
+                </span>
+              }
+            </div>
+          </div>
+        }
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Inspected Step Detailed Context Box -->
+  <div class="px-6 py-4 bg-[#fbfaf6] border-t border-[#edf1ea] text-xs">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div class="flex items-start sm:items-center gap-3">
+        <div class="w-8 h-8 rounded-xl bg-white border border-[#bbd2c2] text-[#08492d] flex items-center justify-center font-bold text-xs flex-shrink-0 shadow-2xs">
+          {{ inspectedStepIndex() }}
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <strong class="font-extrabold text-stone-900 text-sm">
+              Giai đoạn: {{ currentInspectedStep().label }}
+            </strong>
+            <span
+              class="px-2 py-0.5 rounded text-[10px] font-bold"
+              [ngClass]="{
+                'bg-emerald-100 text-emerald-800': currentInspectedStep().status === 'completed',
+                'bg-amber-100 text-amber-800': currentInspectedStep().status === 'current',
+                'bg-stone-100 text-stone-600': currentInspectedStep().status === 'upcoming'
+              }"
+            >
+              {{ getStepStatusLabel(currentInspectedStep().status) }}
+            </span>
+          </div>
+          <p class="text-stone-600 mt-0.5 leading-relaxed">
+            {{ currentInspectedStep().fullDesc }}
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 self-end sm:self-auto flex-shrink-0">
+        <span class="text-stone-500 text-[11px]">Bên thực hiện: <strong>{{ currentInspectedStep().role }}</strong></span>
+        @if (inspectedStepIndex() !== currentStepIndex()) {
+          <button
+            type="button"
+            (click)="jumpToCurrentStep()"
+            class="px-2.5 py-1 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-[#08492d] text-[11px] font-bold transition-all cursor-pointer"
+          >
+            Về bước hiện tại ({{ currentStepIndex() }})
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Multi-Vendor Progress Breakdown (When order contains multiple vendors) -->
+  @if (order.subOrders && order.subOrders.length > 1) {
+    <div class="px-6 py-3.5 bg-white border-t border-[#edf1ea]">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-stone-500">
+          Tiến độ riêng từng Nhà cung cấp liên kết ({{ order.subOrders.length }} đơn vị):
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        @for (sub of order.subOrders; track sub.id) {
+          <div class="p-3 rounded-xl border border-[#dce9e0] bg-[#fcfdfa] flex items-center justify-between gap-3 text-xs">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-7 h-7 rounded-lg bg-emerald-700 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">
+                {{ sub.vendorAvatarCode }}
+              </div>
+              <div class="min-w-0">
+                <strong class="font-bold text-stone-900 block truncate">{{ sub.vendorShortName }}</strong>
+                <span class="text-[11px] text-stone-400 font-mono">{{ sub.id }} • {{ sub.items.length }} nông sản</span>
+              </div>
+            </div>
+
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded border whitespace-nowrap" [ngClass]="sub.statusBadgeClass">
+              {{ sub.statusLabel }}
+            </span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Collapsible Real-Time Activity Log / Timeline Checkpoints -->
+  <div class="p-6 bg-white border-t border-[#edf1ea]">
+    <div class="flex items-center justify-between pb-3">
+      <div class="flex items-center gap-2">
+        <span class="text-sm">📋</span>
+        <h4 class="text-xs font-extrabold uppercase tracking-wider text-stone-800">
+          Nhật ký hành trình đơn hàng & Giám sát nhiệt độ
+        </h4>
+        <span class="px-2 py-0.5 rounded-full bg-stone-100 text-stone-600 text-[10px] font-bold">
+          {{ timelineEvents().length }} mốc sự kiện
+        </span>
+      </div>
+
+      <button
+        type="button"
+        (click)="showTimelineLog.set(!showTimelineLog())"
+        class="text-xs font-bold text-[#0d623b] hover:text-[#08492d] cursor-pointer inline-flex items-center gap-1"
+      >
+        <span>{{ showTimelineLog() ? 'Thu gọn' : 'Xem chi tiết' }}</span>
+        <svg
+          class="w-4 h-4 transition-transform duration-200"
+          [class.rotate-180]="showTimelineLog()"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+    </div>
+
+    @if (showTimelineLog()) {
+      <div class="relative pl-6 space-y-4 pt-2 before:absolute before:left-2.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-emerald-200">
+        @for (ev of timelineEvents(); track ev.time; let isFirst = $first) {
+          <div class="relative text-xs group">
+            
+            <!-- Checkpoint Node Dot -->
+            <div
+              class="absolute -left-6 top-0.5 w-5 h-5 rounded-full flex items-center justify-center"
+              [ngClass]="{
+                'bg-[#0d623b] text-white ring-4 ring-emerald-100 shadow-xs': isFirst,
+                'bg-emerald-100 text-[#0d623b] border border-emerald-300': !isFirst
+              }"
+            >
+              @if (isFirst) {
+                <span class="w-2 h-2 rounded-full bg-white"></span>
+              } @else {
+                <span class="w-1.5 h-1.5 rounded-full bg-[#0d623b]"></span>
+              }
+            </div>
+
+            <!-- Event Content -->
+            <div class="p-3.5 rounded-xl border transition-all" [ngClass]="isFirst ? 'bg-emerald-50/50 border-emerald-200 shadow-2xs' : 'bg-[#fcfdfa] border-stone-200'">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1">
+                <strong class="font-extrabold text-stone-900" [class.text-[#08492d]]="isFirst">
+                  {{ ev.title }}
+                </strong>
+                <span class="text-[11px] font-mono text-stone-500 font-medium">
+                  {{ ev.time }}
+                </span>
+              </div>
+
+              <p class="text-stone-600 leading-relaxed">
+                {{ ev.detail }}
+              </p>
+
+              @if (ev.location) {
+                <div class="mt-2 flex items-center gap-1.5 text-[11px] text-emerald-800 font-medium">
+                  <svg class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span>{{ ev.location }}</span>
+                </div>
+              }
+            </div>
+
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+</div>
+

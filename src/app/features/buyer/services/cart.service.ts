@@ -2,7 +2,7 @@ import { Injectable, signal, computed, inject } from '@angular/core';
 import { Product } from '../../../shared/models/product.model';
 import { CartItem, VendorCartGroup } from '../../../shared/models/order.model';
 import { BuyerDataService } from './buyer-data.service';
-import { NotificationService } from '../../../core/services/notification.service';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 import { StorageService } from '../../../core/services/storage.service';
 
 @Injectable({
@@ -10,7 +10,7 @@ import { StorageService } from '../../../core/services/storage.service';
 })
 export class CartService {
   private readonly buyerData = inject(BuyerDataService);
-  private readonly notification = inject(NotificationService);
+  private readonly notification = inject(ToastService);
   private readonly storage = inject(StorageService);
 
   private readonly STORAGE_KEY = 'kaggri_buyer_cart';

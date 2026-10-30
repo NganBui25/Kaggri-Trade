@@ -1,0 +1,238 @@
+.hero-wrapper {
+  position: relative;
+  margin-bottom: 2.5rem;
+}
+
+.hero-container {
+  min-height: 480px;
+  background-color: #f6f3ed;
+  border-radius: 1.75rem;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 4px 20px -2px rgba(13, 98, 59, 0.06);
+}
+
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+  min-height: 480px;
+}
+
+.hero-content {
+  padding: 3.5rem 3rem 4.5rem 3.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-heading {
+  font-family: 'Plus Jakarta Sans', 'Inter', 'Be Vietnam Pro', sans-serif;
+  font-size: clamp(2.5rem, 4.2vw, 3.75rem);
+  font-weight: 850;
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+  color: #08492d;
+  margin: 0 0 1.25rem 0;
+}
+
+.hero-desc {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: #42564a;
+  max-width: 440px;
+  margin: 0 0 2rem 0;
+}
+
+.hero-icons {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-bottom: 2.25rem;
+}
+
+.hero-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 78px;
+}
+
+.hero-icon-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.625rem;
+}
+
+.icon-symbol {
+  font-size: 1.35rem;
+  color: #0d623b;
+  line-height: 1;
+}
+
+.hero-icon-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #2f4636;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.hero-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: #0d623b;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.875rem 1.75rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(13, 98, 59, 0.2);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #08492d;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(13, 98, 59, 0.25);
+  }
+
+  .arrow-icon {
+    font-size: 1.1rem;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover .arrow-icon {
+    transform: translateX(4px);
+  }
+}
+
+.hero-media {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  max-height: 520px;
+  object-fit: cover;
+  object-position: right center;
+  display: block;
+}
+
+/* Floating Bottom Benefits Bar */
+.benefits-bar {
+  position: relative;
+  z-index: 10;
+  margin-top: -1.75rem;
+  margin-left: 2rem;
+  margin-right: 2rem;
+  background-color: #ffffff;
+  border: 1px solid #edf0e9;
+  border-radius: 1rem;
+  box-shadow: 0 14px 34px rgba(17, 69, 42, 0.08);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 1.125rem 1rem;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.35rem 1.25rem;
+  border-right: 1px solid #e9eee8;
+
+  &:last-child {
+    border-right: none;
+  }
+}
+
+.benefit-icon {
+  font-size: 1.5rem;
+  color: #0d623b;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.benefit-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.benefit-title {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #19392d;
+  line-height: 1.3;
+}
+
+.benefit-subtitle {
+  font-size: 0.72rem;
+  color: #718478;
+  margin-top: 0.125rem;
+}
+
+@media (max-width: 1024px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-media {
+    display: none;
+  }
+
+  .benefits-bar {
+    grid-template-columns: repeat(2, 1fr);
+    margin-left: 1rem;
+    margin-right: 1rem;
+    gap: 0.75rem;
+
+    .benefit-item {
+      border-right: none;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-content {
+    padding: 2.25rem 1.5rem 3rem 1.5rem;
+  }
+
+  .hero-heading {
+    font-size: 2.25rem;
+  }
+
+  .hero-icons {
+    gap: 1rem;
+  }
+
+  .hero-icon-item {
+    width: 70px;
+  }
+
+  .benefits-bar {
+    grid-template-columns: 1fr;
+    margin-top: 1rem;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+

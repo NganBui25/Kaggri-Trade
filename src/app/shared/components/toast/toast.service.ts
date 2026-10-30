@@ -18,9 +18,23 @@ export class ToastService {
 
   readonly toasts = computed(() => this.toastsSignal());
 
-  show(type: ToastType, title: string, message: string, duration = 5000): void {
-    const id = crypto.randomUUID();
-    const toast: Toast = { id, type, title, message, duration };
+  show(type: ToastType, message: string, title?: string, duration = 4000): void {
+    const id = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 9);
+    
+    const defaultTitles: Record<ToastType, string> = {
+      success: 'Thành công',
+      error: 'Đã có lỗi xảy ra',
+      warning: 'Cảnh báo',
+      info: 'Thông báo'
+    };
+
+    const toast: Toast = {
+      id,
+      type,
+      title: title || defaultTitles[type],
+      message,
+      duration
+    };
 
     this.toastsSignal.update(toasts => [...toasts, toast]);
 
@@ -29,24 +43,28 @@ export class ToastService {
     }
   }
 
-  success(title: string, message: string, duration?: number): void {
-    this.show('success', title, message, duration);
+  success(message: string, title = 'Thành công', duration = 4000): void {
+    this.show('success', message, title, duration);
   }
 
-  error(title: string, message: string, duration?: number): void {
-    this.show('error', title, message, duration);
+  error(message: string, title = 'Đã có lỗi xảy ra', duration = 4000): void {
+    this.show('error', message, title, duration);
   }
 
-  warning(title: string, message: string, duration?: number): void {
-    this.show('warning', title, message, duration);
+  warning(message: string, title = 'Cảnh báo', duration = 4000): void {
+    this.show('warning', message, title, duration);
   }
 
-  info(title: string, message: string, duration?: number): void {
-    this.show('info', title, message, duration);
+  info(message: string, title = 'Thông báo', duration = 4000): void {
+    this.show('info', message, title, duration);
   }
 
   dismiss(id: string): void {
     this.toastsSignal.update(toasts => toasts.filter(t => t.id !== id));
+  }
+
+  remove(id: string): void {
+    this.dismiss(id);
   }
 
   clear(): void {

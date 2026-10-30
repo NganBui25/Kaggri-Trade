@@ -1,0 +1,180 @@
+<div class="p-6 max-w-5xl mx-auto space-y-6">
+  <!-- Top Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2 text-xs text-stone-500 mb-1">
+        <span>Quản trị hệ thống</span>
+        <span>/</span>
+        <span class="text-emerald-700 font-medium">Trung tâm thông báo</span>
+      </div>
+      <h1 class="text-2xl font-bold text-stone-900 tracking-tight flex items-center gap-2">
+        Thông báo & Cảnh báo hệ thống
+      </h1>
+      <p class="text-sm text-stone-500 mt-0.5">
+        Cập nhật thời gian thực về các biến động giao dịch, hồ sơ KYC và khiếu nại phát sinh.
+      </p>
+    </div>
+
+    <!-- Action -->
+    @if (unreadCount() > 0) {
+      <button
+        (click)="markAllAsRead()"
+        class="px-3.5 py-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition"
+      >
+        ✓ Đánh dấu tất cả đã đọc
+      </button>
+    }
+  </div>
+
+  <!-- Filter Category Tabs (Fix ADM-R29) -->
+  <div class="flex flex-wrap items-center gap-2 border-b border-stone-200 pb-2">
+    <button
+      (click)="activeCategory.set('ALL')"
+      [class.bg-emerald-800]="activeCategory() === 'ALL'"
+      [class.text-white]="activeCategory() === 'ALL'"
+      [class.bg-stone-100]="activeCategory() !== 'ALL'"
+      [class.text-stone-700]="activeCategory() !== 'ALL'"
+      class="px-3 py-1.5 rounded-lg text-xs font-semibold transition"
+    >
+      Tất cả
+    </button>
+
+    <button
+      (click)="activeCategory.set('UNREAD')"
+      [class.bg-emerald-800]="activeCategory() === 'UNREAD'"
+      [class.text-white]="activeCategory() === 'UNREAD'"
+      [class.bg-stone-100]="activeCategory() !== 'UNREAD'"
+      [class.text-stone-700]="activeCategory() !== 'UNREAD'"
+      class="px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5"
+    >
+      <span>Chưa đọc</span>
+      @if (unreadCount() > 0) {
+        <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-rose-500 text-white font-bold">
+          {{ unreadCount() }}
+        </span>
+      }
+    </button>
+
+    <button
+      (click)="activeCategory.set('KYC')"
+      [class.bg-emerald-800]="activeCategory() === 'KYC'"
+      [class.text-white]="activeCategory() === 'KYC'"
+      [class.bg-stone-100]="activeCategory() !== 'KYC'"
+      [class.text-stone-700]="activeCategory() !== 'KYC'"
+      class="px-3 py-1.5 rounded-lg text-xs font-semibold transition"
+    >
+      Hồ sơ KYC
+    </button>
+
+    <button
+      (click)="activeCategory.set('FINANCE')"
+      [class.bg-emerald-800]="activeCategory() === 'FINANCE'"
+      [class.text-white]="activeCategory() === 'FINANCE'"
+      [class.bg-stone-100]="activeCategory() !== 'FINANCE'"
+      [class.text-stone-700]="activeCategory() !== 'FINANCE'"
+      class="px-3 py-1.5 rounded-lg text-xs font-semibold transition"
+    >
+      Tài chính & Hoàn tiền
+    </button>
+
+    <button
+      (click)="activeCategory.set('DISPUTE')"
+      [class.bg-emerald-800]="activeCategory() === 'DISPUTE'"
+      [class.text-white]="activeCategory() === 'DISPUTE'"
+      [class.bg-stone-100]="activeCategory() !== 'DISPUTE'"
+      [class.text-stone-700]="activeCategory() !== 'DISPUTE'"
+      class="px-3 py-1.5 rounded-lg text-xs font-semibold transition"
+    >
+      Khiếu nại & Tranh chấp
+    </button>
+
+    <button
+      (click)="activeCategory.set('SYSTEM')"
+      [class.bg-emerald-800]="activeCategory() === 'SYSTEM'"
+      [class.text-white]="activeCategory() === 'SYSTEM'"
+      [class.bg-stone-100]="activeCategory() !== 'SYSTEM'"
+      [class.text-stone-700]="activeCategory() !== 'SYSTEM'"
+      class="px-3 py-1.5 rounded-lg text-xs font-semibold transition"
+    >
+      Hệ thống
+    </button>
+  </div>
+
+  <!-- NOTIFICATIONS LIST -->
+  <div class="space-y-3">
+    @for (notif of filteredNotifications(); track notif.id) {
+      <div
+        (click)="handleNavigate(notif)"
+        [class.bg-white]="notif.read"
+        [class.bg-emerald-50/40]="!notif.read"
+        [class.border-emerald-300]="!notif.read"
+        class="p-4 rounded-xl border border-stone-200/80 shadow-sm hover:shadow-md transition cursor-pointer flex items-start justify-between gap-4 group"
+      >
+        <div class="flex items-start gap-3.5">
+          <!-- Icon indicator -->
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
+            [class.bg-rose-100]="notif.level === 'critical'"
+            [class.text-rose-700]="notif.level === 'critical'"
+            [class.bg-amber-100]="notif.level === 'warning'"
+            [class.text-amber-800]="notif.level === 'warning'"
+            [class.bg-emerald-100]="notif.level === 'info'"
+            [class.text-emerald-700]="notif.level === 'info'"
+          >
+            @if (notif.level === 'critical') {
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            } @else if (notif.level === 'warning') {
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            } @else {
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            }
+          </div>
+
+          <!-- Content -->
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="font-bold text-stone-900 text-sm group-hover:text-emerald-800 transition">
+                {{ notif.title }}
+              </span>
+              @if (!notif.read) {
+                <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+              }
+            </div>
+
+            <p class="text-xs text-stone-600 leading-relaxed mb-2">
+              {{ notif.detail }}
+            </p>
+
+            <div class="flex items-center gap-3 text-[11px] text-stone-400">
+              <span class="font-mono">{{ notif.createdAt }}</span>
+              <span>•</span>
+              <span class="uppercase tracking-wider font-semibold text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-600">
+                Phân hệ: {{ notif.targetRole || 'TẤT CẢ' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right arrow link -->
+        <div class="shrink-0 self-center text-stone-400 group-hover:text-emerald-800 group-hover:translate-x-1 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </div>
+    } @empty {
+      <div class="bg-white p-12 text-center rounded-2xl border border-stone-200/80 shadow-sm">
+        <svg class="w-12 h-12 text-stone-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg>
+        <p class="text-sm font-medium text-stone-600">Không có thông báo nào trong phân loại này.</p>
+        <p class="text-xs text-stone-400 mt-1">Các sự kiện mới nhất sẽ hiển thị tức thời tại đây.</p>
+      </div>
+    }
+  </div>
+</div>

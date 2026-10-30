@@ -6,7 +6,7 @@ import { BuyerDataService } from '../../services/buyer-data.service';
 import { CartService } from '../../services/cart.service';
 import { Product, ProductImage } from '../../../../shared/models/product.model';
 import { PricePipe, NumberDotPipe } from '../../../../shared/pipes/price.pipe';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { ToastService } from '../../../../shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -20,7 +20,7 @@ export class ProductDetailComponent {
   private readonly router = inject(Router);
   private readonly buyerData = inject(BuyerDataService);
   private readonly cartService = inject(CartService);
-  private readonly notification = inject(NotificationService);
+  private readonly notification = inject(ToastService);
 
   product = signal<Product | undefined>(undefined);
   selectedImage = signal<string>('');

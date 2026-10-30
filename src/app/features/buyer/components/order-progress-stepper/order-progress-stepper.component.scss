@@ -1,0 +1,98 @@
+:host {
+  display: block;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 0 rgba(13, 98, 59, 0.45);
+  }
+  70% {
+    transform: scale(1.12);
+    box-shadow: 0 0 0 10px rgba(13, 98, 59, 0);
+  }
+  100% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 0 rgba(13, 98, 59, 0);
+  }
+}
+
+.step-node {
+  width: 2.625rem; /* 42px */
+  height: 2.625rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.8125rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 2;
+  user-select: none;
+
+  /* 1. COMPLETED STEP: Nền xanh đậm đặc, nổi bật, icon checkmark trắng sắc nét */
+  &.completed {
+    background-color: #0d623b !important;
+    color: #ffffff !important;
+    border: 3px solid #ffffff !important;
+    box-shadow: 0 0 0 1.5px #0d623b, 0 3px 8px rgba(13, 98, 59, 0.35) !important;
+
+    &:hover {
+      transform: scale(1.12);
+      box-shadow: 0 0 0 2.5px #0d623b, 0 4px 12px rgba(13, 98, 59, 0.45) !important;
+    }
+
+    .step-check-icon {
+      width: 1.25rem;
+      height: 1.25rem;
+      color: #ffffff !important;
+      stroke: #ffffff !important;
+      stroke-width: 2.5;
+      display: block;
+    }
+  }
+
+  /* 2. CURRENT STEP: Nền xanh ngọc đậm, số to rõ, viền hào quang phát sáng */
+  &.current {
+    background-color: #08492d !important;
+    color: #ffffff !important;
+    border: 3px solid #ffffff !important;
+    transform: scale(1.12);
+    box-shadow: 0 0 0 4px #a7f3d0, 0 4px 12px rgba(8, 73, 45, 0.35) !important;
+    animation: pulse-ring 2.5s infinite ease-in-out;
+
+    .step-num {
+      color: #ffffff !important;
+      font-size: 0.9375rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+  }
+
+  /* 3. UPCOMING STEP: Nền trắng sạch, viền xám trung tính, số xám rõ nét */
+  &.upcoming {
+    background-color: #ffffff !important;
+    color: #78716c !important;
+    border: 2px solid #d6d3d1 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    &:hover {
+      border-color: #0d623b !important;
+      color: #0d623b !important;
+      transform: scale(1.06);
+    }
+
+    .step-num {
+      color: #78716c !important;
+      font-size: 0.75rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+  }
+
+  /* Khi người dùng click chọn xem chi tiết bước này */
+  &.inspected {
+    box-shadow: 0 0 0 3px #10b981 !important;
+  }
+}

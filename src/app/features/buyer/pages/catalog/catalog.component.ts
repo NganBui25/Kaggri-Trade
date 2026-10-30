@@ -5,11 +5,22 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { BuyerDataService } from '../../services/buyer-data.service';
 import { Product, VendorSummary } from '../../../../shared/models/product.model';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
+import { BuyerHeroBannerComponent } from '../../components/hero-banner/hero-banner.component';
+import { BuyerCategoryShowcaseComponent } from '../../components/category-showcase/category-showcase.component';
+import { BuyerStorySectionComponent } from '../../components/story-section/story-section.component';
 
 @Component({
   selector: 'app-catalog',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ProductCardComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    ProductCardComponent,
+    BuyerHeroBannerComponent,
+    BuyerCategoryShowcaseComponent,
+    BuyerStorySectionComponent
+  ],
   templateUrl: './catalog.component.html',
   styleUrl: './catalog.component.scss'
 })
@@ -53,8 +64,8 @@ export class CatalogComponent {
     // Search query filter (Fix BUY-04)
     const kw = this.searchKeyword().toLowerCase().trim();
     if (kw) {
-      list = list.filter(p => 
-        p.name.toLowerCase().includes(kw) || 
+      list = list.filter(p =>
+        p.name.toLowerCase().includes(kw) ||
         p.sku.toLowerCase().includes(kw) ||
         (p.vendor?.name.toLowerCase().includes(kw)) ||
         p.origin.toLowerCase().includes(kw)
@@ -101,6 +112,25 @@ export class CatalogComponent {
     this.selectedCert.set('all');
     this.searchKeyword.set('');
     this.sortBy.set('default');
+  }
+
+  scrollToProducts(): void {
+    const el = document.getElementById('product-catalog-section');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  onSelectCategory(categoryKey: string): void {
+    this.selectedCategory.set(categoryKey);
+    this.scrollToProducts();
+  }
+
+  scrollToStory(): void {
+    const el = document.getElementById('story-section-anchor');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 }
 

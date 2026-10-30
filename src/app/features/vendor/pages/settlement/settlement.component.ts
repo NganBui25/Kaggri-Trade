@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { VendorDataService } from '../../services/vendor-data.service';
 import { PricePipe } from '../../../../shared/pipes/price.pipe';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { ToastService } from '../../../../shared/components/toast/toast.service';
 
 interface HistoricalSettlement {
   periodId: string;
@@ -27,7 +27,7 @@ interface HistoricalSettlement {
 })
 export class VendorSettlementComponent {
   readonly vendorData = inject(VendorDataService);
-  private readonly notification = inject(NotificationService);
+  private readonly notification = inject(ToastService);
 
   activeTab = signal<'current' | 'history'>('current');
   showBankModal = signal(false);

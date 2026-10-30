@@ -1,0 +1,377 @@
+<div class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+  <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-stone-200 overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between px-6 py-5 border-b border-stone-200 bg-stone-50/70">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-emerald-700 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+          📅
+        </div>
+        <div>
+          <h2 class="text-lg sm:text-xl font-extrabold text-[#08492d] tracking-tight">
+            Đăng Ký Lịch Giao Nông Sản Định Kỳ
+          </h2>
+          <p class="text-xs text-stone-500 mt-0.5">
+            Cố định nguồn cung ứng dài hạn, cam kết bậc giá sỉ ổn định và nhận hàng theo chu kỳ.
+          </p>
+        </div>
+      </div>
+
+      <button 
+        (click)="onClose()" 
+        type="button" 
+        class="w-9 h-9 rounded-xl text-stone-400 hover:text-stone-700 hover:bg-stone-200/60 flex items-center justify-center transition cursor-pointer"
+        aria-label="Đóng"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Modal Body (Scrollable) -->
+    <div class="flex-1 overflow-y-auto p-6 space-y-6 text-sm">
+      
+      <!-- Section 1: Đối tác & Nông sản -->
+      <div class="space-y-4">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+          1. Lựa chọn Đối tác Nhà Vườn & Nông Sản
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Select Vendor -->
+          <div>
+            <label class="block text-xs font-bold text-stone-700 mb-1.5">
+              Hợp tác xã / Trang trại cung ứng <span class="text-rose-500">*</span>
+            </label>
+            <select
+              [ngModel]="selectedVendorId()"
+              (ngModelChange)="onVendorChange($event)"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-white font-medium text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+            >
+              @for (v of vendors(); track v.id) {
+                <option [value]="v.id">{{ v.name }} ({{ v.avatarCode }})</option>
+              }
+            </select>
+          </div>
+
+          <!-- Select Product -->
+          <div>
+            <label class="block text-xs font-bold text-stone-700 mb-1.5">
+              Mặt hàng nông sản đăng ký <span class="text-rose-500">*</span>
+            </label>
+            <select
+              [ngModel]="selectedProductId()"
+              (ngModelChange)="onProductChange($event)"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-white font-medium text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+            >
+              @for (p of availableProductsForVendor(); track p.id) {
+                <option [value]="p.id">{{ p.name }} (MOQ: {{ p.minOrderQty }} {{ p.unit }})</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <!-- Product Preview Card -->
+        @if (currentProduct()) {
+          <div class="p-4 rounded-2xl bg-[#fbfaf6] border border-[#dce9e0] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-3.5">
+              <img 
+                [src]="currentProduct()?.featuredImage" 
+                [alt]="currentProduct()?.name"
+                class="w-14 h-14 rounded-xl object-cover border border-stone-200 flex-shrink-0"
+              />
+              <div>
+                <strong class="text-sm font-bold text-stone-900 block">{{ currentProduct()?.name }}</strong>
+                <span class="text-xs text-stone-500 block mt-0.5">
+                  Mã SKU: <span class="font-mono text-stone-700">{{ currentProduct()?.sku }}</span> • Xuất xứ: {{ currentProduct()?.origin }}
+                </span>
+                <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-md mt-1">
+                  ✓ Chứng nhận: {{ currentVendor()?.certification }}
+                </span>
+              </div>
+            </div>
+
+            <div class="text-left sm:text-right flex-shrink-0">
+              <span class="text-xs text-stone-500 block">Đơn giá cơ sở:</span>
+              <span class="text-base font-extrabold text-[#08492d]">{{ currentProduct()?.basePrice | price }}<small class="text-stone-500 text-xs font-normal">/{{ currentProduct()?.unit }}</small></span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Section 2: Kế hoạch Giao Hàng & Bậc Giá Sỉ -->
+      <div class="space-y-4 pt-2 border-t border-stone-100">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+          2. Kế Hoạch Chu Kỳ Giao Hàng & Bậc Giá Sỉ
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Frequency -->
+          <div>
+            <label class="block text-xs font-bold text-stone-700 mb-1.5">
+              Tần suất giao hàng lặp lại <span class="text-rose-500">*</span>
+            </label>
+            <select
+              [ngModel]="frequency()"
+              (ngModelChange)="frequency.set($event)"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-white font-medium text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+            >
+              @for (opt of frequencyOptions; track opt.value) {
+                <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Receiving Window -->
+          <div>
+            <label class="block text-xs font-bold text-stone-700 mb-1.5">
+              Khung giờ xe lạnh giao tới kho <span class="text-rose-500">*</span>
+            </label>
+            <select
+              [ngModel]="deliveryWindow()"
+              (ngModelChange)="deliveryWindow.set($event)"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-white font-medium text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+            >
+              @for (win of windowOptions; track win) {
+                <option [value]="win">{{ win }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <!-- Quantity & Real-time Tier Price Calculation -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
+          <div>
+            <label class="block text-xs font-bold text-stone-700 mb-1.5">
+              Khối lượng mỗi lần giao ({{ currentProduct()?.unit }}) <span class="text-rose-500">*</span>
+            </label>
+            <div class="relative">
+              <input
+                type="number"
+                [ngModel]="quantityPerDelivery()"
+                (ngModelChange)="quantityPerDelivery.set($event)"
+                [min]="currentProduct()?.minOrderQty || 50"
+                step="25"
+                class="w-full px-4 py-2.5 rounded-xl border border-stone-300 font-bold text-base text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-stone-500 text-xs font-semibold">
+                {{ currentProduct()?.unit }} / đợt
+              </span>
+            </div>
+            <p class="text-[11px] text-stone-500 mt-1">
+              MOQ tối thiểu: <strong>{{ currentProduct()?.minOrderQty }} {{ currentProduct()?.unit }}</strong>
+            </p>
+          </div>
+
+          <!-- Price Tier Highlight Card -->
+          <div class="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-xs space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-950">Đơn giá hợp đồng áp dụng:</span>
+              <span class="text-base font-extrabold text-emerald-800">
+                {{ calculatedUnitPrice() | price }}<small class="text-xs font-normal">/{{ currentProduct()?.unit }}</small>
+              </span>
+            </div>
+
+            <!-- Tiers list -->
+            <div class="space-y-1 pt-1 border-t border-emerald-200/60 text-[11px]">
+              <span class="text-stone-500 block">Chính sách bậc giá sỉ từ nhà vườn:</span>
+              <div class="flex flex-wrap gap-2">
+                @for (t of currentProduct()?.priceTiers; track t.minQty) {
+                  <span 
+                    [class.bg-emerald-600]="quantityPerDelivery() >= t.minQty && (t.maxQty === null || quantityPerDelivery() <= t.maxQty)"
+                    [class.text-white]="quantityPerDelivery() >= t.minQty && (t.maxQty === null || quantityPerDelivery() <= t.maxQty)"
+                    [class.font-bold]="quantityPerDelivery() >= t.minQty && (t.maxQty === null || quantityPerDelivery() <= t.maxQty)"
+                    [class.bg-white]="!(quantityPerDelivery() >= t.minQty && (t.maxQty === null || quantityPerDelivery() <= t.maxQty))"
+                    [class.text-stone-600]="!(quantityPerDelivery() >= t.minQty && (t.maxQty === null || quantityPerDelivery() <= t.maxQty))"
+                    class="px-2 py-0.5 rounded border border-emerald-300">
+                    ≥ {{ t.minQty }} {{ currentProduct()?.unit }}: {{ t.unitPrice | price }}
+                  </span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Thời Hạn Hợp Đồng & Địa Điểm Nhận Hàng -->
+      <div class="space-y-4 pt-2 border-t border-stone-100">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+          3. Thời Hạn Hợp Đồng & Thông Tin Kho Nhận Hàng
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Start Date -->
+          <div>
+            <label class="block text-xs font-bold text-stone-700 mb-1.5">
+              Ngày bắt đầu đợt giao đầu tiên <span class="text-rose-500">*</span>
+            </label>
+            <input
+              type="date"
+              [ngModel]="startDate()"
+              (ngModelChange)="startDate.set($event)"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 bg-white font-medium text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+            />
+          </div>
+
+          <!-- Contract Duration Pills -->
+          <div>
+            <label class="block text-xs font-bold text-stone-700 mb-1.5">
+              Thời hạn hợp đồng cam kết
+            </label>
+            <div class="grid grid-cols-4 gap-2">
+              @for (m of [1, 3, 6, 12]; track m) {
+                <button
+                  type="button"
+                  (click)="contractDurationMonths.set(m)"
+                  [class.bg-[#0d623b]]="contractDurationMonths() === m"
+                  [class.text-white]="contractDurationMonths() === m"
+                  [class.border-emerald-700]="contractDurationMonths() === m"
+                  [class.bg-stone-50]="contractDurationMonths() !== m"
+                  [class.text-stone-700]="contractDurationMonths() !== m"
+                  class="py-2.5 px-2 rounded-xl text-xs font-bold border transition text-center cursor-pointer"
+                >
+                  {{ m }} tháng
+                </button>
+              }
+            </div>
+            <p class="text-[11px] text-stone-500 mt-1">
+              Hiệu lực đến: <strong class="text-stone-800">{{ calculatedEndDate() }}</strong>
+            </p>
+          </div>
+        </div>
+
+        <!-- Warehouse address -->
+        <div>
+          <label class="block text-xs font-bold text-stone-700 mb-1.5">
+            Địa chỉ kho trung chuyển / Nhà hàng tiếp nhận nông sản <span class="text-rose-500">*</span>
+          </label>
+          <input
+            type="text"
+            [ngModel]="warehouseAddress()"
+            (ngModelChange)="warehouseAddress.set($event)"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 font-medium text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+          />
+        </div>
+
+        <!-- Contact Person -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-stone-700 mb-1.5">
+              Họ tên người phụ trách nhận hàng <span class="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              [ngModel]="receiverName()"
+              (ngModelChange)="receiverName.set($event)"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 font-medium text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-stone-700 mb-1.5">
+              Số điện thoại trực ban kho nhận hàng <span class="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              [ngModel]="receiverPhone()"
+              (ngModelChange)="receiverPhone.set($event)"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+            />
+          </div>
+        </div>
+
+        <!-- Packaging Notes -->
+        <div>
+          <label class="block text-xs font-bold text-stone-700 mb-1.5">
+            Yêu cầu quy cách đóng gói & bảo quản đặc biệt
+          </label>
+          <input
+            type="text"
+            [ngModel]="packagingNotes()"
+            (ngModelChange)="packagingNotes.set($event)"
+            placeholder="Ví dụ: Đóng bao lưới 25kg, thùng xốp lót giấy hút ẩm..."
+            class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 font-medium text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+          />
+        </div>
+      </div>
+
+      <!-- Section 4: Summary Callout Box -->
+      <div class="p-5 rounded-2xl bg-gradient-to-br from-emerald-900 to-[#08492d] text-white shadow-md space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-white/15">
+          <span class="text-xs uppercase font-extrabold tracking-wider text-emerald-200">
+            Dự Tính Chi Phí Hợp Đồng Định Kỳ
+          </span>
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-white/10 text-white border border-white/20">
+            Chu kỳ: {{ frequency() }}
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+          <div>
+            <span class="text-emerald-300 block">Khối lượng / tháng:</span>
+            <strong class="text-base font-bold text-white mt-0.5 block">
+              {{ estimatedMonthlyQuantity() | numberDot }} {{ currentProduct()?.unit }}
+            </strong>
+          </div>
+
+          <div>
+            <span class="text-emerald-300 block">Đơn giá cam kết:</span>
+            <strong class="text-base font-bold text-white mt-0.5 block">
+              {{ calculatedUnitPrice() | price }}
+            </strong>
+          </div>
+
+          <div>
+            <span class="text-emerald-300 block">Giá trị mỗi đợt giao:</span>
+            <strong class="text-base font-bold text-white mt-0.5 block">
+              {{ estimatedPerDeliveryAmount() | price }}
+            </strong>
+          </div>
+
+          <div>
+            <span class="text-emerald-300 block">Dự kiến ngân sách / tháng:</span>
+            <strong class="text-lg font-black text-emerald-200 mt-0.5 block">
+              {{ estimatedMonthlyTotalAmount() | price }}
+            </strong>
+          </div>
+        </div>
+
+        <div class="pt-2 text-[11px] text-emerald-100/90 flex items-start gap-2 border-t border-white/10">
+          <span class="text-emerald-400 font-bold text-sm">🛡️</span>
+          <span>
+            <strong>Bảo chứng Kaggri Escrow:</strong> Đơn định kỳ được trích tiền ký quỹ an toàn theo từng đợt giao thực tế. Người bán cam kết giữ nguồn cung và kiểm tra chất lượng trước khi nhận thanh toán.
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Modal Footer Actions -->
+    <div class="px-6 py-4 border-t border-stone-200 bg-stone-50 flex items-center justify-end gap-3">
+      <button
+        (click)="onClose()"
+        type="button"
+        class="px-5 py-2.5 rounded-xl border border-stone-300 text-stone-700 text-xs font-bold hover:bg-stone-100 transition cursor-pointer"
+      >
+        Hủy bỏ
+      </button>
+
+      <button
+        (click)="onSubmit()"
+        type="button"
+        class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold transition shadow-md shadow-emerald-950/20 cursor-pointer"
+      >
+        <span>Gửi đề nghị cung ứng định kỳ</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+</div>
+

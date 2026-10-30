@@ -1,0 +1,211 @@
+<div class="space-y-6">
+  
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
+    <div>
+      <div class="flex items-center gap-2">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
+          Quản Lý Tài Khoản Người Bán (Vendor)
+        </h1>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 text-[#08492d] border border-emerald-300">
+          {{ filteredVendors().length }} Nhà vườn / HTX
+        </span>
+      </div>
+      <p class="text-xs text-stone-500 mt-1">
+        Giám sát trạng thái hoạt động, điểm uy tín (Vendor Score) và xử lý tạm khóa/chấm dứt vi phạm.
+      </p>
+    </div>
+
+    @if (!canSuspend()) {
+      <span class="px-3 py-1.5 rounded-xl bg-stone-100 text-stone-600 text-xs font-bold border border-stone-200">
+        👁️ Chế độ chỉ xem (Vai trò: {{ auth.currentAdmin().roleLabel.split(' ')[0] }})
+      </span>
+    }
+  </div>
+
+  <!-- Search & Filter Controls -->
+  <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-xs">
+    <div class="relative flex-1 max-w-md">
+      <input
+        type="text"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+        placeholder="Tìm tên nhà vườn, mã VND, vùng trồng..."
+        class="w-full pl-9 pr-4 py-2 rounded-xl border border-[#bbd2c2] bg-white focus:outline-none focus:border-[#0d623b] text-xs"
+      />
+      <span class="absolute left-3 top-2.5 text-stone-400">🔍</span>
+    </div>
+
+    <div class="flex items-center gap-2 overflow-x-auto pb-1">
+      <button
+        type="button"
+        (click)="statusFilter.set('ALL')"
+        class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
+        [ngClass]="statusFilter() === 'ALL' ? 'bg-[#0d623b] text-white' : 'bg-white border border-[#bbd2c2] text-stone-600'"
+      >
+        Tất cả
+      </button>
+
+      <button
+        type="button"
+        (click)="statusFilter.set('active')"
+        class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
+        [ngClass]="statusFilter() === 'active' ? 'bg-[#0d623b] text-white' : 'bg-white border border-[#bbd2c2] text-stone-600'"
+      >
+        Đang hoạt động
+      </button>
+
+      <button
+        type="button"
+        (click)="statusFilter.set('suspended')"
+        class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
+        [ngClass]="statusFilter() === 'suspended' ? 'bg-[#0d623b] text-white' : 'bg-white border border-[#bbd2c2] text-stone-600'"
+      >
+        Đang tạm khóa
+      </button>
+
+      <button
+        type="button"
+        (click)="statusFilter.set('terminated')"
+        class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
+        [ngClass]="statusFilter() === 'terminated' ? 'bg-[#0d623b] text-white' : 'bg-white border border-[#bbd2c2] text-stone-600'"
+      >
+        Đã chấm dứt
+      </button>
+    </div>
+  </div>
+
+  <!-- Vendors Table -->
+  <div class="bg-white rounded-3xl border border-[#dce9e0] shadow-xs overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="bg-[#fbfaf6] border-b border-[#edf1ea] text-stone-500 font-extrabold uppercase tracking-wider text-[11px]">
+          <tr>
+            <th class="py-3.5 px-4">Mã</th>
+            <th class="py-3.5 px-4">Tên cơ sở / HTX</th>
+            <th class="py-3.5 px-4">Hạng & Vùng trồng</th>
+            <th class="py-3.5 px-4">Điểm uy tín</th>
+            <th class="py-3.5 px-4">Đơn đang chạy</th>
+            <th class="py-3.5 px-4">Trạng thái</th>
+            <th class="py-3.5 px-4 text-right">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#edf1ea]">
+          @for (v of filteredVendors(); track v.id) {
+            <tr class="hover:bg-[#fcfdfa] transition-colors">
+              <td class="py-3.5 px-4 font-mono font-bold text-[#08492d]">
+                {{ v.id }}
+              </td>
+
+              <td class="py-3.5 px-4">
+                <strong class="font-bold text-stone-900 block">{{ v.company }}</strong>
+                <span class="text-stone-400 text-[11px]">Ngày gia nhập: {{ v.createdAt }} • Hoạt động: {{ v.lastActive }}</span>
+                @if (v.suspendReason) {
+                  <p class="text-[11px] text-amber-700 italic mt-0.5">Lý do khóa: {{ v.suspendReason }}</p>
+                }
+                @if (v.terminatedReason) {
+                  <p class="text-[11px] text-rose-700 italic mt-0.5">Lý do chấm dứt: {{ v.terminatedReason }}</p>
+                }
+              </td>
+
+              <td class="py-3.5 px-4 space-y-1">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold block w-fit" [ngClass]="v.tier === 'PREMIUM' ? 'bg-amber-100 text-amber-900' : 'bg-stone-100 text-stone-700'">
+                  {{ v.tier }}
+                </span>
+                <span class="text-stone-500 text-[11px] block">{{ v.region }}</span>
+              </td>
+
+              <td class="py-3.5 px-4">
+                @if (v.score) {
+                  <div class="flex items-center gap-1 font-bold text-amber-600">
+                    <span>★</span>
+                    <span class="text-stone-900 font-extrabold">{{ v.score }}</span>
+                    <span class="text-stone-400 text-[10px]">/ 5.0</span>
+                  </div>
+                } @else {
+                  <span class="text-stone-400 italic">Chưa có</span>
+                }
+              </td>
+
+              <td class="py-3.5 px-4">
+                @if (v.pendingOrdersCount > 0) {
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                    {{ v.pendingOrdersCount }} đơn đang xử lý
+                  </span>
+                } @else {
+                  <span class="text-stone-400 text-[11px]">0 đơn</span>
+                }
+              </td>
+
+              <td class="py-3.5 px-4">
+                <span
+                  class="px-2.5 py-1 rounded-full text-[10px] font-bold"
+                  [ngClass]="{
+                    'bg-emerald-100 text-emerald-900': v.status === 'active',
+                    'bg-amber-100 text-amber-900': v.status === 'suspended',
+                    'bg-rose-100 text-rose-900': v.status === 'terminated',
+                    'bg-sky-100 text-sky-900': v.status === 'pending_kyc'
+                  }"
+                >
+                  {{ v.status === 'active' ? 'Đang hoạt động' : v.status === 'suspended' ? 'Đang tạm khóa' : v.status === 'terminated' ? 'Đã chấm dứt' : 'Chờ duyệt KYC' }}
+                </span>
+              </td>
+
+              <td class="py-3.5 px-4 text-right">
+                <div class="flex items-center justify-end gap-1.5">
+                  @if (canSuspend()) {
+                    @if (v.status === 'active') {
+                      <button
+                        type="button"
+                        (click)="openSuspendModal(v)"
+                        class="px-2.5 py-1 rounded-lg border border-amber-300 hover:bg-amber-50 text-amber-800 font-bold transition-all cursor-pointer"
+                      >
+                        Tạm khóa
+                      </button>
+                    } @else if (v.status === 'suspended') {
+                      <button
+                        type="button"
+                        (click)="openReactivateModal(v)"
+                        class="px-2.5 py-1 rounded-lg bg-[#0d623b] hover:bg-[#08492d] text-white font-bold transition-all cursor-pointer shadow-2xs"
+                      >
+                        Kích hoạt lại
+                      </button>
+                    }
+                  }
+
+                  <!-- Rule D3: Only Super Admin can terminate vendor! (Fix ADM-R04) -->
+                  @if (canTerminate() && v.status !== 'terminated') {
+                    <button
+                      type="button"
+                      (click)="openTerminateModal(v)"
+                      class="px-2.5 py-1 rounded-lg border border-rose-300 hover:bg-rose-50 text-rose-700 font-bold transition-all cursor-pointer"
+                    >
+                      Chấm dứt
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Reason Modal for Suspend/Terminate/Reactivate (Fix ADM-R08, ADM-29) -->
+  @if (modalAction(); as action) {
+    <app-admin-reason-modal
+      [title]="action === 'TERMINATE' ? 'Chấm dứt hợp tác Người bán' : action === 'SUSPEND' ? 'Tạm khóa tài khoản Người bán' : 'Kích hoạt lại Người bán'"
+      [subtitle]="selectedVendor()?.company"
+      [confirmText]="action === 'TERMINATE' ? 'Xác nhận chấm dứt vĩnh viễn' : action === 'SUSPEND' ? 'Xác nhận tạm khóa' : 'Kích hoạt lại'"
+      [confirmButtonClass]="action === 'TERMINATE' ? 'bg-rose-700 hover:bg-rose-800 text-white' : action === 'SUSPEND' ? 'bg-amber-600 hover:bg-amber-700 text-white' : 'bg-[#0d623b] hover:bg-[#08492d] text-white'"
+      [placeholder]="action === 'TERMINATE' ? 'Nêu rõ vi phạm nghiêm trọng buộc chấm dứt tư cách...' : 'Nhập lý do tạm khóa đối soát...'"
+      [warningText]="getWarningText()"
+      [minLength]="10"
+      (confirm)="onModalConfirm($event)"
+      (cancel)="closeModal()"
+    />
+  }
+
+</div>
+

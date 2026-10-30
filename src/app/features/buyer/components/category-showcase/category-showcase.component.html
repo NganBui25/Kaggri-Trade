@@ -1,0 +1,38 @@
+<section class="category-section" aria-labelledby="cat-title">
+  <!-- Section Header -->
+  <div class="section-head">
+    <h2 id="cat-title" class="section-title">Khám phá theo danh mục</h2>
+    <button (click)="onViewAll()" type="button" class="view-all-btn">
+      Xem tất cả
+      <span class="arrow">→</span>
+    </button>
+  </div>
+
+  <!-- 5 Cards Grid -->
+  <div class="category-grid">
+    @for (cat of categories; track cat.id) {
+      <div 
+        (click)="onCardClick(cat)"
+        class="category-card"
+        role="button"
+        tabindex="0"
+        (keydown.enter)="onCardClick(cat)"
+        [attr.aria-label]="cat.name"
+      >
+        <!-- Background Image -->
+        <div 
+          class="category-image" 
+          [style.backgroundImage]="'url(' + cat.imageUrl + ')'"
+          [style.backgroundPosition]="cat.imagePosition"
+        ></div>
+
+        <!-- Card Content -->
+        <div class="category-card-content">
+          <strong class="category-name">{{ cat.name }}</strong>
+          <span class="category-arrow" aria-hidden="true">↗</span>
+        </div>
+      </div>
+    }
+  </div>
+</section>
+

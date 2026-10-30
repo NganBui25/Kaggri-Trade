@@ -1,0 +1,174 @@
+<div class="space-y-6">
+  
+  <!-- Page Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
+    <div>
+      <div class="flex items-center gap-2">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
+          Tổng Quan Nền Tảng
+        </h1>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 text-[#08492d] border border-emerald-200">
+          {{ currentAdmin().roleLabel }}
+        </span>
+      </div>
+      <p class="text-xs text-stone-500 mt-1">
+        Báo cáo chỉ số vận hành, dòng tiền ký quỹ Escrow và các đầu việc cần xử lý theo vai trò quản trị.
+      </p>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="flex items-center gap-2 text-xs font-bold">
+      <span class="text-stone-400 text-[11px]">Kỳ báo cáo: Tháng 09/2026</span>
+    </div>
+  </div>
+
+  <!-- KPI Cards Grid (Dynamic by Role - Fix ADM-R26, ADM-11, ADM-12) -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    @for (kpi of displayedKpis(); track kpi.key) {
+      <a
+        [routerLink]="kpi.targetModule"
+        class="p-5 rounded-2xl bg-white border border-[#bbd2c2] hover:border-emerald-600 transition-all cursor-pointer shadow-xs space-y-2 group block"
+      >
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold text-stone-500">{{ kpi.label }}</span>
+          <span class="text-lg p-1.5 rounded-xl bg-stone-50 group-hover:bg-emerald-50 transition-colors">{{ kpi.icon }}</span>
+        </div>
+
+        <div class="flex items-baseline justify-between pt-1">
+          <div>
+            @if (kpi.unit === '%') {
+              <span class="text-2xl font-extrabold text-stone-900">{{ kpi.value | numberDot }}%</span>
+            } @else if (kpi.unit) {
+              <span class="text-2xl font-extrabold text-stone-900">{{ kpi.value | numberDot }}</span>
+              <span class="text-xs text-stone-500 ml-1 font-medium">{{ kpi.unit }}</span>
+            } @else {
+              <span class="text-2xl font-extrabold text-[#0d623b]">{{ kpi.value | price }}</span>
+            }
+          </div>
+
+          <!-- Trend Indicator with accurate arrow (Fix ADM-11) -->
+          <span
+            class="text-xs font-extrabold flex items-center gap-0.5"
+            [ngClass]="{
+              'text-emerald-700': kpi.changeDir === 'up' && kpi.key !== 'disputeRate',
+              'text-rose-700': kpi.changeDir === 'down' || (kpi.key === 'disputeRate' && kpi.changeDir === 'up')
+            }"
+          >
+            <span>{{ kpi.changeDir === 'up' ? '↗' : '↘' }}</span>
+            <span>{{ kpi.change }}</span>
+          </span>
+        </div>
+      </a>
+    }
+  </div>
+
+  <!-- Actionable Work Queue: Việc cần xử lý (Fix ADM-14) -->
+  @if (pendingTasks().length > 0) {
+    <div class="p-6 rounded-3xl bg-white border border-[#dce9e0] shadow-xs space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-base">📌</span>
+          <h3 class="text-sm font-extrabold text-[#08492d] uppercase tracking-wider">
+            Việc Cần Xử Lý Theo Vai Trò ({{ pendingTasks().length }})
+          </h3>
+        </div>
+        <span class="text-xs text-stone-400">Yêu cầu phản hồi trong ngày</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        @for (task of pendingTasks(); track task.title) {
+          <a
+            [routerLink]="task.route"
+            class="p-4 rounded-2xl border border-[#bbd2c2] bg-[#fcfdfa] hover:bg-emerald-50/40 hover:border-emerald-500 transition-all cursor-pointer flex items-start justify-between gap-3 group"
+          >
+            <div class="space-y-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded text-[10px] font-extrabold" [ngClass]="task.badgeClass">
+                  {{ task.badge }}
+                </span>
+                <strong class="text-xs font-extrabold text-stone-900 group-hover:text-[#08492d] transition-colors truncate block">
+                  {{ task.title }}
+                </strong>
+              </div>
+              <p class="text-xs text-stone-500 leading-relaxed">
+                {{ task.desc }}
+              </p>
+            </div>
+
+            <span class="text-[#0d623b] font-bold text-xs group-hover:translate-x-1 transition-transform flex-shrink-0 pt-1">
+              Xem →
+            </span>
+          </a>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Lower Section: GMV Chart & Top Vendors -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- GMV Trend Chart (7 days) (Fix ADM-13) -->
+    <div class="lg:col-span-8 p-6 rounded-3xl bg-white border border-[#dce9e0] shadow-xs space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#edf1ea]">
+        <div>
+          <h3 class="text-sm font-extrabold text-[#08492d] uppercase tracking-wider">
+            Xu Hướng GMV 7 Ngày Gần Nhất
+          </h3>
+          <p class="text-xs text-stone-400 mt-0.5">Tổng phát sinh từ các đơn hàng B2B đã thanh toán Escrow</p>
+        </div>
+        <strong class="text-sm text-[#0d623b] font-mono">
+          Tổng 7 ngày: ~4,47 tỷ ₫
+        </strong>
+      </div>
+
+      <!-- Bar Chart -->
+      <div class="h-56 flex items-end justify-between gap-3 pt-6 pb-2 px-2">
+        @for (col of gmvSeries; track col.date) {
+          <div class="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
+            <span class="text-[10px] font-bold text-stone-500 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              {{ (col.gmv / 1000000) | numberDot }}M
+            </span>
+            <div
+              class="w-full max-w-[42px] bg-emerald-600 group-hover:bg-[#08492d] rounded-t-xl transition-all"
+              [style.height.%]="(col.gmv / maxGmv) * 100"
+            ></div>
+            <span class="text-[11px] font-bold text-stone-600">{{ col.date }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Top Vendors Leaderboard -->
+    <div class="lg:col-span-4 p-6 rounded-3xl bg-white border border-[#dce9e0] shadow-xs space-y-4">
+      <div class="pb-3 border-b border-[#edf1ea]">
+        <h3 class="text-sm font-extrabold text-[#08492d] uppercase tracking-wider">
+          Top Người Bán Doanh Số Cao
+        </h3>
+        <p class="text-xs text-stone-400 mt-0.5">Xếp hạng theo sản lượng giao dịch tháng</p>
+      </div>
+
+      <div class="space-y-3">
+        @for (v of topVendors; track v.name; let idx = $index) {
+          <div class="p-3.5 rounded-2xl border border-[#bbd2c2] bg-[#fcfdfa] flex items-center justify-between gap-3 text-xs">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-900 font-extrabold text-xs flex items-center justify-center flex-shrink-0">
+                {{ idx + 1 }}
+              </span>
+              <div class="min-w-0">
+                <strong class="font-bold text-stone-900 block truncate">{{ v.name }}</strong>
+                <span class="text-[11px] text-stone-400">Vùng trồng: {{ v.region }}</span>
+              </div>
+            </div>
+
+            <strong class="text-xs text-[#0d623b] font-mono flex-shrink-0">
+              {{ v.gmv | price }}
+            </strong>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+
+</div>
+

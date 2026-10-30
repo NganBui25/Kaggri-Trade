@@ -1,0 +1,330 @@
+<div class="space-y-6">
+  
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
+    <div>
+      <div class="flex items-center gap-2">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
+          Giải Quyết Khiếu Nại & Tranh Chấp (Disputes)
+        </h1>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-rose-100 text-rose-900 border border-rose-300">
+          Quyết định D2: Ops phán quyết, Finance thực thi
+        </span>
+      </div>
+      <p class="text-xs text-stone-500 mt-1">
+        Trọng tài đối chiếu bằng chứng nông sản hư hao, phán quyết bồi thường Escrow và chuyển lệnh sang hàng chờ hoàn tiền.
+      </p>
+    </div>
+
+    @if (!canDecide()) {
+      <span class="px-3 py-1.5 rounded-xl bg-stone-100 text-stone-600 text-xs font-bold border border-stone-200">
+        👁️ Chế độ chỉ xem (Vai trò: {{ auth.currentAdmin().roleLabel.split(' ')[0] }})
+      </span>
+    }
+  </div>
+
+  <!-- Status Tabs Bar -->
+  <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+    <button
+      type="button"
+      (click)="activeStatusTab.set('ALL')"
+      class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
+      [ngClass]="activeStatusTab() === 'ALL' ? 'bg-[#0d623b] text-white' : 'bg-white border border-[#bbd2c2] text-stone-600'"
+    >
+      Tất cả khiếu nại ({{ disputes().length }})
+    </button>
+
+    <button
+      type="button"
+      (click)="activeStatusTab.set('PENDING')"
+      class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
+      [ngClass]="activeStatusTab() === 'PENDING' ? 'bg-[#0d623b] text-white' : 'bg-white border border-[#bbd2c2] text-stone-600'"
+    >
+      Đang xử lý / Thẩm định
+    </button>
+
+    <button
+      type="button"
+      (click)="activeStatusTab.set('PENDING_REFUND')"
+      class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
+      [ngClass]="activeStatusTab() === 'PENDING_REFUND' ? 'bg-[#0d623b] text-white' : 'bg-white border border-[#bbd2c2] text-stone-600'"
+    >
+      Chờ Tài chính hoàn tiền
+    </button>
+
+    <button
+      type="button"
+      (click)="activeStatusTab.set('RESOLVED')"
+      class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
+      [ngClass]="activeStatusTab() === 'RESOLVED' ? 'bg-[#0d623b] text-white' : 'bg-white border border-[#bbd2c2] text-stone-600'"
+    >
+      Đã giải quyết / Đóng
+    </button>
+  </div>
+
+  <!-- Disputes Table -->
+  <div class="bg-white rounded-3xl border border-[#dce9e0] shadow-xs overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="bg-[#fbfaf6] border-b border-[#edf1ea] text-stone-500 font-extrabold uppercase tracking-wider text-[11px]">
+          <tr>
+            <th class="py-3.5 px-4">Mã tranh chấp</th>
+            <th class="py-3.5 px-4">Đơn hàng & Nông sản</th>
+            <th class="py-3.5 px-4">Người mua / Người bán</th>
+            <th class="py-3.5 px-4">Tiền giữ Escrow</th>
+            <th class="py-3.5 px-4">Thời hạn SLA</th>
+            <th class="py-3.5 px-4">Phân công</th>
+            <th class="py-3.5 px-4">Trạng thái</th>
+            <th class="py-3.5 px-4 text-right">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#edf1ea]">
+          @for (d of filteredDisputes(); track d.id) {
+            @let sla = getSlaBadge(d);
+            <tr class="hover:bg-[#fcfdfa] transition-colors">
+              <td class="py-3.5 px-4 font-mono font-bold text-[#08492d]">
+                {{ d.id }}
+                <span class="block text-[10px] text-stone-400 font-normal mt-0.5">{{ d.openedAt }}</span>
+              </td>
+
+              <td class="py-3.5 px-4">
+                <strong class="font-bold text-stone-900 block truncate max-w-[200px]">{{ d.product }}</strong>
+                <span class="text-stone-500 text-[11px]">Ảnh hưởng: <strong>{{ d.affected }}</strong> / {{ d.qty }} kg</span>
+              </td>
+
+              <td class="py-3.5 px-4 space-y-0.5">
+                <span class="text-stone-900 font-semibold block truncate max-w-[180px]">Mua: {{ d.buyer }}</span>
+                <span class="text-stone-500 text-[11px] block truncate max-w-[180px]">Bán: {{ d.vendor }}</span>
+              </td>
+
+              <td class="py-3.5 px-4 font-mono font-bold text-[#0d623b]">
+                {{ d.escrowAmount | price }}
+              </td>
+
+              <!-- Positive SLA Indicator (Fix ADM-16) -->
+              <td class="py-3.5 px-4">
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border" [ngClass]="sla.badgeClass">
+                  {{ sla.text }}
+                </span>
+              </td>
+
+              <td class="py-3.5 px-4">
+                @if (d.assignedTo) {
+                  <span class="text-stone-700 font-medium block truncate max-w-[140px]">{{ d.assignedTo }}</span>
+                } @else {
+                  @if (canDecide()) {
+                    <button
+                      type="button"
+                      (click)="assignToMe(d)"
+                      class="px-2 py-0.5 rounded bg-emerald-100 hover:bg-emerald-200 text-[#08492d] text-[10px] font-bold transition-all cursor-pointer"
+                    >
+                      + Nhận xử lý
+                    </button>
+                  } @else {
+                    <span class="text-stone-400 italic">Chưa phân công</span>
+                  }
+                }
+              </td>
+
+              <td class="py-3.5 px-4">
+                <span
+                  class="px-2 py-0.5 rounded text-[10px] font-bold"
+                  [ngClass]="{
+                    'bg-amber-100 text-amber-900': d.status === 'OPENED' || d.status === 'UNDER_REVIEW',
+                    'bg-sky-100 text-sky-900': d.status === 'PENDING_REFUND_EXECUTION',
+                    'bg-emerald-100 text-emerald-900': d.status === 'RESOLVED_REFUND_FULL' || d.status === 'RESOLVED_REFUND_PARTIAL',
+                    'bg-stone-100 text-stone-700': d.status === 'RESOLVED_REJECTED'
+                  }"
+                >
+                  {{ d.statusLabel }}
+                </span>
+              </td>
+
+              <td class="py-3.5 px-4 text-right">
+                <button
+                  type="button"
+                  (click)="selectDispute(d)"
+                  class="px-3 py-1 rounded-lg border border-stone-200 hover:bg-stone-50 text-stone-700 font-bold transition-all cursor-pointer"
+                >
+                  Xem xét
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Detail Modal: Full Dispute Inspection & Decision Box -->
+  @if (selectedDispute(); as disp) {
+    <div
+      (click)="closeDetail()"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/60 backdrop-blur-xs p-4 animate-fadeIn"
+    >
+      <div
+        (click)="$event.stopPropagation()"
+        class="bg-white rounded-3xl border border-[#dce9e0] shadow-2xl max-w-2xl w-full p-6 sm:p-7 space-y-5 max-h-[90vh] overflow-y-auto"
+      >
+        <div class="flex items-start justify-between pb-3 border-b border-[#edf1ea]">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-mono font-bold text-[#0d623b]">{{ disp.id }}</span>
+              <span class="text-xs px-2 py-0.5 rounded font-bold bg-stone-100 text-stone-700">Đơn hàng: {{ disp.orderId }}</span>
+            </div>
+            <h3 class="text-lg font-extrabold text-[#08492d] mt-1">
+              {{ disp.reason }}: {{ disp.product }}
+            </h3>
+            <p class="text-xs text-stone-500">Mở lúc: {{ disp.openedAt }} • Hạn SLA: {{ disp.slaDeadline }}</p>
+          </div>
+
+          <button
+            type="button"
+            (click)="closeDetail()"
+            class="w-8 h-8 rounded-full flex items-center justify-center text-stone-400 hover:text-stone-700 hover:bg-stone-100"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Claim Amounts Overview (Fix ADM-R13: 3 numbers displayed) -->
+        <div class="grid grid-cols-3 gap-3 text-xs p-4 rounded-2xl bg-[#fbfaf6] border border-[#dce9e0] text-center">
+          <div class="space-y-0.5">
+            <span class="text-stone-400 block font-medium">Đã thanh toán Escrow:</span>
+            <strong class="font-mono text-sm text-stone-800">{{ disp.escrowAmount | price }}</strong>
+          </div>
+          <div class="space-y-0.5 border-x border-[#edf1ea]">
+            <span class="text-stone-400 block font-medium">Đã hoàn trước đó:</span>
+            <strong class="font-mono text-sm text-amber-700">{{ disp.alreadyRefunded | price }}</strong>
+          </div>
+          <div class="space-y-0.5">
+            <span class="text-stone-400 block font-medium">Còn có thể hoàn tối đa:</span>
+            <strong class="font-mono text-sm text-[#0d623b] font-extrabold">{{ disp.refundableAmount | price }}</strong>
+          </div>
+        </div>
+
+        <!-- Description & Evidence (Fix ADM-09) -->
+        <div class="space-y-3 text-xs">
+          <div>
+            <strong class="text-stone-800 block font-bold mb-1">Mô tả khiếu nại của Người mua:</strong>
+            <p class="p-3 rounded-xl bg-stone-50 border border-stone-200 text-stone-700 leading-relaxed">
+              {{ disp.description }}
+            </p>
+          </div>
+
+          <!-- Evidence List -->
+          <div>
+            <strong class="text-stone-800 block font-bold mb-1">Bằng chứng hình ảnh & biên bản:</strong>
+            <div class="grid grid-cols-2 gap-2">
+              @for (ev of disp.evidenceBuyer; track ev) {
+                <div class="p-2.5 rounded-xl border border-[#bbd2c2] bg-white flex items-center gap-2 truncate">
+                  <span>📸</span>
+                  <span class="truncate font-medium text-stone-700">{{ ev }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Past Decision Result if resolved -->
+        @if (disp.decision) {
+          <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs space-y-1">
+            <div class="flex items-center justify-between font-extrabold text-[#08492d]">
+              <span>Phán quyết đã ban hành:</span>
+              <span>{{ disp.resolvedAt }}</span>
+            </div>
+            <strong class="block text-emerald-950 font-bold text-sm">{{ disp.decision }}</strong>
+            @if (disp.decisionReason) {
+              <p class="text-stone-600 mt-1 italic leading-relaxed">Căn cứ: {{ disp.decisionReason }}</p>
+            }
+          </div>
+        }
+
+        <!-- Decision Action Block (Only for unresolved disputes & authorized roles - Fix ADM-R12, ADM-R14, ADM-19) -->
+        @if (!disp.decision && (disp.status === 'OPENED' || disp.status === 'UNDER_REVIEW' || disp.status === 'AWAITING_VENDOR')) {
+          @if (canDecide()) {
+            <div class="p-4 rounded-2xl border-2 border-emerald-200 bg-emerald-50/30 space-y-4 text-xs">
+              <div class="flex items-center justify-between">
+                <strong class="font-extrabold text-[#08492d] text-sm">
+                  Ban Hành Phán Quyết Trọng Tài (Ops Admin)
+                </strong>
+                <span class="text-[11px] text-stone-500">Đơn giá: {{ disp.unitPrice | price }} / kg</span>
+              </div>
+
+              <!-- Partial Qty Input (Fix ADM-R13) -->
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-white rounded-xl border border-emerald-100">
+                <div>
+                  <span class="font-bold text-stone-800 block">Số lượng nông sản hư hỏng cần bồi thường:</span>
+                  <span class="text-[11px] text-stone-400">Hệ thống tự động tính số tiền hoàn không vượt quá mức ký quỹ còn lại</span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <input
+                    type="number"
+                    [ngModel]="partialQtyInput()"
+                    (ngModelChange)="partialQtyInput.set($event)"
+                    min="1"
+                    [max]="disp.qty"
+                    class="w-20 px-2.5 py-1.5 rounded-lg border border-stone-300 font-mono font-bold text-center text-xs"
+                  />
+                  <span class="text-stone-600 font-semibold">kg</span>
+                  <span class="text-[#0d623b] font-mono font-extrabold ml-1">
+                    = {{ getCalculatedPartialAmount() | price }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="flex flex-wrap items-center justify-end gap-2 pt-1">
+                <button
+                  type="button"
+                  (click)="openDecisionModal('REJECT')"
+                  class="px-3.5 py-2 rounded-xl border border-stone-300 hover:bg-stone-100 text-stone-700 font-bold transition-all cursor-pointer"
+                >
+                  Từ chối khiếu nại (NCC giữ 100%)
+                </button>
+
+                <button
+                  type="button"
+                  (click)="openDecisionModal('REFUND_PARTIAL')"
+                  class="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold transition-all shadow-xs cursor-pointer"
+                >
+                  Hoàn tiền một phần ({{ getCalculatedPartialAmount() | price }})
+                </button>
+
+                <button
+                  type="button"
+                  (click)="openDecisionModal('REFUND_FULL')"
+                  class="px-4 py-2 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white font-bold transition-all shadow-xs cursor-pointer"
+                >
+                  Hoàn toàn bộ ({{ disp.refundableAmount | price }})
+                </button>
+              </div>
+            </div>
+          } @else {
+            <div class="p-3.5 rounded-xl bg-stone-100 text-stone-600 text-xs italic">
+              Tài khoản hiện tại chỉ có quyền xem xét, không có thẩm quyền ra phán quyết khiếu nại.
+            </div>
+          }
+        }
+
+      </div>
+    </div>
+  }
+
+  <!-- Decision Reason Confirmation Modal (Fix ADM-R08, ADM-17) -->
+  @if (decisionType(); as type) {
+    <app-admin-reason-modal
+      [title]="type === 'REJECT' ? 'Xác nhận từ chối khiếu nại' : type === 'REFUND_FULL' ? 'Phê duyệt hoàn tiền toàn phần' : 'Phê duyệt hoàn tiền một phần'"
+      [subtitle]="'Tranh chấp #' + selectedDispute()?.id + ' • ' + selectedDispute()?.product"
+      [confirmText]="type === 'REJECT' ? 'Xác nhận bác bỏ' : 'Ban hành quyết định hoàn tiền'"
+      [confirmButtonClass]="type === 'REJECT' ? 'bg-stone-700 hover:bg-stone-800 text-white' : 'bg-[#0d623b] hover:bg-[#08492d] text-white'"
+      [placeholder]="'Căn cứ pháp lý, kết quả giám định kho lạnh và lý do ra phán quyết (tối thiểu 10 ký tự)...'"
+      [minLength]="10"
+      (confirm)="onDecisionConfirm($event)"
+      (cancel)="closeDecisionModal()"
+    />
+  }
+
+</div>
+

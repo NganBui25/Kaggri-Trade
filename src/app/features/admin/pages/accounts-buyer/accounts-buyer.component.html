@@ -1,0 +1,164 @@
+<div class="space-y-6">
+  
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
+    <div>
+      <div class="flex items-center gap-2">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
+          Quản Lý Tài Khoản Người Mua (Buyer)
+        </h1>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 text-[#08492d] border border-emerald-300">
+          {{ filteredBuyers().length }} Doanh nghiệp
+        </span>
+      </div>
+      <p class="text-xs text-stone-500 mt-1">
+        Theo dõi hạn mức công nợ, tiến độ đối soát Escrow và tình trạng kích hoạt tài khoản của chuỗi siêu thị, F&B.
+      </p>
+    </div>
+
+    @if (!canSuspend()) {
+      <span class="px-3 py-1.5 rounded-xl bg-stone-100 text-stone-600 text-xs font-bold border border-stone-200">
+        👁️ Chế độ chỉ xem (Vai trò: {{ auth.currentAdmin().roleLabel.split(' ')[0] }})
+      </span>
+    }
+  </div>
+
+  <!-- Search & Filter Controls -->
+  <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-xs">
+    <div class="relative flex-1 max-w-md">
+      <input
+        type="text"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+        placeholder="Tìm doanh nghiệp, mã BUY, địa phương..."
+        class="w-full pl-9 pr-4 py-2 rounded-xl border border-[#bbd2c2] bg-white focus:outline-none focus:border-[#0d623b] text-xs"
+      />
+      <span class="absolute left-3 top-2.5 text-stone-400">🔍</span>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        (click)="statusFilter.set('ALL')"
+        class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer"
+        [ngClass]="statusFilter() === 'ALL' ? 'bg-[#0d623b] text-white' : 'bg-white border border-[#bbd2c2] text-stone-600'"
+      >
+        Tất cả
+      </button>
+
+      <button
+        type="button"
+        (click)="statusFilter.set('active')"
+        class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer"
+        [ngClass]="statusFilter() === 'active' ? 'bg-[#0d623b] text-white' : 'bg-white border border-[#bbd2c2] text-stone-600'"
+      >
+        Đang hoạt động
+      </button>
+
+      <button
+        type="button"
+        (click)="statusFilter.set('suspended')"
+        class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer"
+        [ngClass]="statusFilter() === 'suspended' ? 'bg-[#0d623b] text-white' : 'bg-white border border-[#bbd2c2] text-stone-600'"
+      >
+        Đang tạm khóa
+      </button>
+    </div>
+  </div>
+
+  <!-- Buyers Table -->
+  <div class="bg-white rounded-3xl border border-[#dce9e0] shadow-xs overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="bg-[#fbfaf6] border-b border-[#edf1ea] text-stone-500 font-extrabold uppercase tracking-wider text-[11px]">
+          <tr>
+            <th class="py-3.5 px-4">Mã</th>
+            <th class="py-3.5 px-4">Tên doanh nghiệp</th>
+            <th class="py-3.5 px-4">Mô hình kinh doanh</th>
+            <th class="py-3.5 px-4">Hạn mức công nợ</th>
+            <th class="py-3.5 px-4">Khu vực</th>
+            <th class="py-3.5 px-4">Trạng thái</th>
+            <th class="py-3.5 px-4 text-right">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#edf1ea]">
+          @for (b of filteredBuyers(); track b.id) {
+            <tr class="hover:bg-[#fcfdfa] transition-colors">
+              <td class="py-3.5 px-4 font-mono font-bold text-[#08492d]">
+                {{ b.id }}
+              </td>
+
+              <td class="py-3.5 px-4">
+                <strong class="font-bold text-stone-900 block">{{ b.company }}</strong>
+                <span class="text-stone-400 text-[11px]">Gia nhập: {{ b.createdAt }} • Hoạt động: {{ b.lastActive }}</span>
+                @if (b.suspendReason) {
+                  <p class="text-[11px] text-amber-700 italic mt-0.5">Lý do khóa: {{ b.suspendReason }}</p>
+                }
+              </td>
+
+              <td class="py-3.5 px-4 text-stone-700">
+                {{ b.type }}
+              </td>
+
+              <td class="py-3.5 px-4 font-mono font-bold text-[#0d623b]">
+                {{ b.creditLimit | price }}
+              </td>
+
+              <td class="py-3.5 px-4 text-stone-600">
+                {{ b.region }}
+              </td>
+
+              <td class="py-3.5 px-4">
+                <span
+                  class="px-2.5 py-1 rounded-full text-[10px] font-bold"
+                  [ngClass]="b.status === 'active' ? 'bg-emerald-100 text-emerald-900' : 'bg-amber-100 text-amber-900'"
+                >
+                  {{ b.status === 'active' ? 'Đang hoạt động' : 'Đang tạm khóa' }}
+                </span>
+              </td>
+
+              <!-- Action Buttons (Fix ADM-R05) -->
+              <td class="py-3.5 px-4 text-right">
+                @if (canSuspend()) {
+                  @if (b.status === 'active') {
+                    <button
+                      type="button"
+                      (click)="openSuspendModal(b)"
+                      class="px-2.5 py-1 rounded-lg border border-amber-300 hover:bg-amber-50 text-amber-800 font-bold transition-all cursor-pointer"
+                    >
+                      Tạm khóa
+                    </button>
+                  } @else {
+                    <button
+                      type="button"
+                      (click)="openReactivateModal(b)"
+                      class="px-2.5 py-1 rounded-lg bg-[#0d623b] hover:bg-[#08492d] text-white font-bold transition-all cursor-pointer shadow-2xs"
+                    >
+                      Kích hoạt lại
+                    </button>
+                  }
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Reason Modal -->
+  @if (modalAction(); as action) {
+    <app-admin-reason-modal
+      [title]="action === 'SUSPEND' ? 'Tạm khóa tài khoản Người mua' : 'Kích hoạt lại Người mua'"
+      [subtitle]="selectedBuyer()?.company"
+      [confirmText]="action === 'SUSPEND' ? 'Xác nhận tạm khóa' : 'Kích hoạt lại'"
+      [confirmButtonClass]="action === 'SUSPEND' ? 'bg-amber-600 hover:bg-amber-700 text-white' : 'bg-[#0d623b] hover:bg-[#08492d] text-white'"
+      [placeholder]="'Nhập lý do chi tiết (tối thiểu 10 ký tự)...'"
+      [minLength]="10"
+      (confirm)="onModalConfirm($event)"
+      (cancel)="closeModal()"
+    />
+  }
+
+</div>
+

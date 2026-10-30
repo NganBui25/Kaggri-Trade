@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { PricePipe } from '../../../../shared/pipes/price.pipe';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { ToastService } from '../../../../shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-profile',
@@ -14,7 +14,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
 })
 export class ProfileComponent {
   readonly authService = inject(AuthService);
-  private readonly notification = inject(NotificationService);
+  private readonly notification = inject(ToastService);
 
   profile = {
     companyName: 'HTX Bách Hóa Xanh',

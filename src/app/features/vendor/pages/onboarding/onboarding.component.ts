@@ -2,7 +2,7 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { VendorDataService } from '../../services/vendor-data.service';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { ToastService } from '../../../../shared/components/toast/toast.service';
 import { VendorKycProfile } from '../../models/vendor.model';
 
 @Component({
@@ -14,7 +14,7 @@ import { VendorKycProfile } from '../../models/vendor.model';
 })
 export class VendorOnboardingComponent {
   readonly vendorData = inject(VendorDataService);
-  private readonly notification = inject(NotificationService);
+  private readonly notification = inject(ToastService);
 
   // Active step in onboarding wizard (1: Gian hàng, 2: Pháp lý, 3: Liên hệ & OTP)
   currentStep = signal<number>(1);

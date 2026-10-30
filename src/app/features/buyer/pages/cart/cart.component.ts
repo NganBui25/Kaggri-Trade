@@ -6,7 +6,7 @@ import { CartService } from '../../services/cart.service';
 import { BuyerDataService } from '../../services/buyer-data.service';
 import { PricePipe, NumberDotPipe } from '../../../../shared/pipes/price.pipe';
 import { CartItem } from '../../../../shared/models/order.model';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { ToastService } from '../../../../shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-cart',
@@ -19,7 +19,7 @@ export class CartComponent {
   readonly cartService = inject(CartService);
   private readonly buyerData = inject(BuyerDataService);
   private readonly router = inject(Router);
-  private readonly notification = inject(NotificationService);
+  private readonly notification = inject(ToastService);
 
   // Fix BUY-18: Refresh stock with timestamp
   lastRefreshedAt = signal<string>('Vừa xong');

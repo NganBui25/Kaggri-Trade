@@ -1,0 +1,260 @@
+<div class="space-y-6">
+  
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
+    <div>
+      <div class="flex items-center gap-2">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
+          Giám Sát Giao Dịch & Dòng Tiền Escrow
+        </h1>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 text-[#08492d] border border-emerald-300">
+          Sổ cái thanh toán
+        </span>
+      </div>
+      <p class="text-xs text-stone-500 mt-1">
+        Theo dõi trạng thái nạp tiền ký quỹ, giải ngân nhà vườn, hoàn tiền bồi thường và đối soát tín hiệu Webhook từ các ngân hàng/cổng thanh toán.
+      </p>
+    </div>
+
+    @if (!canManageGateway()) {
+      <span class="px-3 py-1.5 rounded-xl bg-stone-100 text-stone-600 text-xs font-bold border border-stone-200">
+        👁️ Chế độ chỉ xem (Vai trò: {{ auth.currentAdmin().roleLabel.split(' ')[0] }})
+      </span>
+    }
+  </div>
+
+  <!-- Filters & Search Controls (Fix ADM-10: Dropdown and click handling) -->
+  <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs">
+    <div class="sm:col-span-5 relative">
+      <input
+        type="text"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+        placeholder="Tìm mã giao dịch, đơn hàng, Người mua, Người bán..."
+        class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[#bbd2c2] bg-white focus:outline-none focus:border-[#0d623b] text-xs"
+      />
+      <span class="absolute left-3 top-3 text-stone-400">🔍</span>
+    </div>
+
+    <div class="sm:col-span-4 flex items-center gap-2">
+      <label class="text-stone-500 font-bold whitespace-nowrap">Cổng:</label>
+      <select
+        [ngModel]="providerFilter()"
+        (ngModelChange)="providerFilter.set($event)"
+        class="flex-1 px-3 py-2.5 rounded-xl border border-[#bbd2c2] bg-white focus:outline-none focus:border-[#0d623b] text-xs font-semibold cursor-pointer"
+      >
+        <option value="ALL">Tất cả cổng thanh toán</option>
+        <option value="VietQR">VietQR (Ngân hàng)</option>
+        <option value="VNPay">VNPay B2B</option>
+        <option value="MoMo">Ví MoMo</option>
+        <option value="Napas">Napas 247</option>
+        <option value="Stripe">Thẻ quốc tế (Stripe)</option>
+      </select>
+    </div>
+
+    <div class="sm:col-span-3 flex items-center gap-2">
+      <label class="text-stone-500 font-bold whitespace-nowrap">Trạng thái:</label>
+      <select
+        [ngModel]="statusFilter()"
+        (ngModelChange)="statusFilter.set($event)"
+        class="flex-1 px-3 py-2.5 rounded-xl border border-[#bbd2c2] bg-white focus:outline-none focus:border-[#0d623b] text-xs font-semibold cursor-pointer"
+      >
+        <option value="ALL">Tất cả trạng thái</option>
+        <option value="success">Thành công</option>
+        <option value="processing">Đang xử lý</option>
+        <option value="failed">Thất bại</option>
+        <option value="flagged">Nghi vấn</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Transactions Table -->
+  <div class="bg-white rounded-3xl border border-[#dce9e0] shadow-xs overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="bg-[#fbfaf6] border-b border-[#edf1ea] text-stone-500 font-extrabold uppercase tracking-wider text-[11px]">
+          <tr>
+            <th class="py-3.5 px-4">Mã giao dịch</th>
+            <th class="py-3.5 px-4">Bên mua & Bên bán</th>
+            <th class="py-3.5 px-4">Loại giao dịch</th>
+            <th class="py-3.5 px-4">Số tiền</th>
+            <th class="py-3.5 px-4">Cổng thanh toán</th>
+            <th class="py-3.5 px-4">Thời gian</th>
+            <th class="py-3.5 px-4">Trạng thái</th>
+            <th class="py-3.5 px-4 text-right">Chi tiết</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#edf1ea]">
+          @for (t of filteredTransactions(); track t.id) {
+            <tr class="hover:bg-[#fcfdfa] transition-colors">
+              <td class="py-3.5 px-4 font-mono font-bold text-[#08492d]">
+                {{ t.id }}
+                @if (t.orderId) {
+                  <span class="block text-[10px] text-stone-400 font-mono">{{ t.orderId }}</span>
+                }
+              </td>
+
+              <td class="py-3.5 px-4 space-y-0.5">
+                <strong class="font-bold text-stone-900 block truncate max-w-[200px]">{{ t.buyer }}</strong>
+                <span class="text-stone-500 text-[11px] block truncate max-w-[200px]">→ {{ t.vendor }}</span>
+              </td>
+
+              <td class="py-3.5 px-4">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-stone-100 text-stone-700">
+                  {{ t.typeLabel }}
+                </span>
+              </td>
+
+              <td class="py-3.5 px-4 font-mono font-extrabold text-sm" [ngClass]="t.type === 'REFUND_PARTIAL' || t.type === 'REFUND_FULL' ? 'text-amber-700' : 'text-[#0d623b]'">
+                {{ t.amount | price }}
+              </td>
+
+              <td class="py-3.5 px-4">
+                <strong class="font-semibold text-stone-800">{{ t.provider }}</strong>
+                @if (t.webhookStatus === 'failed') {
+                  <span class="block text-[10px] text-rose-600 font-bold">● Lỗi Webhook</span>
+                }
+              </td>
+
+              <td class="py-3.5 px-4 text-stone-500">
+                {{ t.createdAt }}
+              </td>
+
+              <td class="py-3.5 px-4">
+                <span
+                  class="px-2.5 py-1 rounded-full text-[10px] font-bold"
+                  [ngClass]="{
+                    'bg-emerald-100 text-emerald-900': t.status === 'success',
+                    'bg-amber-100 text-amber-900': t.status === 'processing',
+                    'bg-rose-100 text-rose-900': t.status === 'failed',
+                    'bg-purple-100 text-purple-900': t.status === 'flagged'
+                  }"
+                >
+                  {{ t.statusLabel }}
+                </span>
+              </td>
+
+              <td class="py-3.5 px-4 text-right">
+                <button
+                  type="button"
+                  (click)="selectTxn(t)"
+                  class="px-3 py-1 rounded-lg border border-stone-200 hover:bg-stone-50 text-stone-700 font-bold transition-all cursor-pointer"
+                >
+                  Xem
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="8" class="py-10 text-center text-stone-400">
+                Không tìm thấy giao dịch nào phù hợp điều kiện lọc.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Transaction Detail Modal (Fix ADM-R16, ADM-07, ADM-21) -->
+  @if (selectedTxn(); as txn) {
+    <div
+      (click)="closeDetail()"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/60 backdrop-blur-xs p-4 animate-fadeIn"
+    >
+      <div
+        (click)="$event.stopPropagation()"
+        class="bg-white rounded-3xl border border-[#dce9e0] shadow-2xl max-w-xl w-full p-6 sm:p-7 space-y-6"
+      >
+        <div class="flex items-start justify-between pb-3 border-b border-[#edf1ea]">
+          <div>
+            <span class="text-xs font-mono text-[#0d623b] font-bold">Mã GD: {{ txn.id }}</span>
+            <h3 class="text-lg font-extrabold text-[#08492d] mt-0.5">
+              {{ txn.typeLabel }}
+            </h3>
+            <p class="text-xs text-stone-500">Khởi tạo: {{ txn.createdAt }} • Cổng: {{ txn.provider }}</p>
+          </div>
+
+          <button
+            type="button"
+            (click)="closeDetail()"
+            class="w-8 h-8 rounded-full flex items-center justify-center text-stone-400 hover:text-stone-700 hover:bg-stone-100"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Details Card -->
+        <div class="p-4 rounded-2xl bg-[#fbfaf6] border border-[#dce9e0] text-xs space-y-2.5">
+          <div class="flex justify-between">
+            <span class="text-stone-500">Doanh nghiệp đặt mua:</span>
+            <strong class="text-stone-900">{{ txn.buyer }}</strong>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-stone-500">Nhà cung cấp nông sản:</span>
+            <strong class="text-stone-900">{{ txn.vendor }}</strong>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-stone-500">Mã đơn đặt hàng liên kết:</span>
+            <strong class="font-mono text-emerald-800">{{ txn.orderId || 'Chưa liên kết' }}</strong>
+          </div>
+          <div class="flex justify-between pt-2 border-t border-[#edf1ea]">
+            <span class="font-bold text-stone-800">Số tiền giao dịch:</span>
+            <strong class="font-mono text-base font-extrabold text-[#0d623b]">{{ txn.amount | price }}</strong>
+          </div>
+        </div>
+
+        <!-- Webhook Status Callout -->
+        <div class="p-3.5 rounded-xl border text-xs space-y-1" [ngClass]="txn.webhookStatus === 'failed' ? 'bg-rose-50 border-rose-200 text-rose-900' : 'bg-emerald-50 border-emerald-200 text-emerald-900'">
+          <div class="flex items-center justify-between font-bold">
+            <span>Tín hiệu phản hồi Webhook:</span>
+            <span>{{ txn.webhookStatus === 'failed' ? 'Lỗi kết nối (Mã 502)' : 'Đã đối soát ghi sổ bất biến' }}</span>
+          </div>
+          @if (txn.reason) {
+            <p class="text-[11px] opacity-90">Ghi chú lỗi: {{ txn.reason }}</p>
+          }
+        </div>
+
+        <!-- Action Bar: Gateway Check & Webhook Retry (Fix ADM-R16) -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-[#edf1ea]">
+          <span class="text-[11px] text-stone-400">
+            Hệ thống không cho phép sửa tay trạng thái để bảo vệ tính toàn vẹn sổ cái.
+          </span>
+
+          <div class="flex items-center gap-2">
+            @if (canManageGateway()) {
+              <button
+                type="button"
+                (click)="checkGatewayStatus(txn)"
+                class="px-3.5 py-2 rounded-xl border border-stone-300 hover:bg-stone-50 text-stone-700 text-xs font-bold transition-all cursor-pointer"
+              >
+                Kiểm tra lại cổng
+              </button>
+
+              @if (txn.status === 'failed' || txn.webhookStatus === 'failed') {
+                <button
+                  type="button"
+                  (click)="retryWebhook(txn)"
+                  class="px-3.5 py-2 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+                >
+                  Xử lý lại webhook
+                </button>
+              }
+            } @else {
+              <button
+                type="button"
+                (click)="closeDetail()"
+                class="px-4 py-2 rounded-xl bg-stone-100 text-stone-700 text-xs font-bold cursor-pointer"
+              >
+                Đóng
+              </button>
+            }
+          </div>
+        </div>
+
+      </div>
+    </div>
+  }
+
+</div>
+

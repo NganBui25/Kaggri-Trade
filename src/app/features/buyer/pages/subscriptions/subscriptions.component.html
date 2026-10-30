@@ -1,91 +1,343 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
   
+  <!-- Page Header -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
     <div>
-      <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+          🌱 Kênh Khách Hàng Doanh Nghiệp (B2B)
+        </span>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d] tracking-tight">
         Đơn Hàng Giao Định Kỳ (Subscription)
       </h1>
-      <p class="text-xs text-stone-500 mt-1">
-        Cố định nguồn cung ứng nông sản dài hạn cho chuỗi nhà hàng, khách sạn và siêu thị đối tác.
+      <p class="text-xs text-stone-500 mt-1 max-w-2xl leading-relaxed">
+        Cố định nguồn cung ứng nông sản dài hạn cho chuỗi bách hóa, siêu thị và nhà hàng đối tác. Đảm bảo nguồn hàng ổn định, hưởng bậc giá sỉ ưu đãi và xe lạnh giao tận kho.
       </p>
     </div>
 
-    <a
-      routerLink="/buyer/catalog"
-      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold transition-all shadow-md w-fit"
+    <!-- Fixed Button: Now triggers modal directly! -->
+    <button
+      type="button"
+      (click)="openCreateModal()"
+      class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold transition-all shadow-md shadow-emerald-950/20 w-fit cursor-pointer flex-shrink-0"
     >
-      <span>+ Đăng ký lịch giao mới</span>
-    </a>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+      </svg>
+      <span>Đăng ký lịch giao mới</span>
+    </button>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    @for (plan of subscriptions; track plan.id) {
-      <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs space-y-4">
-        
-        <div class="flex items-center justify-between pb-3 border-b border-[#edf1ea]">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-bold text-xs">
-              {{ plan.vendorAvatar }}
-            </div>
-            <div>
-              <strong class="text-xs font-extrabold text-[#08492d]">{{ plan.vendorName }}</strong>
-              <span class="text-[11px] text-stone-400 block font-mono">{{ plan.id }}</span>
-            </div>
-          </div>
-
-          <span 
-            [class.bg-emerald-100]="plan.status === 'active'"
-            [class.text-emerald-800]="plan.status === 'active'"
-            [class.bg-stone-100]="plan.status === 'paused'"
-            [class.text-stone-600]="plan.status === 'paused'"
-            class="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase"
-          >
-            {{ plan.status === 'active' ? 'Đang hoạt động' : 'Tạm dừng' }}
-          </span>
-        </div>
-
-        <div class="space-y-2 text-xs">
-          <div class="flex justify-between">
-            <span class="text-stone-500">Mặt hàng cung ứng:</span>
-            <strong class="text-stone-900 font-bold">{{ plan.productName }}</strong>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-stone-500">Chu kỳ giao hàng:</span>
-            <span class="font-semibold text-emerald-800">📅 {{ plan.frequency }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-stone-500">Khối lượng mỗi kỳ:</span>
-            <strong class="text-stone-900">{{ plan.quantityPerDelivery | numberDot }} {{ plan.unit }}</strong>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-stone-500">Đơn giá khóa kỳ hạn:</span>
-            <strong class="text-[#0d623b] font-bold">{{ plan.unitPrice | price }} / {{ plan.unit }}</strong>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-stone-500">Khung giờ giao kho:</span>
-            <span class="font-medium">⏰ {{ plan.deliveryWindow }}</span>
-          </div>
-          <div class="flex justify-between pt-2 border-t border-[#edf1ea] font-bold">
-            <span class="text-emerald-950">Kỳ giao tiếp theo:</span>
-            <span class="text-emerald-700">🚚 {{ plan.nextDeliveryDate }}</span>
-          </div>
-        </div>
-
-        <div class="pt-3 border-t border-[#edf1ea] flex items-center justify-between text-xs">
-          <button
-            type="button"
-            (click)="toggleStatus(plan)"
-            class="font-semibold text-stone-600 hover:text-stone-900 underline cursor-pointer"
-          >
-            {{ plan.status === 'active' ? 'Tạm dừng chu kỳ này' : 'Kích hoạt lại' }}
-          </button>
-
-          <span class="text-[11px] text-stone-400">Tự động sinh Draft Order trước 2 ngày</span>
-        </div>
-
+  <!-- KPI Summary Banner -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="bg-white p-5 rounded-2xl border border-stone-200/80 shadow-xs flex items-center justify-between">
+      <div>
+        <span class="text-xs font-semibold uppercase text-stone-400 block tracking-wider">Hợp đồng đang chạy</span>
+        <strong class="text-2xl font-black text-[#08492d] mt-1 block">{{ activeCount() }} hợp đồng</strong>
+        <span class="text-xs text-stone-500 mt-0.5 block">Đảm bảo giao định kỳ mỗi tuần</span>
       </div>
-    }
+      <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-xl">
+        📦
+      </div>
+    </div>
+
+    <div class="bg-white p-5 rounded-2xl border border-stone-200/80 shadow-xs flex items-center justify-between">
+      <div>
+        <span class="text-xs font-semibold uppercase text-stone-400 block tracking-wider">Sản lượng cam kết / tháng</span>
+        <strong class="text-2xl font-black text-[#08492d] mt-1 block">{{ totalMonthlyVolume() | numberDot }} kg</strong>
+        <span class="text-xs text-stone-500 mt-0.5 block">Nông sản sạch VietGAP / GlobalGAP</span>
+      </div>
+      <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-xl">
+        ⚖️
+      </div>
+    </div>
+
+    <div class="bg-white p-5 rounded-2xl border border-stone-200/80 shadow-xs flex items-center justify-between sm:col-span-2 lg:col-span-1">
+      <div>
+        <span class="text-xs font-semibold uppercase text-stone-400 block tracking-wider">Bảo chứng thanh toán</span>
+        <strong class="text-base font-extrabold text-emerald-800 mt-1 block">Kaggri Escrow An Toàn</strong>
+        <span class="text-xs text-stone-500 mt-0.5 block">Chỉ giải ngân khi hàng đủ chuẩn tươi</span>
+      </div>
+      <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-xl">
+        🛡️
+      </div>
+    </div>
   </div>
+
+  <!-- Filter Tabs Bar -->
+  <div class="flex items-center justify-between gap-4 border-b border-stone-200">
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        (click)="statusFilter.set('all')"
+        [class.border-emerald-700]="statusFilter() === 'all'"
+        [class.text-emerald-800]="statusFilter() === 'all'"
+        [class.font-bold]="statusFilter() === 'all'"
+        [class.border-transparent]="statusFilter() !== 'all'"
+        [class.text-stone-500]="statusFilter() !== 'all'"
+        class="pb-3 px-3 border-b-2 text-xs transition cursor-pointer"
+      >
+        Tất cả ({{ subscriptions().length }})
+      </button>
+
+      <button
+        type="button"
+        (click)="statusFilter.set('active')"
+        [class.border-emerald-700]="statusFilter() === 'active'"
+        [class.text-emerald-800]="statusFilter() === 'active'"
+        [class.font-bold]="statusFilter() === 'active'"
+        [class.border-transparent]="statusFilter() !== 'active'"
+        [class.text-stone-500]="statusFilter() !== 'active'"
+        class="pb-3 px-3 border-b-2 text-xs transition cursor-pointer flex items-center gap-1.5"
+      >
+        <span>Đang hoạt động</span>
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+      </button>
+
+      <button
+        type="button"
+        (click)="statusFilter.set('paused')"
+        [class.border-emerald-700]="statusFilter() === 'paused'"
+        [class.text-emerald-800]="statusFilter() === 'paused'"
+        [class.font-bold]="statusFilter() === 'paused'"
+        [class.border-transparent]="statusFilter() !== 'paused'"
+        [class.text-stone-500]="statusFilter() !== 'paused'"
+        class="pb-3 px-3 border-b-2 text-xs transition cursor-pointer"
+      >
+        Tạm dừng ({{ pausedCount() }})
+      </button>
+    </div>
+
+    <span class="text-xs text-stone-500 hidden sm:inline">
+      Hiển thị <strong>{{ filteredSubscriptions().length }}</strong> gói giao định kỳ
+    </span>
+  </div>
+
+  <!-- Subscriptions Grid -->
+  @if (filteredSubscriptions().length > 0) {
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      @for (plan of filteredSubscriptions(); track plan.id) {
+        <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-5">
+          
+          <!-- Card Top: Vendor & Status -->
+          <div class="space-y-4">
+            <div class="flex items-center justify-between pb-3.5 border-b border-[#edf1ea]">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-emerald-700 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                  {{ plan.vendorAvatar }}
+                </div>
+                <div>
+                  <strong class="text-xs font-extrabold text-[#08492d] block">{{ plan.vendorName }}</strong>
+                  <span class="text-[11px] text-stone-400 block font-mono">Mã HĐ: {{ plan.id }}</span>
+                </div>
+              </div>
+
+              <!-- Status Badge -->
+              <span 
+                [class.bg-emerald-100]="plan.status === 'active'"
+                [class.text-emerald-800]="plan.status === 'active'"
+                [class.border-emerald-200]="plan.status === 'active'"
+                [class.bg-stone-100]="plan.status === 'paused'"
+                [class.text-stone-600]="plan.status === 'paused'"
+                [class.border-stone-200]="plan.status === 'paused'"
+                class="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase border inline-flex items-center gap-1.5"
+              >
+                @if (plan.status === 'active') {
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Đang hoạt động
+                } @else {
+                  <span class="w-1.5 h-1.5 rounded-full bg-stone-400"></span>
+                  Đang tạm dừng
+                }
+              </span>
+            </div>
+
+            <!-- Product and Schedule details -->
+            <div class="p-3.5 rounded-2xl bg-[#fbfaf6] border border-stone-200/80 flex items-center gap-3.5">
+              @if (plan.productImage) {
+                <img 
+                  [src]="plan.productImage" 
+                  [alt]="plan.productName"
+                  class="w-16 h-16 rounded-xl object-cover border border-stone-200 flex-shrink-0"
+                />
+              }
+              <div class="min-w-0 flex-1">
+                <span class="text-[11px] text-emerald-800 font-bold uppercase tracking-wider block">Mặt hàng cung ứng</span>
+                <strong class="text-sm font-bold text-stone-900 block truncate">{{ plan.productName }}</strong>
+                <span class="text-xs font-extrabold text-emerald-700 block mt-0.5">
+                  {{ plan.unitPrice | price }}<small class="text-stone-500 font-normal">/{{ plan.unit }} (Cam kết bậc giá sỉ)</small>
+                </span>
+              </div>
+            </div>
+
+            <!-- Specs Grid -->
+            <div class="space-y-2 text-xs">
+              <div class="flex justify-between py-1 border-b border-stone-100">
+                <span class="text-stone-500">Chu kỳ lặp lại:</span>
+                <strong class="font-bold text-emerald-900">📅 {{ plan.frequency }}</strong>
+              </div>
+
+              <div class="flex justify-between py-1 border-b border-stone-100">
+                <span class="text-stone-500">Khối lượng mỗi đợt giao:</span>
+                <strong class="text-stone-900 font-extrabold">{{ plan.quantityPerDelivery | numberDot }} {{ plan.unit }}</strong>
+              </div>
+
+              <div class="flex justify-between py-1 border-b border-stone-100">
+                <span class="text-stone-500">Khung giờ nhận xe lạnh:</span>
+                <span class="font-medium text-stone-800">🚚 {{ plan.deliveryWindow }}</span>
+              </div>
+
+              <div class="flex justify-between py-1 border-b border-stone-100">
+                <span class="text-stone-500">Đợt giao tiếp theo:</span>
+                <strong class="text-emerald-800 font-bold">⏰ {{ plan.nextDeliveryDate }}</strong>
+              </div>
+
+              @if (plan.endDate) {
+                <div class="flex justify-between py-1">
+                  <span class="text-stone-500">Thời hạn hợp đồng:</span>
+                  <span class="text-stone-700 font-medium">Đến hết ngày {{ plan.endDate }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Card Actions Footer -->
+          <div class="pt-3 border-t border-[#edf1ea] flex items-center justify-between gap-2">
+            <button
+              type="button"
+              (click)="openDetail(plan)"
+              class="px-3.5 py-2 text-xs font-bold text-stone-700 hover:text-emerald-800 hover:bg-stone-100 rounded-xl transition cursor-pointer"
+            >
+              Xem chi tiết hợp đồng
+            </button>
+
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                (click)="toggleStatus(plan)"
+                [class.bg-amber-50]="plan.status === 'active'"
+                [class.text-amber-800]="plan.status === 'active'"
+                [class.hover:bg-amber-100]="plan.status === 'active'"
+                [class.bg-emerald-50]="plan.status === 'paused'"
+                [class.text-emerald-800]="plan.status === 'paused'"
+                [class.hover:bg-emerald-100]="plan.status === 'paused'"
+                class="px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer"
+              >
+                {{ plan.status === 'active' ? 'Tạm dừng' : 'Kích hoạt lại' }}
+              </button>
+
+              <button
+                type="button"
+                (click)="cancelSubscription(plan.id)"
+                class="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                title="Hủy hợp đồng định kỳ"
+                aria-label="Hủy hợp đồng định kỳ"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      }
+    </div>
+  } @else {
+    <!-- Empty State -->
+    <div class="bg-white rounded-3xl border border-[#dce9e0] p-12 text-center space-y-4">
+      <div class="w-16 h-16 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center text-3xl mx-auto shadow-xs">
+        📅
+      </div>
+      <h3 class="text-lg font-bold text-[#08492d]">Chưa có lịch giao định kỳ nào</h3>
+      <p class="text-xs text-stone-500 max-w-md mx-auto leading-relaxed">
+        Bạn chưa thiết lập hợp đồng giao nông sản định kỳ nào phù hợp với bộ lọc hiện tại. Bấm vào nút bên dưới để lên kế hoạch giao hàng lặp lại với các nhà vườn.
+      </p>
+      <button
+        type="button"
+        (click)="openCreateModal()"
+        class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0d623b] text-white text-xs font-bold hover:bg-[#08492d] transition-all shadow-md cursor-pointer"
+      >
+        <span>+ Đăng ký lịch giao định kỳ ngay</span>
+      </button>
+    </div>
+  }
 
 </div>
 
+<!-- Subscription Detail Modal -->
+@if (isDetailOpen() && selectedDetailPlan()) {
+  <div class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-stone-200 space-y-5 animate-in fade-in zoom-in-95 duration-200">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-stone-200">
+        <div>
+          <h3 class="text-base font-bold text-[#08492d]">Chi tiết hợp đồng {{ selectedDetailPlan()?.id }}</h3>
+          <p class="text-xs text-stone-500 mt-0.5">{{ selectedDetailPlan()?.vendorName }}</p>
+        </div>
+        <button (click)="closeDetail()" class="text-stone-400 hover:text-stone-600 cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div class="p-3 rounded-xl bg-[#fbfaf6] border border-stone-200">
+          <span class="text-stone-500 block">Sản phẩm đăng ký:</span>
+          <strong class="text-sm font-bold text-stone-900 block mt-0.5">{{ selectedDetailPlan()?.productName }}</strong>
+          <span class="text-emerald-700 font-bold block mt-0.5">
+            {{ selectedDetailPlan()?.quantityPerDelivery | numberDot }} {{ selectedDetailPlan()?.unit }} / đợt • Đơn giá: {{ selectedDetailPlan()?.unitPrice | price }}/{{ selectedDetailPlan()?.unit }}
+          </span>
+        </div>
+
+        <div>
+          <span class="text-stone-500 block">Lịch giao:</span>
+          <strong class="text-stone-800">{{ selectedDetailPlan()?.frequency }} (Khung giờ: {{ selectedDetailPlan()?.deliveryWindow }})</strong>
+        </div>
+
+        <div>
+          <span class="text-stone-500 block">Địa chỉ kho nhận hàng:</span>
+          <span class="text-stone-800 font-medium">{{ selectedDetailPlan()?.warehouseAddress || '128 Đường số 7, P. Bình Trị Đông B, Q. Bình Tân, TP. HCM' }}</span>
+        </div>
+
+        <div>
+          <span class="text-stone-500 block">Người phụ trách nhận hàng:</span>
+          <strong class="text-stone-800">{{ selectedDetailPlan()?.receiverContact || 'Nguyễn Minh Anh • 090 123 4567' }}</strong>
+        </div>
+
+        <div>
+          <span class="text-stone-500 block">Yêu cầu bảo quản & quy cách:</span>
+          <span class="text-stone-800 font-medium">{{ selectedDetailPlan()?.packagingNotes || 'Bao lưới 25kg, xe lạnh chuyên dụng ≤ 8°C.' }}</span>
+        </div>
+
+        @if (selectedDetailPlan()?.estimatedMonthlyAmount) {
+          <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 flex justify-between items-center">
+            <span>Dự toán ngân sách / tháng:</span>
+            <strong class="text-sm font-black text-emerald-900">{{ selectedDetailPlan()?.estimatedMonthlyAmount | price }}</strong>
+          </div>
+        }
+      </div>
+
+      <div class="pt-3 border-t border-stone-200 flex justify-end gap-2">
+        <button
+          type="button"
+          (click)="closeDetail()"
+          class="px-4 py-2 rounded-xl border border-stone-300 text-xs font-bold text-stone-700 hover:bg-stone-50 cursor-pointer"
+        >
+          Đóng
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
+<!-- Create Subscription Modal -->
+@if (isModalOpen()) {
+  <app-buyer-subscription-modal
+    (close)="closeCreateModal()"
+    (submitPlan)="handleCreateSubscription($event)"
+  ></app-buyer-subscription-modal>
+}

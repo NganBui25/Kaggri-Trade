@@ -9,14 +9,14 @@ import {
   SettlementPeriod, 
   VendorKycProfile 
 } from '../models/vendor.model';
-import { NotificationService } from '../../../core/services/notification.service';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 import { StorageService } from '../../../core/services/storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VendorDataService {
-  private readonly notification = inject(NotificationService);
+  private readonly notification = inject(ToastService);
   private readonly storage = inject(StorageService);
 
   private readonly STORAGE_PRODUCTS = 'kaggri_vendor_products';

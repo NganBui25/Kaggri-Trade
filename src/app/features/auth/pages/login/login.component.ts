@@ -7,7 +7,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { AuthFeatureService } from '../../services/auth-feature.service';
 import { LoginFormState, MockAccount } from '../../models/auth.model';
 import { RoleSelectorComponent } from '../../components/role-selector/role-selector.component';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { ToastService } from '../../../../shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +21,7 @@ export class LoginComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthService);
   private readonly authFeatureService = inject(AuthFeatureService);
-  private readonly notificationService = inject(NotificationService);
+  private readonly toastService = inject(ToastService);
 
   readonly roleDefinitions = ROLE_DEFINITIONS;
   readonly mockAccounts = this.authFeatureService.getMockAccounts();
@@ -85,7 +85,7 @@ export class LoginComponent {
     this.authFeatureService.submitLogin(this.formState).subscribe({
       next: (session) => {
         this.isLoading.set(false);
-        this.notificationService.success(
+        this.toastService.success(
           `Chào mừng ${session.user.fullName} (${session.user.organizationName || 'Kaggri-Trade'}) đã đăng nhập thành công!`,
           'Đăng nhập thành công'
         );
@@ -100,7 +100,7 @@ export class LoginComponent {
         this.isLoading.set(false);
         const msg = err?.error?.message || 'Email hoặc mật khẩu không chính xác. Vui lòng thử lại!';
         this.errorMessage.set(msg);
-        this.notificationService.error(msg, 'Đăng nhập thất bại');
+        this.toastService.error(msg, 'Đăng nhập thất bại');
       }
     });
   }
