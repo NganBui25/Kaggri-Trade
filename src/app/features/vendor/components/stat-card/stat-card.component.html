@@ -1,0 +1,35 @@
+<div class="bg-white p-5 rounded-2xl border border-stone-200/80 shadow-xs hover:shadow-md transition-all duration-200">
+  <div class="flex items-center justify-between text-stone-500 mb-2">
+    <span class="text-xs font-semibold uppercase tracking-wider text-stone-500 truncate">{{ title() }}</span>
+    <span class="text-lg p-2 rounded-xl bg-stone-50 border border-stone-100 flex-shrink-0">{{ icon() }}</span>
+  </div>
+
+  <div class="flex items-baseline gap-2">
+    <div class="text-2xl font-bold text-stone-900 tracking-tight">{{ value() }}</div>
+    @if (badge()) {
+      <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800">
+        {{ badge() }}
+      </span>
+    }
+  </div>
+
+  @if (subtitle() || trend()) {
+    <div class="flex items-center gap-2 mt-1.5 text-xs">
+      @if (trend()) {
+        <span 
+          [class.text-emerald-700]="trendType() === 'positive'"
+          [class.text-rose-600]="trendType() === 'negative'"
+          [class.text-stone-500]="trendType() === 'neutral'"
+          class="font-semibold flex items-center gap-0.5">
+          @if (trendType() === 'positive') { ↑ }
+          @if (trendType() === 'negative') { ↓ }
+          {{ trend() }}
+        </span>
+      }
+      @if (subtitle()) {
+        <span class="text-stone-500 truncate">{{ subtitle() }}</span>
+      }
+    </div>
+  }
+</div>
+

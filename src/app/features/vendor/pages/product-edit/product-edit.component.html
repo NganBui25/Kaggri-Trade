@@ -1,0 +1,249 @@
+<div class="max-w-4xl mx-auto space-y-6">
+  
+  <!-- Header -->
+  <div class="flex items-center justify-between pb-4 border-b border-[#edf1ea]">
+    <div>
+      <nav class="flex items-center gap-2 text-xs font-semibold text-stone-500 mb-2">
+        <a routerLink="/vendor/products" class="hover:text-emerald-800 transition-colors">← Danh sách sản phẩm</a>
+        <span>/</span>
+        <span class="text-emerald-950 font-bold">
+          {{ isEditMode() ? 'Cập nhật thông tin nông sản' : 'Đăng bán nông sản mới' }}
+        </span>
+      </nav>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
+        {{ isEditMode() ? 'Chỉnh Sửa Nông Sản: ' + form.name : 'Đăng Bán Nông Sản Mới' }}
+      </h1>
+      <p class="text-xs text-stone-500 mt-1">
+        Cấu hình thông tin quy cách đóng gói, giá sỉ theo bậc và lượng hàng sẵn sàng giao.
+      </p>
+    </div>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" class="space-y-6 text-xs">
+    
+    <!-- 1. General Info & Image (Fix VND-01) -->
+    <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 sm:p-8 shadow-xs space-y-5">
+      <h3 class="text-sm font-extrabold text-[#08492d] pb-2 border-b border-[#edf1ea]">
+        1. Thông tin chung & Nhận diện sản phẩm
+      </h3>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="sm:col-span-2">
+          <label class="block font-bold text-stone-700 mb-1">
+            Tên nông sản <span class="text-rose-500">*</span>
+          </label>
+          <input 
+            type="text" 
+            [(ngModel)]="form.name" 
+            name="name" 
+            placeholder="VD: Cà chua bi đỏ Lạc Dương" 
+            class="w-full p-3 rounded-xl border border-[#bbd2c2] font-bold text-sm text-[#08492d] focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          />
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">Mã SKU nội bộ</label>
+          <input 
+            type="text" 
+            [(ngModel)]="form.sku" 
+            name="sku" 
+            placeholder="VD: SKU-DALAT-TOM-003" 
+            class="w-full p-2.5 rounded-xl border border-[#bbd2c2] bg-[#fbfaf6] font-mono"
+          />
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">Nhóm hàng nông sản</label>
+          <select 
+            [(ngModel)]="form.category" 
+            name="category" 
+            class="w-full p-2.5 rounded-xl border border-[#bbd2c2] bg-white font-semibold"
+          >
+            @for (cat of categories; track cat) {
+              <option [value]="cat">{{ cat }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">Đơn vị đo lường</label>
+          <select 
+            [(ngModel)]="form.unit" 
+            name="unit" 
+            class="w-full p-2.5 rounded-xl border border-[#bbd2c2] bg-white font-semibold"
+          >
+            @for (u of units; track u) {
+              <option [value]="u">{{ u }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">Nơi trồng / Thu hoạch</label>
+          <input 
+            type="text" 
+            [(ngModel)]="form.origin" 
+            name="origin" 
+            class="w-full p-2.5 rounded-xl border border-[#bbd2c2]"
+          />
+        </div>
+
+        <div class="sm:col-span-2">
+          <label class="block font-bold text-stone-700 mb-1">Tiêu chuẩn / Chứng nhận chất lượng</label>
+          <input 
+            type="text" 
+            [(ngModel)]="form.certificationName" 
+            name="certificationName" 
+            placeholder="VD: VietGAP số 2026/LD-TOM-088, GLOBALG.A.P." 
+            class="w-full p-2.5 rounded-xl border border-[#bbd2c2]"
+          />
+        </div>
+
+        <!-- Product Image Preview (Fix VND-01: Displays existing photo, no mandatory re-upload error) -->
+        <div class="sm:col-span-2 p-4 bg-[#fbfaf6] rounded-2xl border border-[#dce9e0] space-y-3">
+          <span class="block font-bold text-stone-700">Hình ảnh sản phẩm đại diện</span>
+          
+          <div class="flex items-center gap-4">
+            @if (form.featuredImage) {
+              <img [src]="form.featuredImage" alt="Ảnh sản phẩm" class="w-20 h-20 rounded-xl object-cover border border-[#bbd2c2] shadow-xs" />
+            }
+            <div class="space-y-1">
+              <p class="text-xs text-stone-600 font-medium">
+                {{ isEditMode() ? 'Ảnh sản phẩm hiện tại đã được tải lên.' : 'Sử dụng ảnh nông sản sạch chuẩn VietGAP.' }}
+              </p>
+              <span class="text-[11px] text-stone-400 block">
+                (Đổi giá sản phẩm không bắt buộc phải tải lại ảnh mới - Fix VND-01)
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 2. Tier Pricing Matrix Configuration -->
+    <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 sm:p-8 shadow-xs space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b border-[#edf1ea]">
+        <div>
+          <h3 class="text-sm font-extrabold text-[#08492d]">2. Cấu hình bảng giá sỉ theo số lượng (Tier Pricing)</h3>
+          <p class="text-stone-500 text-[11px]">Khuyến khích Người mua đặt đơn số lượng lớn với mức chiết khấu hấp dẫn.</p>
+        </div>
+        <button
+          type="button"
+          (click)="addTier()"
+          class="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-[#0d623b] font-bold border border-emerald-200 cursor-pointer"
+        >
+          + Thêm bậc giá
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        @for (tier of priceTiers(); track $index) {
+          <div class="flex flex-wrap sm:flex-nowrap items-center gap-3 p-3 rounded-2xl bg-[#fbfaf6] border border-[#bbd2c2]">
+            <span class="font-bold text-stone-500 w-16">Bậc {{ $index + 1 }}:</span>
+            
+            <div class="flex items-center gap-1.5 flex-1 min-w-[140px]">
+              <span class="text-stone-500">Từ</span>
+              <input 
+                type="number" 
+                [(ngModel)]="tier.minQty" 
+                [name]="'minQty_' + $index" 
+                class="w-20 p-1.5 bg-white rounded-lg border border-[#bbd2c2] text-center font-bold"
+              />
+              <span class="text-stone-500">{{ form.unit }}</span>
+            </div>
+
+            <div class="flex items-center gap-1.5 flex-1 min-w-[140px]">
+              <span class="text-stone-500">Đến</span>
+              <input 
+                type="number" 
+                [(ngModel)]="tier.maxQty" 
+                [name]="'maxQty_' + $index" 
+                placeholder="Không giới hạn" 
+                class="w-28 p-1.5 bg-white rounded-lg border border-[#bbd2c2] text-center font-bold placeholder:text-stone-300"
+              />
+              <span class="text-stone-500">{{ form.unit }}</span>
+            </div>
+
+            <div class="flex items-center gap-1.5 flex-1 min-w-[160px]">
+              <span class="text-stone-500 font-bold">Đơn giá:</span>
+              <input 
+                type="number" 
+                [(ngModel)]="tier.unitPrice" 
+                [name]="'price_' + $index" 
+                class="w-24 p-1.5 bg-white rounded-lg border border-[#bbd2c2] text-right font-bold text-[#0d623b]"
+              />
+              <span class="font-bold text-stone-700">₫</span>
+            </div>
+
+            @if (priceTiers().length > 1) {
+              <button
+                type="button"
+                (click)="removeTier($index)"
+                class="p-1.5 text-stone-400 hover:text-rose-600 rounded-lg cursor-pointer"
+                title="Xóa bậc này"
+              >
+                ✕
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- 3. Stock & MOQ -->
+    <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 sm:p-8 shadow-xs space-y-4">
+      <h3 class="text-sm font-extrabold text-[#08492d] pb-2 border-b border-[#edf1ea]">
+        3. Số lượng tối thiểu (MOQ) & Tồn kho
+      </h3>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">
+            Số lượng đặt tối thiểu (MOQ)
+          </label>
+          <input 
+            type="number" 
+            [(ngModel)]="form.minOrderQty" 
+            name="minOrderQty" 
+            class="w-full p-2.5 rounded-xl border border-[#bbd2c2] font-bold"
+          />
+          <span class="text-[11px] text-stone-400 mt-0.5 block">Đơn hàng của Người mua phải đạt ít nhất mức này</span>
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">
+            Tồn kho vật lý ban đầu (kg)
+          </label>
+          <input 
+            type="number" 
+            [(ngModel)]="form.onHandQty" 
+            name="onHandQty" 
+            class="w-full p-2.5 rounded-xl border border-[#bbd2c2] font-bold text-emerald-950"
+          />
+          <span class="text-[11px] text-stone-400 mt-0.5 block">Có thể ghi nhận thêm sau qua phiếu nhập kho</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit CTA (Fix VND-01) -->
+    <div class="flex items-center justify-end gap-3 pt-3">
+      <a
+        routerLink="/vendor/products"
+        class="px-5 py-3 rounded-xl border border-[#bbd2c2] font-bold text-stone-700 hover:bg-stone-50"
+      >
+        Hủy bỏ
+      </a>
+
+      <button
+        type="submit"
+        class="px-8 py-3 rounded-xl bg-gradient-to-r from-[#0d623b] to-[#08492d] hover:from-[#0b5432] hover:to-[#063823] text-white font-bold shadow-md hover:shadow-lg transition-all cursor-pointer"
+      >
+        {{ isEditMode() ? 'Lưu thay đổi sản phẩm' : 'Đăng bán sản phẩm' }}
+      </button>
+    </div>
+
+  </form>
+
+</div>
+

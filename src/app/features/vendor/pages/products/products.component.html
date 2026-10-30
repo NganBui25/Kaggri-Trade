@@ -1,0 +1,230 @@
+<div class="max-w-7xl mx-auto space-y-6">
+  
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
+        Sản Phẩm Của Tôi
+      </h1>
+      <p class="text-xs text-stone-500 mt-1">
+        Quản lý danh mục nông sản đang bán, cấu hình bảng giá sỉ theo bậc và trạng thái hiển thị trên sàn.
+      </p>
+    </div>
+
+    <a
+      routerLink="/vendor/products/new"
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#0d623b] to-[#08492d] hover:from-[#0b5432] hover:to-[#063823] text-white text-xs font-bold shadow-md transition-all cursor-pointer w-fit"
+    >
+      <span>+ Đăng bán nông sản mới</span>
+    </a>
+  </div>
+
+  <!-- Filters & Search Bar -->
+  <div class="bg-white rounded-2xl border border-[#dce9e0] p-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs shadow-xs">
+    
+    <!-- Search Query -->
+    <div class="relative w-full sm:w-80">
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        placeholder="Tìm theo tên sản phẩm, mã SKU..."
+        class="w-full pl-9 pr-4 py-2 rounded-xl border border-[#bbd2c2] bg-[#fbfaf6] text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
+      />
+      <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-stone-400">🔍</span>
+    </div>
+
+    <!-- Status Filter Pills -->
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        (click)="filterStatus.set('all')"
+        [class.bg-[#0d623b]]="filterStatus() === 'all'"
+        [class.text-white]="filterStatus() === 'all'"
+        [class.bg-[#fbfaf6]]="filterStatus() !== 'all'"
+        [class.text-stone-700]="filterStatus() !== 'all'"
+        class="px-3 py-1.5 rounded-lg border border-[#bbd2c2] font-bold cursor-pointer"
+      >
+        Tất cả ({{ vendorData.products().length }})
+      </button>
+
+      <button
+        type="button"
+        (click)="filterStatus.set('active')"
+        [class.bg-[#0d623b]]="filterStatus() === 'active'"
+        [class.text-white]="filterStatus() === 'active'"
+        [class.bg-[#fbfaf6]]="filterStatus() !== 'active'"
+        [class.text-stone-700]="filterStatus() !== 'active'"
+        class="px-3 py-1.5 rounded-lg border border-[#bbd2c2] font-bold cursor-pointer"
+      >
+        Đang bán
+      </button>
+
+      <button
+        type="button"
+        (click)="filterStatus.set('hidden')"
+        [class.bg-[#0d623b]]="filterStatus() === 'hidden'"
+        [class.text-white]="filterStatus() === 'hidden'"
+        [class.bg-[#fbfaf6]]="filterStatus() !== 'hidden'"
+        [class.text-stone-700]="filterStatus() !== 'hidden'"
+        class="px-3 py-1.5 rounded-lg border border-[#bbd2c2] font-bold cursor-pointer"
+      >
+        Đang ẩn
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Products Table -->
+  <div class="bg-white rounded-3xl border border-[#dce9e0] overflow-hidden shadow-xs">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse text-xs">
+        <thead>
+          <tr class="bg-[#fbfaf6] border-b border-[#edf1ea] text-stone-400 uppercase font-bold text-[10px] tracking-wider">
+            <th class="py-3.5 px-5">Sản phẩm nông sản</th>
+            <th class="py-3.5 px-4">Giá sỉ cơ bản</th>
+            <th class="py-3.5 px-4">Tồn vật lý</th>
+            <th class="py-3.5 px-4">Đã giữ cho đơn</th>
+            <th class="py-3.5 px-4">Có thể bán</th>
+            <th class="py-3.5 px-4">Trạng thái</th>
+            <th class="py-3.5 px-5 text-right">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#edf1ea]">
+          @for (p of filteredProducts(); track p.id) {
+            <tr class="hover:bg-stone-50/60 transition-colors">
+              
+              <!-- Product Image & Name -->
+              <td class="py-4 px-5">
+                <div class="flex items-center gap-3">
+                  <img [src]="p.featuredImage" [alt]="p.name" class="w-12 h-12 rounded-xl object-cover border border-emerald-100 flex-shrink-0" />
+                  <div>
+                    <strong class="font-extrabold text-stone-900 block">{{ p.name }}</strong>
+                    <span class="text-[11px] text-stone-400 font-mono">{{ p.sku }} • {{ p.category }}</span>
+                    <span class="text-[10px] text-emerald-800 font-semibold block mt-0.5">🌿 {{ p.certificationName }}</span>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Base Price -->
+              <td class="py-4 px-4 font-bold text-[#0d623b]">
+                {{ p.basePrice | price }} / {{ p.unit }}
+                <span class="text-[10px] text-stone-400 font-normal block">{{ p.priceTiers.length }} bậc giá</span>
+              </td>
+
+              <!-- Stock: On Hand -->
+              <td class="py-4 px-4 font-medium text-stone-700">
+                {{ p.onHandQty | numberDot: p.unit }}
+              </td>
+
+              <!-- Stock: Reserved (Fix VND-07) -->
+              <td class="py-4 px-4 font-medium text-amber-700">
+                {{ p.reservedQty | numberDot: p.unit }}
+              </td>
+
+              <!-- Stock: Available -->
+              <td class="py-4 px-4 font-extrabold" [class.text-rose-600]="p.availableQty === 0" [class.text-emerald-950]="p.availableQty > 0">
+                {{ p.availableQty | numberDot: p.unit }}
+              </td>
+
+              <!-- Status Toggle -->
+              <td class="py-4 px-4">
+                <button
+                  type="button"
+                  (click)="toggleStatus(p.id)"
+                  [class.bg-emerald-100]="p.status === 'active'"
+                  [class.text-emerald-800]="p.status === 'active'"
+                  [class.bg-stone-100]="p.status === 'hidden'"
+                  [class.text-stone-600]="p.status === 'hidden'"
+                  class="px-2.5 py-1 rounded-full text-[11px] font-bold cursor-pointer hover:opacity-80 transition-opacity"
+                  [title]="p.status === 'active' ? 'Bấm để ẩn sản phẩm' : 'Bấm để mở bán'"
+                >
+                  {{ p.status === 'active' ? '✓ Đang bán' : '— Đang ẩn' }}
+                </button>
+              </td>
+
+              <!-- Actions -->
+              <td class="py-4 px-5 text-right space-x-2 whitespace-nowrap">
+                <a
+                  [routerLink]="['/vendor/products/edit', p.id]"
+                  class="px-3 py-1.5 rounded-lg border border-[#bbd2c2] hover:bg-emerald-50 text-stone-700 font-bold transition-all"
+                >
+                  Sửa
+                </a>
+                <button
+                  type="button"
+                  (click)="openDeleteModal(p)"
+                  class="px-3 py-1.5 rounded-lg border border-rose-200 hover:bg-rose-50 text-rose-600 font-bold transition-all cursor-pointer"
+                >
+                  Xóa
+                </button>
+              </td>
+
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Delete Modal (Fix VND-19: Clear, non-confusing action) -->
+  @if (selectedProductToDelete(); as item) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fadeIn">
+      <div class="bg-white rounded-3xl border border-[#dce9e0] max-w-md w-full p-6 shadow-2xl space-y-4">
+        
+        <div class="flex items-center justify-between pb-3 border-b border-[#edf1ea]">
+          <h4 class="text-sm font-extrabold text-[#08492d]">Xác nhận xóa nông sản</h4>
+          <button (click)="closeDeleteModal()" class="text-stone-400 hover:text-stone-700 text-lg cursor-pointer">✕</button>
+        </div>
+
+        @if (deleteErrorMessage()) {
+          <!-- Notice: cannot delete if inventory exists (Fix VND-19: Only one button 'Đã hiểu') -->
+          <div class="space-y-4">
+            <div class="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs space-y-2">
+              <span class="text-base font-bold flex items-center gap-1.5">
+                <span>⚠️</span> Không thể xóa sản phẩm
+              </span>
+              <p class="leading-relaxed">{{ deleteErrorMessage() }}</p>
+            </div>
+
+            <div class="flex justify-end pt-2">
+              <button
+                type="button"
+                (click)="closeDeleteModal()"
+                class="px-5 py-2.5 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold cursor-pointer shadow-xs"
+              >
+                Đã hiểu
+              </button>
+            </div>
+          </div>
+        } @else {
+          <!-- Confirmation to delete -->
+          <div class="space-y-4">
+            <p class="text-xs text-stone-600">
+              Bạn có chắc chắn muốn xóa sản phẩm <strong>"{{ item.name }}"</strong> khỏi danh mục bán hàng? Hành động này không thể hoàn tác.
+            </p>
+
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#edf1ea]">
+              <button
+                type="button"
+                (click)="closeDeleteModal()"
+                class="px-4 py-2 rounded-xl border border-[#bbd2c2] text-xs font-semibold text-stone-700 hover:bg-stone-50 cursor-pointer"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                (click)="confirmDelete()"
+                class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold cursor-pointer shadow-xs"
+              >
+                Xóa vĩnh viễn
+              </button>
+            </div>
+          </div>
+        }
+
+      </div>
+    </div>
+  }
+
+</div>
+

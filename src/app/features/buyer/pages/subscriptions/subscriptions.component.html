@@ -1,0 +1,91 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+  
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
+        Đơn Hàng Giao Định Kỳ (Subscription)
+      </h1>
+      <p class="text-xs text-stone-500 mt-1">
+        Cố định nguồn cung ứng nông sản dài hạn cho chuỗi nhà hàng, khách sạn và siêu thị đối tác.
+      </p>
+    </div>
+
+    <a
+      routerLink="/buyer/catalog"
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold transition-all shadow-md w-fit"
+    >
+      <span>+ Đăng ký lịch giao mới</span>
+    </a>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    @for (plan of subscriptions; track plan.id) {
+      <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs space-y-4">
+        
+        <div class="flex items-center justify-between pb-3 border-b border-[#edf1ea]">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-bold text-xs">
+              {{ plan.vendorAvatar }}
+            </div>
+            <div>
+              <strong class="text-xs font-extrabold text-[#08492d]">{{ plan.vendorName }}</strong>
+              <span class="text-[11px] text-stone-400 block font-mono">{{ plan.id }}</span>
+            </div>
+          </div>
+
+          <span 
+            [class.bg-emerald-100]="plan.status === 'active'"
+            [class.text-emerald-800]="plan.status === 'active'"
+            [class.bg-stone-100]="plan.status === 'paused'"
+            [class.text-stone-600]="plan.status === 'paused'"
+            class="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase"
+          >
+            {{ plan.status === 'active' ? 'Đang hoạt động' : 'Tạm dừng' }}
+          </span>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <div class="flex justify-between">
+            <span class="text-stone-500">Mặt hàng cung ứng:</span>
+            <strong class="text-stone-900 font-bold">{{ plan.productName }}</strong>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-stone-500">Chu kỳ giao hàng:</span>
+            <span class="font-semibold text-emerald-800">📅 {{ plan.frequency }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-stone-500">Khối lượng mỗi kỳ:</span>
+            <strong class="text-stone-900">{{ plan.quantityPerDelivery | numberDot }} {{ plan.unit }}</strong>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-stone-500">Đơn giá khóa kỳ hạn:</span>
+            <strong class="text-[#0d623b] font-bold">{{ plan.unitPrice | price }} / {{ plan.unit }}</strong>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-stone-500">Khung giờ giao kho:</span>
+            <span class="font-medium">⏰ {{ plan.deliveryWindow }}</span>
+          </div>
+          <div class="flex justify-between pt-2 border-t border-[#edf1ea] font-bold">
+            <span class="text-emerald-950">Kỳ giao tiếp theo:</span>
+            <span class="text-emerald-700">🚚 {{ plan.nextDeliveryDate }}</span>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-[#edf1ea] flex items-center justify-between text-xs">
+          <button
+            type="button"
+            (click)="toggleStatus(plan)"
+            class="font-semibold text-stone-600 hover:text-stone-900 underline cursor-pointer"
+          >
+            {{ plan.status === 'active' ? 'Tạm dừng chu kỳ này' : 'Kích hoạt lại' }}
+          </button>
+
+          <span class="text-[11px] text-stone-400">Tự động sinh Draft Order trước 2 ngày</span>
+        </div>
+
+      </div>
+    }
+  </div>
+
+</div>
+

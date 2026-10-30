@@ -1,0 +1,141 @@
+<div class="max-w-7xl mx-auto space-y-6">
+  
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
+        Xử Lý Khiếu Nại Nông Sản (Dispute Resolution)
+      </h1>
+      <p class="text-xs text-stone-500 mt-1">
+        Xem xét bằng chứng biên bản lúc giao, phản hồi yêu cầu bồi hoàn và giải quyết tranh chấp với Người mua.
+      </p>
+    </div>
+  </div>
+
+  <div class="space-y-4">
+    @for (d of vendorData.disputes(); track d.id) {
+      <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs space-y-5 text-xs">
+        
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#edf1ea]">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">⚖️</span>
+            <div>
+              <strong class="text-sm font-extrabold text-[#08492d]">{{ d.id }}</strong>
+              <p class="text-stone-400 text-[11px]">Đơn hàng: {{ d.orderId }} • Mã đơn Người bán: {{ d.subOrderId }} • Ngày gửi: {{ d.createdAt }}</p>
+            </div>
+          </div>
+
+          <span 
+            [class.bg-amber-100]="d.status === 'pending_vendor'"
+            [class.text-amber-800]="d.status === 'pending_vendor'"
+            [class.bg-emerald-100]="d.status === 'vendor_replied'"
+            [class.text-emerald-800]="d.status === 'vendor_replied'"
+            class="px-3 py-1 rounded-full font-bold uppercase text-[10px] w-fit"
+          >
+            {{ d.statusLabel }}
+          </span>
+        </div>
+
+        <!-- Issue details & Deadline (Fix VND-17) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <span class="text-stone-400 font-medium block">Người mua khiếu nại:</span>
+            <strong class="text-stone-900 font-bold block mt-0.5">{{ d.buyerCompany }}</strong>
+            <p class="text-rose-600 font-bold mt-1">
+              {{ d.productName }} • Bị ảnh hưởng: {{ d.affectedQty }} {{ d.unit }}
+            </p>
+          </div>
+
+          <div>
+            <span class="text-stone-400 font-medium block">Mô tả sự cố & Đề xuất giải quyết:</span>
+            <p class="text-stone-800 font-semibold mt-0.5">{{ d.issueDescription }}</p>
+            <p class="text-emerald-800 font-bold mt-1">Yêu cầu: {{ d.requestedSolution }}</p>
+          </div>
+
+          <!-- Deadline (Fix VND-17) -->
+          <div>
+            <span class="text-stone-400 font-medium block">Hạn Người bán phản hồi (Fix VND-17):</span>
+            <div class="p-2 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 font-bold mt-1 inline-block">
+              ⏰ {{ d.responseDeadline }}
+            </div>
+            <span class="text-[11px] text-stone-500 block mt-1">Nếu quá hạn, Admin sẽ tự động phân xử theo chứng từ bên mua.</span>
+          </div>
+        </div>
+
+        <!-- Proof Images (Fix VND-17: Actual viewable images, not empty boxes) -->
+        <div class="p-4 bg-[#fbfaf6] rounded-2xl border border-[#dce9e0] space-y-2">
+          <span class="font-bold text-stone-700 block">Hình ảnh bằng chứng bên mua đã tải lên (Fix VND-17):</span>
+          <div class="flex items-center gap-3">
+            @for (img of d.proofImages; track img) {
+              <a [href]="img" target="_blank" class="block group relative overflow-hidden rounded-xl border border-[#bbd2c2]">
+                <img [src]="img" alt="Bằng chứng khiếu nại" class="w-24 h-24 object-cover group-hover:scale-105 transition-transform" />
+                <span class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] font-bold">
+                  Phóng to 🔍
+                </span>
+              </a>
+            }
+          </div>
+        </div>
+
+        <!-- Vendor Reply Status / Action (Fix VND-17) -->
+        @if (d.vendorReply) {
+          <div class="p-4 bg-emerald-50/70 rounded-2xl border border-emerald-200 space-y-1">
+            <span class="font-bold text-emerald-950 flex items-center gap-1.5">
+              <span>✓</span> Phản hồi của trang trại (Gửi lúc: {{ d.vendorRepliedAt }}):
+            </span>
+            <p class="text-stone-700 leading-relaxed">{{ d.vendorReply }}</p>
+            <p class="text-[11px] text-emerald-800 font-semibold pt-1">
+              Khoản bồi hoàn {{ d.claimAmount | price }} đã được đồng bộ khấu trừ vào số dư đối soát kỳ này (Fix VND-17).
+            </p>
+          </div>
+        } @else {
+          <div class="flex items-center justify-end gap-3 pt-2">
+            <button
+              type="button"
+              (click)="openReplyModal(d)"
+              class="px-5 py-2.5 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5"
+            >
+              <span>Phản hồi khiếu nại & Thống nhất bồi hoàn →</span>
+            </button>
+          </div>
+        }
+
+      </div>
+    }
+  </div>
+
+  <!-- Reply Modal (Fix VND-17) -->
+  @if (replyModalOpen()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fadeIn">
+      <div class="bg-white rounded-3xl border border-[#dce9e0] max-w-md w-full p-6 shadow-2xl space-y-4 text-xs">
+        
+        <div class="flex items-center justify-between pb-2 border-b border-[#edf1ea]">
+          <h4 class="text-sm font-extrabold text-[#08492d]">Gửi phản hồi khiếu nại</h4>
+          <button (click)="closeReplyModal()" class="text-stone-400 text-lg">✕</button>
+        </div>
+
+        <div class="space-y-3">
+          <label class="inline-flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" [(ngModel)]="acceptRefund" class="w-4 h-4 text-emerald-700 accent-[#0d623b]" />
+            <span class="font-bold text-stone-800">Đồng ý bồi hoàn {{ selectedDispute()?.claimAmount | price }} (Trừ vào đối soát)</span>
+          </label>
+
+          <div>
+            <label class="block font-bold text-stone-700 mb-1">Nội dung giải thích / phản hồi của Người bán</label>
+            <textarea [(ngModel)]="replyMessage" rows="3" class="w-full p-2.5 rounded-xl border border-[#bbd2c2] bg-[#fbfaf6]"></textarea>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#edf1ea]">
+          <button type="button" (click)="closeReplyModal()" class="px-4 py-2 rounded-xl border border-[#bbd2c2]">Hủy</button>
+          <button type="button" (click)="submitReply()" class="px-5 py-2 rounded-xl bg-[#0d623b] text-white font-bold cursor-pointer">
+            Gửi phản hồi
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+
+</div>
+

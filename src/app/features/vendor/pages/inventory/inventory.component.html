@@ -1,0 +1,206 @@
+<div class="max-w-7xl mx-auto space-y-8">
+  
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
+        Quản Lý Tồn Kho & Biến Động Nông Sản
+      </h1>
+      <p class="text-xs text-stone-500 mt-1">
+        Theo dõi chính xác 3 chỉ số: Tồn vật lý (On-hand), Lượng đã giữ (Reserved) và Sẵn sàng bán (Available).
+      </p>
+    </div>
+
+    <!-- Quick Inbound Action Button (Fix VND-15) -->
+    <button
+      type="button"
+      (click)="openInboundModal()"
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#0d623b] to-[#08492d] hover:from-[#0b5432] hover:to-[#063823] text-white text-xs font-bold shadow-md transition-all cursor-pointer w-fit"
+    >
+      <span>+ Ghi nhận nhập kho thu hoạch</span>
+    </button>
+  </div>
+
+  <!-- 3 Inventory Totals Breakdown (Fix VND-07) -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 text-xs">
+    
+    <!-- 1. On Hand -->
+    <div class="p-5 bg-white rounded-3xl border border-[#dce9e0] shadow-xs space-y-2">
+      <span class="text-stone-400 font-bold uppercase tracking-wider block">Tồn kho vật lý (On-hand)</span>
+      <strong class="text-2xl font-black text-stone-900 block">3.510 kg</strong>
+      <p class="text-stone-500 text-[11px]">Tổng khối lượng nông sản thực tế đang nằm trong kho bảo quản.</p>
+    </div>
+
+    <!-- 2. Reserved (Fix VND-07) -->
+    <div class="p-5 bg-white rounded-3xl border border-[#dce9e0] shadow-xs space-y-2">
+      <span class="text-amber-700 font-bold uppercase tracking-wider block">Đã cam kết giữ (Reserved)</span>
+      <strong class="text-2xl font-black text-amber-700 block">350 kg</strong>
+      <p class="text-stone-500 text-[11px]">Đã giữ cho các đơn hàng đã xác nhận, không thể bán trùng.</p>
+    </div>
+
+    <!-- 3. Available -->
+    <div class="p-5 bg-white rounded-3xl border border-[#dce9e0] shadow-xs space-y-2">
+      <span class="text-emerald-800 font-bold uppercase tracking-wider block">Sẵn sàng bán (Available)</span>
+      <strong class="text-2xl font-black text-[#0d623b] block">3.160 kg</strong>
+      <p class="text-stone-500 text-[11px]">Hiển thị công khai cho Người mua đặt mua trên sàn.</p>
+    </div>
+
+  </div>
+
+  <!-- Product Stock Table -->
+  <div class="bg-white rounded-3xl border border-[#dce9e0] overflow-hidden shadow-xs space-y-4 p-6">
+    <h3 class="text-sm font-extrabold text-[#08492d]">
+      Tồn kho chi tiết theo từng loại nông sản
+    </h3>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse text-xs">
+        <thead>
+          <tr class="bg-[#fbfaf6] border-b border-[#edf1ea] text-stone-400 uppercase font-bold text-[10px] tracking-wider">
+            <th class="py-3 px-4">Nông sản</th>
+            <th class="py-3 px-4">Đơn vị</th>
+            <th class="py-3 px-4">Tồn vật lý</th>
+            <th class="py-3 px-4">Đã giữ cho đơn (Fix VND-07)</th>
+            <th class="py-3 px-4">Khả dụng bán</th>
+            <th class="py-3 px-4">Trạng thái</th>
+            <th class="py-3 px-4 text-right">Nhập thêm</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#edf1ea]">
+          @for (p of vendorData.products(); track p.id) {
+            <tr class="hover:bg-stone-50/60">
+              <td class="py-3 px-4 font-bold text-stone-900">
+                {{ p.name }}
+                <span class="text-[11px] text-stone-400 font-mono block">{{ p.sku }}</span>
+              </td>
+              <td class="py-3 px-4 text-stone-600">{{ p.unit }}</td>
+              <td class="py-3 px-4 font-bold">{{ p.onHandQty | numberDot }}</td>
+              <td class="py-3 px-4 font-bold text-amber-700">{{ p.reservedQty | numberDot }}</td>
+              <td class="py-3 px-4 font-extrabold text-[#0d623b]">{{ p.availableQty | numberDot }}</td>
+              <td class="py-3 px-4">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold" [class.bg-emerald-100]="p.status === 'active'" [class.text-emerald-800]="p.status === 'active'" [class.bg-stone-100]="p.status === 'hidden'">
+                  {{ p.status === 'active' ? 'Đang mở bán' : 'Ẩn' }}
+                </span>
+              </td>
+              <td class="py-3 px-4 text-right">
+                <button
+                  type="button"
+                  (click)="selectedProductId.set(p.id); inboundModalOpen.set(true)"
+                  class="px-2.5 py-1 rounded-lg border border-[#bbd2c2] hover:bg-emerald-50 text-[#0d623b] font-bold cursor-pointer"
+                >
+                  + Nhập
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Historical Movements Table (Fix VND-15: Complete Inventory Audit Trail) -->
+  <div class="bg-white rounded-3xl border border-[#dce9e0] overflow-hidden shadow-xs space-y-4 p-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-sm font-extrabold text-[#08492d]">
+          Lịch sử biến động tồn kho (Fix VND-15)
+        </h3>
+        <p class="text-xs text-stone-500">Mọi biến động nhập thu hoạch, xuất đơn hàng và điều chỉnh đều được ghi vết kèm chứng từ.</p>
+      </div>
+      <span class="text-xs font-bold text-stone-500">{{ vendorData.inventoryMovements().length }} bản ghi</span>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse text-xs">
+        <thead>
+          <tr class="bg-[#fbfaf6] border-b border-[#edf1ea] text-stone-400 uppercase font-bold text-[10px] tracking-wider">
+            <th class="py-3 px-4">Thời gian</th>
+            <th class="py-3 px-4">Mặt hàng</th>
+            <th class="py-3 px-4">Loại biến động</th>
+            <th class="py-3 px-4">Biến động (kg)</th>
+            <th class="py-3 px-4">Tồn sau giao dịch</th>
+            <th class="py-3 px-4">Chứng từ / Ghi chú</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#edf1ea]">
+          @for (m of vendorData.inventoryMovements(); track m.id) {
+            <tr class="hover:bg-stone-50/60">
+              <td class="py-3 px-4 text-stone-500 font-mono text-[11px]">{{ m.timestamp }}</td>
+              <td class="py-3 px-4 font-bold text-stone-900">{{ m.productName }}</td>
+              <td class="py-3 px-4">
+                <span 
+                  [class.bg-emerald-100]="m.type === 'inbound'"
+                  [class.text-emerald-800]="m.type === 'inbound'"
+                  [class.bg-blue-100]="m.type === 'outbound_order'"
+                  [class.text-blue-800]="m.type === 'outbound_order'"
+                  class="px-2 py-0.5 rounded text-[10px] font-bold"
+                >
+                  {{ m.typeLabel }}
+                </span>
+              </td>
+              <td class="py-3 px-4 font-extrabold" [class.text-emerald-700]="m.quantityChange > 0" [class.text-rose-600]="m.quantityChange < 0">
+                {{ m.quantityChange > 0 ? '+' : '' }}{{ m.quantityChange | numberDot }}
+              </td>
+              <td class="py-3 px-4 font-bold text-stone-800">{{ m.balanceAfter | numberDot }} kg</td>
+              <td class="py-3 px-4 text-stone-600">
+                <span class="font-semibold text-stone-900">{{ m.referenceDoc }}</span>
+                <span class="text-[11px] text-stone-400 block">{{ m.note }}</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Inbound Stock Modal (Fix VND-15) -->
+  @if (inboundModalOpen()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fadeIn">
+      <div class="bg-white rounded-3xl border border-[#dce9e0] max-w-md w-full p-6 shadow-2xl space-y-4 text-xs">
+        
+        <div class="flex items-center justify-between pb-2 border-b border-[#edf1ea]">
+          <h4 class="text-sm font-extrabold text-[#08492d]">Ghi nhận nhập kho thu hoạch</h4>
+          <button (click)="closeInboundModal()" class="text-stone-400 text-lg">✕</button>
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">Chọn sản phẩm nhập kho</label>
+          <select [(ngModel)]="selectedProductId" class="w-full p-2.5 rounded-xl border border-[#bbd2c2] bg-white font-semibold">
+            @for (p of vendorData.products(); track p.id) {
+              <option [value]="p.id">{{ p.name }} (Hiện có: {{ p.onHandQty }} {{ p.unit }})</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">Khối lượng nhập thêm (kg)</label>
+          <input 
+            type="number" 
+            [(ngModel)]="inboundQty" 
+            class="w-full p-2.5 rounded-xl border border-[#bbd2c2] font-bold text-base text-[#0d623b]"
+          />
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">Ghi chú nguồn thu hoạch / Số lô</label>
+          <input 
+            type="text" 
+            [(ngModel)]="inboundNote" 
+            placeholder="VD: Thu hoạch đợt sáng sớm luống A1-A4..."
+            class="w-full p-2.5 rounded-xl border border-[#bbd2c2]"
+          />
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#edf1ea]">
+          <button type="button" (click)="closeInboundModal()" class="px-4 py-2 rounded-xl border border-[#bbd2c2]">Hủy</button>
+          <button type="button" (click)="submitInbound()" class="px-5 py-2 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white font-bold cursor-pointer">
+            Lưu phiếu nhập
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+
+</div>
+

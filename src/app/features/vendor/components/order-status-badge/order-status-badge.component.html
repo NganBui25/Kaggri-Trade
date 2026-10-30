@@ -1,0 +1,8 @@
+<span [class]="badgeConfig().classes"
+  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border shadow-2xs">
+  <span [class.bg-amber-500]="status() === 'pending_confirmation'" [class.bg-sky-500]="status() === 'confirmed'"
+    [class.bg-blue-500]="status() === 'preparing'" [class.bg-indigo-500]="status() === 'shipped'"
+    [class.bg-emerald-500]="status() === 'delivered'" [class.bg-rose-500]="status() === 'rejected'"
+    class="w-1.5 h-1.5 rounded-full"></span>
+  {{ badgeConfig().label }}
+</span>

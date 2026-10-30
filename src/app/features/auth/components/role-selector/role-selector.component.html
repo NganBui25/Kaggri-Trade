@@ -1,0 +1,52 @@
+<div class="space-y-2">
+  <label class="block text-xs font-bold uppercase tracking-wider text-emerald-950/70">
+    Chọn vai trò đăng nhập <span class="text-rose-500">*</span>
+  </label>
+  
+  <div class="grid grid-cols-3 gap-2 p-1.5 bg-emerald-50/70 border border-emerald-100 rounded-2xl">
+    @for (item of roles; track item.role) {
+      <button
+        type="button"
+        (click)="selectRole(item.role)"
+        [class.bg-white]="selectedRole() === item.role"
+        [class.shadow-md]="selectedRole() === item.role"
+        [class.border-emerald-600]="selectedRole() === item.role"
+        [class.text-emerald-900]="selectedRole() === item.role"
+        [class.text-stone-600]="selectedRole() !== item.role"
+        [class.hover:bg-emerald-100/50]="selectedRole() !== item.role"
+        class="relative flex flex-col items-center justify-center py-2.5 px-2 rounded-xl border border-transparent transition-all duration-200 text-center group cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+      >
+        <!-- Icon badge -->
+        <span 
+          class="text-xl mb-1 transform transition-transform duration-200 group-hover:scale-110"
+          [class.scale-110]="selectedRole() === item.role"
+        >
+          {{ item.icon }}
+        </span>
+
+        <!-- Title -->
+        <span class="text-xs sm:text-sm font-bold tracking-tight leading-tight">
+          {{ item.label }}
+        </span>
+
+        <!-- Small subtitle -->
+        <span 
+          class="text-[10px] hidden sm:block mt-0.5 font-medium transition-colors"
+          [class.text-emerald-700]="selectedRole() === item.role"
+          [class.text-stone-400]="selectedRole() !== item.role"
+        >
+          {{ item.role === 'buyer' ? 'Bên Mua' : item.role === 'vendor' ? 'Bên Bán' : 'Hệ Thống' }}
+        </span>
+
+        <!-- Active Indicator Dot -->
+        @if (selectedRole() === item.role) {
+          <span class="absolute -top-1 -right-1 flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-600"></span>
+          </span>
+        }
+      </button>
+    }
+  </div>
+</div>
+

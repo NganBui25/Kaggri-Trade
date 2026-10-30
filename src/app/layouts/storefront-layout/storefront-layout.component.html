@@ -1,0 +1,385 @@
+<div class="min-h-screen bg-[#fbfaf6] text-[#19392d] flex flex-col font-sans selection:bg-emerald-200 selection:text-emerald-950">
+  
+  <!-- Top Utility Bar -->
+  <div class="bg-[#08492d] text-emerald-100/90 text-xs py-2 px-4 border-b border-emerald-900/40">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <span class="inline-flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Sàn Nông Sản B2B – Kết nối trực tiếp Nông trại & Hợp tác xã</span>
+        </span>
+        <span class="hidden md:inline text-emerald-400">•</span>
+        <span class="hidden md:inline">Cam kết 100% hồ sơ VietGAP / GlobalGAP đã xác minh</span>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <span class="inline-flex items-center gap-1">
+          <span>📞 Hotline B2B:</span>
+          <strong class="text-white font-semibold">1900 6868</strong>
+        </span>
+        <span class="text-emerald-400">•</span>
+        <a routerLink="/vendor" class="hover:text-white transition-colors underline font-medium">Kênh Người bán</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Site Header -->
+  <header class="bg-white/95 backdrop-blur-md border-b border-[#edf1ea] sticky top-0 z-50 transition-all shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo (Fix BUY-07, BUY-39, BUY-40) -->
+      <a routerLink="/buyer/catalog" class="flex items-center gap-3 flex-shrink-0 group focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-xl p-1">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#0d623b] to-[#08492d] text-white flex items-center justify-center font-bold text-2xl shadow-md shadow-emerald-900/10 group-hover:scale-105 transition-transform">
+          🌱
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-1.5">
+            <span class="text-xl font-extrabold text-[#08492d] tracking-tight group-hover:text-emerald-700 transition-colors">
+              Kaggri-Trade
+            </span>
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 uppercase">
+              B2B
+            </span>
+          </div>
+          <span class="text-[11px] font-bold text-[#789285] uppercase tracking-widest">
+            Sàn Nông Sản Người Mua
+          </span>
+        </div>
+      </a>
+
+      <!-- Search Bar (Fix BUY-04: Fully interactive search input) -->
+      <div class="hidden md:flex flex-1 max-w-md mx-2">
+        <form (ngSubmit)="onSearch()" class="relative w-full">
+          <input
+            type="text"
+            [(ngModel)]="searchKeyword"
+            name="searchKeyword"
+            placeholder="Tìm bắp cải, cà rốt, xà lách, HTX Lạc Dương..."
+            class="w-full pl-10 pr-10 py-2.5 rounded-full border border-[#bbd2c2] bg-[#fbfaf6] text-sm text-[#19392d] focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all placeholder:text-stone-400"
+          />
+          <button 
+            type="submit"
+            class="absolute inset-y-0 right-0 pr-3 flex items-center text-emerald-700 hover:text-emerald-900 focus:outline-none cursor-pointer"
+            aria-label="Tìm kiếm"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </form>
+      </div>
+
+      <!-- Desktop Navigation Menu (Fix BUY-06, BUY-07, BUY-08) -->
+      <nav class="hidden lg:flex items-center gap-6 text-sm font-bold text-[#19392d]">
+        <a 
+          routerLink="/buyer/catalog" 
+          routerLinkActive="text-[#0d623b] underline underline-offset-8 decoration-2" 
+          class="hover:text-[#0d623b] transition-colors py-2"
+        >
+          Sàn Nông Sản
+        </a>
+        <a 
+          routerLink="/buyer/orders" 
+          routerLinkActive="text-[#0d623b] underline underline-offset-8 decoration-2" 
+          class="hover:text-[#0d623b] transition-colors py-2"
+        >
+          Đơn Mua
+        </a>
+        <a 
+          routerLink="/buyer/subscriptions" 
+          routerLinkActive="text-[#0d623b] underline underline-offset-8 decoration-2" 
+          class="hover:text-[#0d623b] transition-colors py-2"
+        >
+          Đơn Định Kỳ
+        </a>
+        <a 
+          routerLink="/buyer/dispute" 
+          routerLinkActive="text-[#0d623b] underline underline-offset-8 decoration-2" 
+          class="hover:text-[#0d623b] transition-colors py-2"
+        >
+          Khiếu Nại
+        </a>
+      </nav>
+
+      <!-- Right Header Actions (Bell, Cart, User Dropdown - Fix BUY-02, BUY-03) -->
+      <div class="flex items-center gap-3">
+        
+        <!-- Notifications Bell (Fix BUY-03) -->
+        <div class="relative">
+          <button
+            type="button"
+            (click)="toggleNotifications()"
+            class="relative w-10 h-10 rounded-xl border border-[#bbd2c2]/60 hover:border-emerald-600 bg-white hover:bg-emerald-50 flex items-center justify-center text-stone-700 hover:text-emerald-900 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            aria-label="Thông báo"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            @if (unreadNotificationCount() > 0) {
+              <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-4 w-4 bg-rose-500 text-[10px] font-bold text-white items-center justify-center">
+                  {{ unreadNotificationCount() }}
+                </span>
+              </span>
+            }
+          </button>
+
+          <!-- Notifications Dropdown Box -->
+          @if (isNotificationsOpen()) {
+            <div class="absolute right-0 mt-2 w-80 bg-white border border-[#dce9e0] rounded-2xl shadow-xl z-50 p-4 space-y-3 animate-fadeIn">
+              <div class="flex items-center justify-between border-b border-[#edf1ea] pb-2">
+                <h4 class="font-bold text-sm text-[#08492d]">Thông báo đơn hàng</h4>
+                <span class="text-xs text-emerald-700 cursor-pointer hover:underline" (click)="unreadNotificationCount.set(0)">Đã đọc tất cả</span>
+              </div>
+              <div class="space-y-2.5 max-h-60 overflow-y-auto text-xs">
+                <div class="p-2.5 bg-emerald-50/60 rounded-xl border border-emerald-100 flex items-start gap-2.5">
+                  <span class="text-base">🚚</span>
+                  <div>
+                    <p class="font-semibold text-emerald-950">Đơn hàng #PO-20260917-8831 đang giao</p>
+                    <p class="text-[11px] text-stone-500 mt-0.5">Xe tải lạnh HTX Lạc Dương dự kiến đến lúc 05:30 sáng mai.</p>
+                  </div>
+                </div>
+                <div class="p-2.5 bg-emerald-50/60 rounded-xl border border-emerald-100 flex items-start gap-2.5">
+                  <span class="text-base">✅</span>
+                  <div>
+                    <p class="font-semibold text-emerald-950">Khiếu nại #DISP-20260915-01 được duyệt</p>
+                    <p class="text-[11px] text-stone-500 mt-0.5">Khoản hoàn 532.500 ₫ đã được cộng vào tài khoản đối soát.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Cart Button (Fix BUY-03) -->
+        <a
+          routerLink="/buyer/cart"
+          class="relative w-10 h-10 rounded-xl border border-[#bbd2c2]/60 hover:border-emerald-600 bg-white hover:bg-emerald-50 flex items-center justify-center text-stone-700 hover:text-emerald-900 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          aria-label="Giỏ hàng"
+          title="Xem giỏ hàng"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          @if (cartService.uniqueProductsCount() > 0) {
+            <span class="absolute -top-1 -right-1 flex h-4 w-4">
+              <span class="relative inline-flex rounded-full h-4 w-4 bg-[#0d623b] text-[10px] font-bold text-white items-center justify-center">
+                {{ cartService.uniqueProductsCount() }}
+              </span>
+            </span>
+          }
+        </a>
+
+        <!-- User Profile Dropdown & Logout (Fix BUY-02) -->
+        <div class="relative">
+          @if (authService.currentUser(); as user) {
+            <button
+              type="button"
+              (click)="toggleUserDropdown()"
+              class="flex items-center gap-2.5 p-1.5 sm:px-3 rounded-2xl border border-[#bbd2c2]/70 hover:border-emerald-600 bg-white hover:bg-emerald-50/50 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
+            >
+              <div class="w-8 h-8 rounded-full bg-emerald-800 text-white flex items-center justify-center text-xs font-bold shadow-sm">
+                {{ user.organizationName ? user.organizationName.substring(0, 2).toUpperCase() : 'BH' }}
+              </div>
+              <div class="hidden sm:flex flex-col text-left">
+                <span class="text-xs font-bold text-[#08492d] max-w-[130px] truncate leading-tight">
+                  {{ user.organizationName || user.fullName }}
+                </span>
+                <span class="text-[10px] text-stone-500 font-medium">
+                  Tài khoản Người mua
+                </span>
+              </div>
+              <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <!-- Dropdown Menu -->
+            @if (isUserDropdownOpen()) {
+              <div class="absolute right-0 mt-2 w-64 bg-white border border-[#dce9e0] rounded-2xl shadow-xl z-50 p-2 space-y-1 animate-fadeIn">
+                <div class="p-3 bg-emerald-50/50 rounded-xl border border-emerald-100/60 mb-2">
+                  <p class="text-xs font-bold text-[#08492d]">{{ user.organizationName || user.fullName }}</p>
+                  <p class="text-[11px] text-stone-500 truncate">{{ user.email }}</p>
+                  <span class="inline-block mt-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                    Bên Mua (Bách Hóa / F&B)
+                  </span>
+                </div>
+
+                <a 
+                  routerLink="/buyer/profile" 
+                  (click)="isUserDropdownOpen.set(false)"
+                  class="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-stone-700 hover:text-emerald-900 hover:bg-emerald-50 rounded-xl transition-colors"
+                >
+                  <span>🏢</span> Hồ sơ doanh nghiệp & Địa chỉ
+                </a>
+
+                <a 
+                  routerLink="/buyer/orders" 
+                  (click)="isUserDropdownOpen.set(false)"
+                  class="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-stone-700 hover:text-emerald-900 hover:bg-emerald-50 rounded-xl transition-colors"
+                >
+                  <span>📦</span> Lịch sử đơn mua
+                </a>
+
+                <div class="border-t border-[#edf1ea] my-1"></div>
+
+                <!-- Fix BUY-02: Logout button prominently placed -->
+                <button
+                  type="button"
+                  (click)="onLogout()"
+                  class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors text-left cursor-pointer"
+                >
+                  <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  <span>Đăng xuất tài khoản</span>
+                </button>
+              </div>
+            }
+          } @else {
+            <a
+              routerLink="/auth/login"
+              class="px-4 py-2 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold transition-all shadow-sm"
+            >
+              Đăng nhập
+            </a>
+          }
+        </div>
+
+        <!-- Mobile Menu Hamburger Button (Fix BUY-05) -->
+        <button
+          type="button"
+          (click)="toggleMobileMenu()"
+          class="lg:hidden p-2 rounded-xl border border-[#bbd2c2]/60 text-stone-700 hover:bg-emerald-50 focus:outline-none"
+          aria-label="Mở menu điều hướng"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- Mobile Drawer Navigation (Fix BUY-05: Fully responsive for mobile/tablet) -->
+    @if (isMobileMenuOpen()) {
+      <div class="lg:hidden border-t border-[#edf1ea] bg-white px-4 py-4 space-y-4 animate-fadeIn">
+        
+        <!-- Mobile Search Input -->
+        <form (ngSubmit)="onSearch()" class="relative w-full">
+          <input
+            type="text"
+            [(ngModel)]="searchKeyword"
+            name="mobileSearch"
+            placeholder="Tìm nông sản, người bán..."
+            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#bbd2c2] text-sm bg-[#fbfaf6]"
+          />
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </form>
+
+        <div class="grid grid-cols-2 gap-2 text-sm font-bold">
+          <a routerLink="/buyer/catalog" (click)="closeMobileMenu()" class="p-3 bg-emerald-50 rounded-xl text-[#0d623b] flex items-center gap-2">
+            <span>🌿</span> Sàn Nông Sản
+          </a>
+          <a routerLink="/buyer/orders" (click)="closeMobileMenu()" class="p-3 bg-stone-50 rounded-xl text-stone-800 flex items-center gap-2">
+            <span>📦</span> Đơn Mua
+          </a>
+          <a routerLink="/buyer/subscriptions" (click)="closeMobileMenu()" class="p-3 bg-stone-50 rounded-xl text-stone-800 flex items-center gap-2">
+            <span>📅</span> Đơn Định Kỳ
+          </a>
+          <a routerLink="/buyer/dispute" (click)="closeMobileMenu()" class="p-3 bg-stone-50 rounded-xl text-stone-800 flex items-center gap-2">
+            <span>⚖️</span> Khiếu Nại
+          </a>
+        </div>
+      </div>
+    }
+  </header>
+
+  <!-- Router Outlet Container -->
+  <main class="flex-1">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Professional B2B Marketplace Footer -->
+  <footer class="bg-white border-t border-[#edf1ea] pt-12 pb-8 text-[#19392d]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+        
+        <!-- Col 1: Brand Info -->
+        <div class="lg:col-span-2 space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0d623b] to-[#08492d] text-white flex items-center justify-center font-bold text-xl shadow-md">
+              🌱
+            </div>
+            <div>
+              <span class="text-xl font-extrabold text-[#08492d]">Kaggri-Trade</span>
+              <p class="text-xs text-stone-500 font-medium">Hệ thống giao thương Nông sản B2B Quốc gia</p>
+            </div>
+          </div>
+          <p class="text-xs text-stone-600 leading-relaxed max-w-sm">
+            Nền tảng thương mại điện tử chuyên biệt kết nối chuỗi cung ứng nông sản an toàn từ các Hợp tác xã, Nông trại đến Doanh nghiệp F&B, Siêu thị và Bếp ăn công nghiệp.
+          </p>
+          <div class="flex items-center gap-3 text-xs text-emerald-800 font-semibold">
+            <span class="px-2.5 py-1 bg-emerald-50 rounded-lg border border-emerald-200">VietGAP</span>
+            <span class="px-2.5 py-1 bg-emerald-50 rounded-lg border border-emerald-200">GLOBALG.A.P.</span>
+            <span class="px-2.5 py-1 bg-emerald-50 rounded-lg border border-emerald-200">Hữu Cơ PGS</span>
+          </div>
+        </div>
+
+        <!-- Col 2: Dành cho Người mua -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-950">Dành cho Người mua</h4>
+          <ul class="space-y-2 text-xs text-stone-600 font-medium">
+            <li><a routerLink="/buyer/catalog" class="hover:text-emerald-800 transition-colors">Khám phá nguồn nông sản</a></li>
+            <li><a routerLink="/buyer/cart" class="hover:text-emerald-800 transition-colors">Giỏ hàng theo Người bán</a></li>
+            <li><a routerLink="/buyer/orders" class="hover:text-emerald-800 transition-colors">Theo dõi đơn hàng & Giao nhận</a></li>
+            <li><a routerLink="/buyer/subscriptions" class="hover:text-emerald-800 transition-colors">Đặt hàng định kỳ hàng tuần</a></li>
+            <li><a routerLink="/buyer/dispute" class="hover:text-emerald-800 transition-colors">Chính sách xử lý nông sản dập/hỏng</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Dành cho Người bán -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-950">Dành cho Người bán</h4>
+          <ul class="space-y-2 text-xs text-stone-600 font-medium">
+            <li><a routerLink="/vendor" class="hover:text-emerald-800 transition-colors">Đăng ký Hộ kinh doanh / HTX</a></li>
+            <li><a routerLink="/vendor" class="hover:text-emerald-800 transition-colors">Quản lý lô thu hoạch & Mã QR</a></li>
+            <li><a routerLink="/vendor" class="hover:text-emerald-800 transition-colors">Khai báo nguồn cung dự kiến</a></li>
+            <li><a routerLink="/vendor" class="hover:text-emerald-800 transition-colors">Quy trình đối soát thanh toán</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Hỗ trợ & Pháp lý -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-950">Bảo mật & Escrow</h4>
+          <ul class="space-y-2 text-xs text-stone-600 font-medium">
+            <li><span class="text-emerald-800 font-bold">🔒 Escrow Protection</span></li>
+            <li><span>Tiền giữ an toàn đến khi xác nhận đạt số lượng & chất lượng</span></li>
+            <li><span>Biên bản kiểm hàng lúc giao</span></li>
+            <li><span>Tổng đài CSKH: 1900 6868</span></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="border-t border-[#edf1ea] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-500">
+        <p>© 2026 Kaggri-Trade. Bản quyền thuộc Dự án Thương Mại Điện Tử Nông Sản B2B PBL6.</p>
+        <p class="text-emerald-800 font-medium">Phiên bản giao diện chuẩn hoá Buyer v1.2</p>
+      </div>
+    </div>
+  </footer>
+
+</div>
+

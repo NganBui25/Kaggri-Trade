@@ -1,0 +1,326 @@
+<div class="min-h-screen bg-[#fbfaf6] text-[#19392d] flex flex-col font-sans selection:bg-emerald-200 selection:text-emerald-950">
+  <!-- Top Navigation Header -->
+  <header class="h-20 bg-white/90 backdrop-blur-md border-b border-[#edf1ea] sticky top-0 z-40 transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+      <!-- Brand Logo -->
+      <a routerLink="/" class="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-xl p-1">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#0d623b] to-[#08492d] text-white flex items-center justify-center font-bold text-2xl shadow-md shadow-emerald-900/10 group-hover:scale-105 transition-transform">
+          🌱
+        </div>
+        <div class="flex flex-col">
+          <span class="text-xl font-extrabold text-[#08492d] tracking-tight leading-tight group-hover:text-emerald-700 transition-colors">
+            Kaggri-Trade
+          </span>
+          <span class="text-[11px] font-bold text-[#789285] uppercase tracking-widest">
+            Sàn Nông Sản B2B Từ Trang Trại
+          </span>
+        </div>
+      </a>
+
+      <!-- Quick Back & Help Links -->
+      <div class="flex items-center gap-4">
+        <a 
+          routerLink="/" 
+          class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-[#08492d] hover:bg-emerald-50 border border-[#bbd2c2]/60 hover:border-emerald-600 transition-all"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Trang chủ
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-10">
+    <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      
+      <!-- Left Column: Value Proposition & Brand Banner (Desktop) -->
+      <div class="hidden lg:flex lg:col-span-5 flex-col justify-between p-8 rounded-3xl bg-gradient-to-br from-[#08492d] via-[#0d623b] to-[#127a4b] text-white shadow-2xl relative overflow-hidden min-h-[620px]">
+        <!-- Decorative Background Patterns -->
+        <div class="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-white/5 blur-2xl pointer-events-none"></div>
+        <div class="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-emerald-400/10 blur-3xl pointer-events-none"></div>
+
+        <!-- Top Section -->
+        <div class="relative z-10 space-y-6">
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs font-semibold tracking-wide text-emerald-200">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Hệ sinh thái Chuỗi cung ứng Nông sản 4.0
+          </div>
+
+          <h2 class="text-3xl font-extrabold leading-tight tracking-tight">
+            Nền tảng giao thương nông sản uy tín hàng đầu
+          </h2>
+
+          <p class="text-emerald-100/80 text-sm leading-relaxed">
+            Kết nối trực tiếp Hợp tác xã, Nhà vườn và Doanh nghiệp thu mua F&B với cơ chế Escrow bảo vệ dòng tiền và mã QR truy xuất từng lô hàng.
+          </p>
+
+          <!-- 3 Feature Cards -->
+          <div class="space-y-3.5 pt-2">
+            <div class="flex items-start gap-3.5 p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10">
+              <div class="w-9 h-9 rounded-xl bg-emerald-500/20 flex items-center justify-center text-lg flex-shrink-0">
+                🏷️
+              </div>
+              <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-200">Giá sỉ theo bậc & Đặt trước</h4>
+                <p class="text-xs text-emerald-50/90 mt-0.5">Tiết kiệm chi phí trung gian với mức giá ưu đãi theo khối lượng đặt hàng.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3.5 p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10">
+              <div class="w-9 h-9 rounded-xl bg-emerald-500/20 flex items-center justify-center text-lg flex-shrink-0">
+                🛡️
+              </div>
+              <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-200">Cơ chế Escrow & Khiếu nại</h4>
+                <p class="text-xs text-emerald-50/90 mt-0.5">Tiền giữ an toàn; bồi hoàn minh bạch theo biên bản kiểm định hàng thực tế.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3.5 p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10">
+              <div class="w-9 h-9 rounded-xl bg-emerald-500/20 flex items-center justify-center text-lg flex-shrink-0">
+                🔍
+              </div>
+              <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-200">Truy xuất nguồn gốc Lô hàng</h4>
+                <p class="text-xs text-emerald-50/90 mt-0.5">Mã QR gắn theo từng lô thu hoạch, nhật ký canh tác và chứng nhận VietGAP.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Testimonial/Badge -->
+        <div class="relative z-10 pt-6 mt-6 border-t border-white/15 flex items-center justify-between text-xs text-emerald-200/90">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">⭐</span>
+            <span>Hơn <strong>500+</strong> HTX nông nghiệp tin dùng</span>
+          </div>
+          <span class="text-[11px] px-2.5 py-1 bg-white/10 rounded-full font-medium">Phiên bản 1.0</span>
+        </div>
+      </div>
+
+      <!-- Right Column: Login Card -->
+      <div class="lg:col-span-7 flex justify-center">
+        <div class="w-full max-w-lg bg-white border border-[#dce9e0] rounded-3xl p-6 sm:p-10 shadow-xl shadow-emerald-950/5 relative">
+          
+          <!-- Card Header -->
+          <div class="mb-6 text-center sm:text-left">
+            <div class="flex items-center justify-between mb-2">
+              <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d] tracking-tight">
+                Đăng nhập
+              </h1>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border"
+                [ngClass]="roleDefinitions[formState.role].badgeClass">
+                {{ roleDefinitions[formState.role].label }}
+              </span>
+            </div>
+            <p class="text-sm text-[#617468]">
+              Truy cập vào cổng giao thương số Kaggri-Trade dành cho đối tác.
+            </p>
+          </div>
+
+          <!-- Error Alert Banner -->
+          @if (errorMessage()) {
+            <div class="mb-5 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-start gap-3 animate-fadeIn">
+              <svg class="w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <div>
+                <p class="font-bold">Đăng nhập không thành công</p>
+                <p class="text-xs text-rose-700 mt-0.5">{{ errorMessage() }}</p>
+              </div>
+            </div>
+          }
+
+          <!-- Form Area -->
+          <form (ngSubmit)="onSubmit()" class="space-y-5" novalidate>
+            
+            <!-- Role Selector Component -->
+            <app-role-selector
+              [selectedRole]="formState.role"
+              (roleChanged)="onRoleChange($event)"
+            ></app-role-selector>
+
+            <!-- Role Description Tip -->
+            <div class="p-3 rounded-2xl bg-[#fbfaf6] border border-[#dce9e0]/80 text-xs text-[#526a5e] flex items-center gap-2.5">
+              <span class="text-base flex-shrink-0">{{ roleDefinitions[formState.role].icon }}</span>
+              <span>{{ roleDefinitions[formState.role].description }}</span>
+            </div>
+
+            <!-- Email Input -->
+            <div class="space-y-1.5">
+              <label for="email" class="block text-xs font-bold uppercase tracking-wider text-emerald-950/70">
+                Email hoặc Tên đăng nhập <span class="text-rose-500">*</span>
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-emerald-700/60">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                  </svg>
+                </div>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  [(ngModel)]="formState.email"
+                  autocomplete="email"
+                  placeholder="name@example.com"
+                  [class.border-rose-400]="errors.email"
+                  [class.focus:ring-rose-400]="errors.email"
+                  class="w-full pl-11 pr-4 py-3 rounded-xl border border-[#bbd2c2] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-600 transition-all placeholder:text-stone-400"
+                />
+              </div>
+              @if (errors.email) {
+                <p class="text-xs text-rose-600 font-medium mt-1 flex items-center gap-1">
+                  <span>⚠</span> {{ errors.email }}
+                </p>
+              }
+            </div>
+
+            <!-- Password Input -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <label for="password" class="block text-xs font-bold uppercase tracking-wider text-emerald-950/70">
+                  Mật khẩu <span class="text-rose-500">*</span>
+                </label>
+                <a routerLink="/auth/forgot-password" class="text-xs font-semibold text-emerald-700 hover:text-emerald-900 hover:underline">
+                  Quên mật khẩu?
+                </a>
+              </div>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-emerald-700/60">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <input
+                  id="password"
+                  name="password"
+                  [type]="showPassword() ? 'text' : 'password'"
+                  [(ngModel)]="formState.password"
+                  autocomplete="current-password"
+                  placeholder="Nhập mật khẩu của bạn"
+                  [class.border-rose-400]="errors.password"
+                  [class.focus:ring-rose-400]="errors.password"
+                  class="w-full pl-11 pr-12 py-3 rounded-xl border border-[#bbd2c2] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-600 transition-all placeholder:text-stone-400"
+                />
+                <button
+                  type="button"
+                  (click)="togglePasswordVisibility()"
+                  class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-emerald-800 transition-colors focus:outline-none cursor-pointer"
+                  [attr.aria-label]="showPassword() ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'"
+                >
+                  @if (showPassword()) {
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                    </svg>
+                  } @else {
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  }
+                </button>
+              </div>
+              @if (errors.password) {
+                <p class="text-xs text-rose-600 font-medium mt-1 flex items-center gap-1">
+                  <span>⚠</span> {{ errors.password }}
+                </p>
+              }
+            </div>
+
+            <!-- Remember Me & Sandbox Helper Pill -->
+            <div class="flex items-center justify-between text-xs">
+              <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  name="rememberMe"
+                  [(ngModel)]="formState.rememberMe"
+                  class="w-4 h-4 rounded text-emerald-700 focus:ring-emerald-500 border-[#bbd2c2] accent-[#0d623b]"
+                />
+                <span class="text-stone-700 font-medium">Ghi nhớ đăng nhập</span>
+              </label>
+
+              <!-- Quick Demo Helper Autofill Pill -->
+              <button
+                type="button"
+                (click)="applyMockCredentials(formState.role)"
+                class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-800 hover:text-emerald-950 bg-emerald-50 hover:bg-emerald-100/80 px-2.5 py-1 rounded-lg border border-emerald-200 transition-colors"
+                title="Tự động điền tài khoản mẫu cho vai trò đang chọn"
+              >
+                <span>⚡</span> Điền tài khoản mẫu
+              </button>
+            </div>
+
+            <!-- Submit Button -->
+            <button
+              type="submit"
+              [disabled]="isLoading()"
+              class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#0d623b] to-[#08492d] hover:from-[#0b5432] hover:to-[#063823] text-white font-bold text-sm tracking-wide shadow-lg shadow-emerald-950/15 hover:shadow-xl hover:shadow-emerald-950/20 active:scale-[0.99] transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+            >
+              @if (isLoading()) {
+                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Đang xác thực thông tin...</span>
+              } @else {
+                <span>Đăng nhập với tư cách {{ roleDefinitions[formState.role].label }}</span>
+                <svg class="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              }
+            </button>
+          </form>
+
+          <!-- Divider -->
+          <div class="relative my-6">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-[#edf1ea]"></div>
+            </div>
+            <div class="relative flex justify-center text-xs">
+              <span class="bg-white px-3 text-stone-400 font-medium uppercase tracking-wider">
+                Lựa chọn khác
+              </span>
+            </div>
+          </div>
+
+          <!-- Bottom Links -->
+          <div class="space-y-3 text-center text-sm">
+            <div>
+              <span class="text-stone-500">Chưa có tài khoản đối tác?</span>
+              <a routerLink="/auth/register" [queryParams]="{ role: formState.role }" class="font-bold text-[#0d623b] hover:text-[#08492d] hover:underline ml-1">
+                Đăng ký tài khoản mới
+              </a>
+            </div>
+
+            <div>
+              <a routerLink="/buyer" class="inline-flex items-center gap-1.5 text-xs font-semibold text-stone-600 hover:text-emerald-900 transition-colors">
+                <span>🛒</span> Khám phá nông sản với tư cách khách
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-6 border-t border-[#edf1ea] text-center text-xs text-[#789285] bg-white">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p>© 2026 Kaggri-Trade. Nền tảng Thương mại Điện tử B2B Nông nghiệp Toàn diện.</p>
+      <div class="flex items-center gap-4">
+        <a href="#" class="hover:text-emerald-800 transition-colors">Điều khoản dịch vụ</a>
+        <span>•</span>
+        <a href="#" class="hover:text-emerald-800 transition-colors">Chính sách bảo mật</a>
+        <span>•</span>
+        <a href="#" class="hover:text-emerald-800 transition-colors">Trung tâm hỗ trợ</a>
+      </div>
+    </div>
+  </footer>
+</div>
+

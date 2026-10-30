@@ -1,0 +1,437 @@
+<div class="max-w-7xl mx-auto space-y-6">
+  
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
+        Quản Lý Đơn Hàng Nông Sản
+      </h1>
+      <p class="text-xs text-stone-500 mt-1">
+        Tiếp nhận đơn đặt hàng từ Người mua, xác nhận nguồn cung, cập nhật lộ trình xe tải và quản lý từ chối hợp lệ.
+      </p>
+    </div>
+
+    <!-- Status Stats Pill -->
+    <div class="flex items-center gap-2">
+      <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+        {{ vendorData.orders().length }} đơn hàng tổng cộng
+      </span>
+    </div>
+  </div>
+
+  <!-- Filter Bar with ALL Statuses (Fix VND-06: Full filter for every order status) -->
+  <div class="bg-white rounded-2xl border border-[#dce9e0] p-4 flex flex-col md:flex-row items-center justify-between gap-4 text-xs shadow-xs">
+    
+    <!-- Status Filter Pills -->
+    <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 w-full md:w-auto scrollbar-none">
+      <button
+        type="button"
+        (click)="selectedStatus.set('all')"
+        [class.bg-[#0d623b]]="selectedStatus() === 'all'"
+        [class.text-white]="selectedStatus() === 'all'"
+        [class.bg-[#fbfaf6]]="selectedStatus() !== 'all'"
+        [class.text-stone-700]="selectedStatus() !== 'all'"
+        class="px-3 py-1.5 rounded-lg border border-[#bbd2c2] font-bold cursor-pointer whitespace-nowrap"
+      >
+        Tất cả
+      </button>
+
+      <button
+        type="button"
+        (click)="selectedStatus.set('pending_confirmation')"
+        [class.bg-amber-600]="selectedStatus() === 'pending_confirmation'"
+        [class.text-white]="selectedStatus() === 'pending_confirmation'"
+        [class.bg-amber-50]="selectedStatus() !== 'pending_confirmation'"
+        [class.text-amber-900]="selectedStatus() !== 'pending_confirmation'"
+        class="px-3 py-1.5 rounded-lg border border-amber-300 font-bold cursor-pointer whitespace-nowrap"
+      >
+        Chờ xác nhận ({{ vendorData.pendingOrdersCount() }})
+      </button>
+
+      <button
+        type="button"
+        (click)="selectedStatus.set('confirmed')"
+        [class.bg-[#0d623b]]="selectedStatus() === 'confirmed'"
+        [class.text-white]="selectedStatus() === 'confirmed'"
+        [class.bg-[#fbfaf6]]="selectedStatus() !== 'confirmed'"
+        [class.text-stone-700]="selectedStatus() !== 'confirmed'"
+        class="px-3 py-1.5 rounded-lg border border-[#bbd2c2] font-bold cursor-pointer whitespace-nowrap"
+      >
+        Đã xác nhận
+      </button>
+
+      <button
+        type="button"
+        (click)="selectedStatus.set('preparing')"
+        [class.bg-[#0d623b]]="selectedStatus() === 'preparing'"
+        [class.text-white]="selectedStatus() === 'preparing'"
+        [class.bg-[#fbfaf6]]="selectedStatus() !== 'preparing'"
+        [class.text-stone-700]="selectedStatus() !== 'preparing'"
+        class="px-3 py-1.5 rounded-lg border border-[#bbd2c2] font-bold cursor-pointer whitespace-nowrap"
+      >
+        Đang chuẩn bị
+      </button>
+
+      <!-- Fix VND-06: Added 'shipped' filter pill -->
+      <button
+        type="button"
+        (click)="selectedStatus.set('shipped')"
+        [class.bg-[#0d623b]]="selectedStatus() === 'shipped'"
+        [class.text-white]="selectedStatus() === 'shipped'"
+        [class.bg-[#fbfaf6]]="selectedStatus() !== 'shipped'"
+        [class.text-stone-700]="selectedStatus() !== 'shipped'"
+        class="px-3 py-1.5 rounded-lg border border-[#bbd2c2] font-bold cursor-pointer whitespace-nowrap"
+      >
+        Đã xuất hàng
+      </button>
+
+      <button
+        type="button"
+        (click)="selectedStatus.set('delivered')"
+        [class.bg-[#0d623b]]="selectedStatus() === 'delivered'"
+        [class.text-white]="selectedStatus() === 'delivered'"
+        [class.bg-[#fbfaf6]]="selectedStatus() !== 'delivered'"
+        [class.text-stone-700]="selectedStatus() !== 'delivered'"
+        class="px-3 py-1.5 rounded-lg border border-[#bbd2c2] font-bold cursor-pointer whitespace-nowrap"
+      >
+        Đã giao
+      </button>
+
+      <!-- Fix VND-06: Added 'rejected' filter pill -->
+      <button
+        type="button"
+        (click)="selectedStatus.set('rejected')"
+        [class.bg-rose-600]="selectedStatus() === 'rejected'"
+        [class.text-white]="selectedStatus() === 'rejected'"
+        [class.bg-rose-50]="selectedStatus() !== 'rejected'"
+        [class.text-rose-800]="selectedStatus() !== 'rejected'"
+        class="px-3 py-1.5 rounded-lg border border-rose-300 font-bold cursor-pointer whitespace-nowrap"
+      >
+        Từ chối
+      </button>
+    </div>
+
+    <!-- Search Query -->
+    <div class="relative w-full md:w-64">
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        placeholder="Tìm mã đơn, tên Người mua..."
+        class="w-full pl-8 pr-3 py-1.5 rounded-xl border border-[#bbd2c2] bg-[#fbfaf6] text-xs focus:outline-none"
+      />
+      <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center text-stone-400">🔍</span>
+    </div>
+
+  </div>
+
+  <!-- Master / Detail Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    
+    <!-- Left: Orders List (4 cols) -->
+    <div class="lg:col-span-5 space-y-3">
+      <span class="text-xs font-bold uppercase tracking-wider text-stone-400 block px-1">
+        Kết quả hiển thị: {{ filteredOrders().length }} đơn
+      </span>
+
+      <div class="space-y-3">
+        @for (ord of filteredOrders(); track ord.id) {
+          <div
+            (click)="selectOrder(ord)"
+            [class.ring-2]="selectedOrder()?.id === ord.id"
+            [class.ring-[#0d623b]]="selectedOrder()?.id === ord.id"
+            [class.bg-white]="selectedOrder()?.id === ord.id"
+            [class.bg-[#fbfaf6]]="selectedOrder()?.id !== ord.id"
+            class="p-4 rounded-2xl border border-[#bbd2c2] hover:border-emerald-600 transition-all cursor-pointer shadow-xs space-y-2.5"
+          >
+            <div class="flex items-center justify-between">
+              <strong class="font-mono text-xs text-[#08492d] font-bold">{{ ord.id }}</strong>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded border" [ngClass]="ord.statusBadgeClass">
+                {{ ord.statusLabel }}
+              </span>
+            </div>
+
+            <div class="text-xs space-y-1 text-stone-600">
+              <div class="flex justify-between">
+                <span class="font-bold text-stone-900">{{ ord.buyerCompany }}</span>
+                <strong class="text-[#0d623b]">{{ ord.totalAmount | price }}</strong>
+              </div>
+              <p class="text-[11px] text-stone-500">
+                {{ ord.items.map(i => i.productName + ' (' + i.quantity + 'kg)').join(', ') }}
+              </p>
+              
+              <!-- Fix VND-05: Show deadline in card -->
+              @if (ord.status === 'pending_confirmation') {
+                <div class="p-1.5 rounded-lg bg-amber-50 text-amber-900 text-[11px] font-semibold flex items-center gap-1 border border-amber-200">
+                  <span>⏰</span> {{ ord.confirmationDeadline }}
+                </div>
+              }
+              @if (ord.status === 'rejected') {
+                <div class="p-1.5 rounded-lg bg-rose-50 text-rose-800 text-[11px] font-semibold border border-rose-200">
+                  Lý do từ chối: {{ ord.rejectionReason }}
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Right: Detailed Order View (7 cols) -->
+    <div class="lg:col-span-7">
+      @if (selectedOrder(); as ord) {
+        <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-sm space-y-6">
+          
+          <!-- Detail Header -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#edf1ea]">
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-lg font-extrabold text-[#08492d]">
+                  Đơn Hàng: {{ ord.id }}
+                </h2>
+                <span class="text-xs font-bold px-2.5 py-0.5 rounded border" [ngClass]="ord.statusBadgeClass">
+                  {{ ord.statusLabel }}
+                </span>
+              </div>
+              <p class="text-xs text-stone-400 mt-0.5">Mã đơn cha: {{ ord.parentOrderId }} • Đặt lúc: {{ ord.createdAt }}</p>
+            </div>
+
+            <!-- Fix VND-05: Confirmation deadline countdown banner -->
+            @if (ord.status === 'pending_confirmation') {
+              <div class="px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-bold flex items-center gap-1.5">
+                <span class="animate-ping w-2 h-2 rounded-full bg-amber-500"></span>
+                <span>Hạn xác nhận: {{ ord.confirmationDeadline }}</span>
+              </div>
+            }
+          </div>
+
+          <!-- Fix VND-02, VND-03, VND-04: Rejection Alert if rejected (Does NOT show self-confirm or fake accept) -->
+          @if (ord.status === 'rejected') {
+            <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs space-y-1 animate-fadeIn">
+              <strong class="font-bold flex items-center gap-1.5 text-rose-800">
+                <span>🚫</span> Đơn hàng đã bị từ chối vào lúc {{ ord.rejectedAt }}
+              </strong>
+              <p class="leading-relaxed">
+                Lý do từ chối đã gửi cho Người mua: <strong>"{{ ord.rejectionReason }}"</strong>. Hệ thống đã tự động kích hoạt hoàn tiền Escrow an toàn.
+              </p>
+            </div>
+          }
+
+          <!-- Delivery Address & Contact (Fix VND-05: Full address, contact person, phone) -->
+          <div class="p-4 bg-[#fbfaf6] rounded-2xl border border-[#dce9e0] space-y-3 text-xs">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400 block">
+              Thông tin Người mua & Địa điểm giao hàng (Fix VND-05)
+            </span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <span class="text-stone-400 block font-medium">Doanh nghiệp bên mua:</span>
+                <strong class="text-stone-900 font-bold block mt-0.5">{{ ord.buyerCompany }}</strong>
+                <span class="text-stone-700 block mt-1">
+                  Người phụ trách: <strong>{{ ord.buyerName }}</strong>
+                </span>
+                <span class="text-emerald-800 font-bold block">
+                  📞 {{ ord.buyerPhone }}
+                </span>
+              </div>
+
+              <div>
+                <span class="text-stone-400 block font-medium">Địa chỉ kho nhận hàng:</span>
+                <p class="text-stone-800 font-medium mt-0.5">{{ ord.deliveryAddress }}</p>
+                <p class="text-amber-800 font-bold mt-1">⏰ Khung giờ giao: {{ ord.receivingWindow }}</p>
+                <p class="text-[11px] text-stone-500 italic mt-0.5">Ghi chú: {{ ord.deliveryNotes }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Items Table -->
+          <div class="space-y-3">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-stone-400">
+              Danh sách nông sản đặt mua
+            </h4>
+            <div class="divide-y divide-[#edf1ea] bg-white rounded-2xl border border-[#dce9e0] overflow-hidden text-xs">
+              @for (it of ord.items; track it.sku) {
+                <div class="p-3.5 flex items-center justify-between gap-4">
+                  <div class="flex items-center gap-3">
+                    <img [src]="it.image" [alt]="it.productName" class="w-12 h-12 rounded-xl object-cover border border-emerald-100 flex-shrink-0" />
+                    <div>
+                      <strong class="font-bold text-stone-900 block">{{ it.productName }}</strong>
+                      <span class="text-[11px] text-stone-400 font-mono">{{ it.sku }}</span>
+                    </div>
+                  </div>
+
+                  <div class="text-right">
+                    <span class="text-stone-500">{{ it.quantity | numberDot }} {{ it.unit }} × {{ it.unitPrice | price }}</span>
+                    <strong class="block text-emerald-950 font-bold text-sm">{{ it.amount | price }}</strong>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Financial summary -->
+            <div class="p-3 bg-emerald-50/60 rounded-xl border border-emerald-100 flex justify-between text-xs font-bold">
+              <span>Phí giao xe tải lạnh: {{ ord.shippingFee | price }}</span>
+              <span class="text-emerald-950 font-extrabold text-sm">Tổng cộng đơn con: {{ ord.totalAmount | price }}</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons Area (Confirm / Reject / Prepare / Ship) -->
+          <div class="p-4 bg-white rounded-2xl border border-[#dce9e0] space-y-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#08492d] block">
+              Thao tác xử lý đơn hàng
+            </span>
+
+            @if (ord.status === 'pending_confirmation') {
+              <div class="flex flex-col sm:flex-row items-center gap-3">
+                <!-- Fix VND-07: Confirm updates reserved stock -->
+                <button
+                  type="button"
+                  (click)="onConfirmOrder(ord.id)"
+                  class="w-full sm:w-auto flex-1 py-3 px-4 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <span>✓ Xác nhận có thể giao (Giữ tồn kho)</span>
+                </button>
+
+                <!-- Fix VND-02: Reject button opens clean reason modal -->
+                <button
+                  type="button"
+                  (click)="openRejectModal()"
+                  class="w-full sm:w-auto py-3 px-4 rounded-xl border border-rose-300 hover:bg-rose-50 text-rose-700 text-xs font-bold transition-all cursor-pointer"
+                >
+                  Không thể giao? Từ chối và nêu lý do
+                </button>
+              </div>
+            }
+
+            @if (ord.status === 'confirmed') {
+              <div class="flex items-center gap-3">
+                <button
+                  type="button"
+                  (click)="onPrepareOrder(ord.id)"
+                  class="py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs cursor-pointer"
+                >
+                  Chuyển sang "Đang chuẩn bị hàng"
+                </button>
+              </div>
+            }
+
+            @if (ord.status === 'preparing') {
+              <div class="flex items-center gap-3">
+                <!-- Fix VND-08: Ship button -->
+                <button
+                  type="button"
+                  (click)="openShipModal()"
+                  class="py-2.5 px-5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold shadow-md cursor-pointer flex items-center gap-2"
+                >
+                  <span>🚚 Xuất hàng bàn giao xe lạnh</span>
+                </button>
+              </div>
+            }
+
+            @if (ord.status === 'shipped') {
+              <p class="text-xs text-stone-500">
+                Đơn hàng đã bàn giao xe lạnh. Người mua sẽ kiểm tra số lượng & chất lượng lúc dỡ hàng tại kho.
+              </p>
+            }
+          </div>
+
+          <!-- Order Timeline (Fix VND-02 & VND-04: Accurate events with timestamp & actor) -->
+          <div class="space-y-3">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-stone-400">
+              Tiến trình đơn hàng (Audit Trail)
+            </h4>
+            <div class="space-y-3 pl-2 border-l-2 border-emerald-200">
+              @for (evt of ord.timeline; track evt.timestamp) {
+                <div class="relative pl-4 space-y-0.5 text-xs">
+                  <span class="absolute -left-[23px] top-1 w-3 h-3 rounded-full" [class.bg-rose-500]="evt.isReject" [class.bg-emerald-600]="!evt.isReject"></span>
+                  <div class="flex items-center justify-between">
+                    <strong class="font-bold" [class.text-rose-700]="evt.isReject" [class.text-stone-900]="!evt.isReject">
+                      {{ evt.title }}
+                    </strong>
+                    <span class="text-[11px] text-stone-400">{{ evt.timestamp }}</span>
+                  </div>
+                  <p class="text-stone-600 text-[11px]">{{ evt.description }}</p>
+                  <span class="text-[10px] text-stone-400 font-medium">Người thao tác: {{ evt.actor }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
+        </div>
+      }
+    </div>
+
+  </div>
+
+  <!-- Reject Reason Modal (Fix VND-02, VND-04) -->
+  @if (rejectModalOpen()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fadeIn">
+      <div class="bg-white rounded-3xl border border-[#dce9e0] max-w-md w-full p-6 shadow-2xl space-y-4">
+        <div class="flex items-center justify-between pb-2 border-b border-[#edf1ea]">
+          <h4 class="text-sm font-extrabold text-rose-700">Từ chối giao đơn hàng</h4>
+          <button (click)="closeRejectModal()" class="text-stone-400 text-lg">✕</button>
+        </div>
+
+        <p class="text-xs text-stone-600 leading-relaxed">
+          Vui lòng nêu rõ lý do không thể cung ứng đơn hàng này để hệ thống thông báo cho Người mua và giải phóng tiền ký quỹ Escrow:
+        </p>
+
+        <textarea
+          [(ngModel)]="rejectReasonText"
+          rows="3"
+          placeholder="VD: Sản phẩm đợt này bị mưa úng, không đạt tiêu chuẩn VietGAP xuất khẩu..."
+          class="w-full p-3 rounded-xl border border-rose-300 bg-rose-50/40 text-xs focus:outline-none"
+        ></textarea>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#edf1ea] text-xs">
+          <button
+            type="button"
+            (click)="closeRejectModal()"
+            class="px-4 py-2 rounded-xl border border-[#bbd2c2] text-stone-700 font-semibold"
+          >
+            Hủy
+          </button>
+          <button
+            type="button"
+            (click)="submitReject()"
+            class="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold shadow-xs cursor-pointer"
+          >
+            Xác nhận từ chối
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Ship Order Modal (Fix VND-08) -->
+  @if (shipModalOpen()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fadeIn">
+      <div class="bg-white rounded-3xl border border-[#dce9e0] max-w-md w-full p-6 shadow-2xl space-y-4 text-xs">
+        <div class="flex items-center justify-between pb-2 border-b border-[#edf1ea]">
+          <h4 class="text-sm font-extrabold text-[#08492d]">Bàn giao xe tải vận chuyển</h4>
+          <button (click)="closeShipModal()" class="text-stone-400 text-lg">✕</button>
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">Mã vận đơn xe tải lạnh</label>
+          <input
+            type="text"
+            [(ngModel)]="trackingCodeInput"
+            class="w-full p-2.5 rounded-xl border border-[#bbd2c2] font-mono font-bold"
+          />
+        </div>
+
+        <p class="text-stone-500 text-[11px]">
+          Sau khi bấm xác nhận, trạng thái đơn sẽ chuyển sang "Đã xuất hàng", Người mua có thể theo dõi hành trình giao nhận.
+        </p>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#edf1ea]">
+          <button type="button" (click)="closeShipModal()" class="px-4 py-2 rounded-xl border border-[#bbd2c2]">Hủy</button>
+          <button type="button" (click)="submitShip()" class="px-5 py-2 rounded-xl bg-[#0d623b] text-white font-bold cursor-pointer">
+            Xác nhận xuất hàng
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>
+

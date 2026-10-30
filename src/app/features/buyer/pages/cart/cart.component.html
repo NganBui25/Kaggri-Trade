@@ -1,0 +1,295 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+  
+  <!-- Header & Actions -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
+    <div>
+      <div class="flex items-center gap-2">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
+          Giỏ Hàng Người Mua
+        </h1>
+        <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">
+          {{ cartService.uniqueVendorsCount() }} Người bán · {{ cartService.uniqueProductsCount() }} mặt hàng
+        </span>
+      </div>
+      <p class="text-xs text-stone-500 mt-1">
+        Đơn hàng được tự động tách theo từng Người bán để đối soát và xuất hóa đơn riêng biệt.
+      </p>
+    </div>
+
+    <!-- Refresh Stock Button (Fix BUY-18: Real timestamp, no 'mock' word) -->
+    <div class="flex items-center gap-3">
+      <button
+        type="button"
+        (click)="refreshStock()"
+        [disabled]="isRefreshing()"
+        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-[#bbd2c2] hover:border-emerald-600 bg-white hover:bg-emerald-50 text-xs font-bold text-emerald-950 transition-all cursor-pointer shadow-xs disabled:opacity-50"
+      >
+        <svg 
+          class="w-4 h-4 text-emerald-700" 
+          [class.animate-spin]="isRefreshing()" 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <span>Làm mới tồn kho</span>
+      </button>
+      <span class="text-[11px] text-stone-400">Đã cập nhật: {{ lastRefreshedAt() }}</span>
+    </div>
+  </div>
+
+  <!-- Cart Content -->
+  @if (cartService.items().length > 0) {
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Left: Vendor Item Groups (8 cols) -->
+      <div class="lg:col-span-8 space-y-6">
+        
+        @for (group of cartService.vendorGroups(); track group.vendorId) {
+          <div class="bg-white rounded-3xl border border-[#dce9e0] overflow-hidden shadow-xs space-y-4 p-5 sm:p-6">
+            
+            <!-- Vendor Header (Fix BUY-09) -->
+            <div class="flex items-center justify-between pb-3 border-b border-[#edf1ea]">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-black text-xs shadow-xs">
+                  {{ group.vendorAvatarCode }}
+                </div>
+                <div>
+                  <h3 class="text-sm font-extrabold text-[#08492d]">{{ group.vendorName }}</h3>
+                  <span class="text-[11px] text-stone-400">Hợp tác xã nông sản đã xác minh</span>
+                </div>
+              </div>
+              <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+                {{ group.items.length }} mặt hàng
+              </span>
+            </div>
+
+            <!-- Items Table in this Vendor Group -->
+            <div class="divide-y divide-[#edf1ea]">
+              @for (item of group.items; track item.product.id) {
+                <div class="py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  
+                  <!-- Product Info with Real Image (Fix BUY-16: Real images, not duplicate emoji) -->
+                  <div class="flex items-center gap-3.5 flex-1 min-w-0">
+                    <img 
+                      [src]="item.product.featuredImage" 
+                      [alt]="item.product.name"
+                      class="w-16 h-16 rounded-xl object-cover border border-emerald-100 flex-shrink-0"
+                    />
+                    <div class="min-w-0">
+                      <a [routerLink]="['/buyer/product', item.product.id]" class="text-sm font-bold text-emerald-950 hover:text-emerald-700 transition-colors line-clamp-1">
+                        {{ item.product.name }}
+                      </a>
+                      <span class="text-[11px] text-stone-400 block font-mono">{{ item.product.sku }}</span>
+                      
+                      <!-- Ghi chú hiển thị & nút sửa inline (Fix BUY-19) -->
+                      <div class="flex items-center gap-2 mt-1">
+                        @if (item.note) {
+                          <span class="text-xs text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 truncate max-w-[200px]" [title]="item.note">
+                            📝 {{ item.note }}
+                          </span>
+                        }
+                        <button
+                          type="button"
+                          (click)="openEditNote(item)"
+                          class="text-[11px] font-semibold text-emerald-700 hover:text-emerald-900 underline cursor-pointer"
+                        >
+                          {{ item.note ? 'Sửa ghi chú' : '+ Thêm ghi chú' }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Price & Tier applied (Fix BUY-12) -->
+                  <div class="text-right sm:text-center flex-shrink-0">
+                    <span class="text-xs font-bold text-[#0d623b]">
+                      {{ item.selectedTierPrice | price }}
+                    </span>
+                    <span class="text-[11px] text-stone-400 block">/{{ item.product.unit }}</span>
+                  </div>
+
+                  <!-- Quantity Stepper -->
+                  <div class="flex items-center border border-[#bbd2c2] rounded-xl overflow-hidden bg-[#fbfaf6]">
+                    <button
+                      type="button"
+                      (click)="cartService.updateQuantity(item.product.id, item.quantity - 50)"
+                      class="w-8 h-8 flex items-center justify-center text-stone-600 hover:bg-emerald-100 font-bold transition-colors cursor-pointer"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      [ngModel]="item.quantity"
+                      (ngModelChange)="cartService.updateQuantity(item.product.id, $event)"
+                      class="w-16 text-center font-bold text-xs text-[#08492d] bg-white border-x border-[#bbd2c2] py-1.5 focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      (click)="cartService.updateQuantity(item.product.id, item.quantity + 50)"
+                      class="w-8 h-8 flex items-center justify-center text-stone-600 hover:bg-emerald-100 font-bold transition-colors cursor-pointer"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <!-- Line Total & Delete -->
+                  <div class="flex items-center gap-3">
+                    <strong class="text-sm font-extrabold text-[#08492d] min-w-[90px] text-right">
+                      {{ item.totalPrice | price }}
+                    </strong>
+                    <button
+                      type="button"
+                      (click)="cartService.removeItem(item.product.id)"
+                      class="p-1.5 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                      title="Xóa khỏi giỏ"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+
+                </div>
+              }
+            </div>
+
+            <!-- Group Subtotal & Shipping Preview -->
+            <div class="pt-3 border-t border-[#edf1ea] flex items-center justify-between text-xs bg-[#fbfaf6] p-3 rounded-xl">
+              <div>
+                <span class="text-stone-500">Phí giao xe tải lạnh ước tính:</span>
+                <strong class="text-stone-700 ml-1">{{ group.shippingFee | price }}</strong>
+              </div>
+              <div>
+                <span class="text-stone-500">Tổng nhóm Người bán:</span>
+                <strong class="text-sm font-extrabold text-[#0d623b] ml-1">{{ group.total | price }}</strong>
+              </div>
+            </div>
+
+          </div>
+        }
+
+      </div>
+
+      <!-- Right: Summary Card (4 cols) -->
+      <div class="lg:col-span-4 space-y-4 sticky top-24">
+        <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-sm space-y-5">
+          <h3 class="text-base font-extrabold text-[#08492d] pb-3 border-b border-[#edf1ea]">
+            Tóm Tắt Đơn Mua
+          </h3>
+
+          <div class="space-y-3 text-xs">
+            <div class="flex items-center justify-between text-stone-600">
+              <span>Tổng số Người bán:</span>
+              <strong class="text-stone-900 font-bold">{{ cartService.uniqueVendorsCount() }}</strong>
+            </div>
+
+            <div class="flex items-center justify-between text-stone-600">
+              <span>Tổng khối lượng nông sản:</span>
+              <strong class="text-stone-900 font-bold">{{ cartService.totalItemsCount() | numberDot }} kg</strong>
+            </div>
+
+            <div class="flex items-center justify-between text-stone-600">
+              <span>Tiền hàng tạm tính:</span>
+              <strong class="text-stone-900 font-bold">{{ cartService.subtotal() | price }}</strong>
+            </div>
+
+            <div class="flex items-center justify-between text-stone-600">
+              <span>Ước tính phí vận chuyển xe lạnh:</span>
+              <strong class="text-stone-900 font-bold">{{ cartService.totalShippingFee() | price }}</strong>
+            </div>
+
+            <div class="pt-3 border-t border-[#edf1ea] flex items-center justify-between text-sm">
+              <span class="font-extrabold text-emerald-950">Tổng thanh toán:</span>
+              <strong class="text-xl font-extrabold text-[#0d623b]">
+                {{ cartService.grandTotal() | price }}
+              </strong>
+            </div>
+          </div>
+
+          <!-- Checkout CTA -->
+          <button
+            type="button"
+            (click)="proceedToCheckout()"
+            class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#0d623b] to-[#08492d] hover:from-[#0b5432] hover:to-[#063823] text-white font-bold text-sm text-center shadow-lg shadow-emerald-950/10 transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>Tiến hành Đặt hàng & Thanh toán</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </button>
+
+          <!-- Escrow Trust Badge -->
+          <div class="p-3 rounded-2xl bg-emerald-50 border border-emerald-100 text-xs text-emerald-900 space-y-1">
+            <span class="font-bold flex items-center gap-1.5">
+              <span>🔒</span> Bảo vệ thanh toán Escrow
+            </span>
+            <p class="text-[11px] text-emerald-800 leading-relaxed">
+              Tiền của bên mua được giữ trong tài khoản Escrow an toàn và chỉ giải ngân cho Người bán sau khi kiểm hàng đạt chuẩn.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  } @else {
+    <!-- Empty Cart State (Fix BUY-15: Friendly empty state with action) -->
+    <div class="bg-white rounded-3xl border border-[#dce9e0] p-12 text-center space-y-4 max-w-lg mx-auto shadow-sm">
+      <div class="w-20 h-20 rounded-full bg-emerald-50 text-[#0d623b] flex items-center justify-center text-4xl mx-auto shadow-inner">
+        🛒
+      </div>
+      <h3 class="text-xl font-extrabold text-[#08492d]">Giỏ hàng của bạn đang trống</h3>
+      <p class="text-xs text-stone-500 leading-relaxed">
+        Bạn chưa chọn mặt hàng nông sản nào. Hãy khám phá danh mục nông sản sạch từ các HTX để bắt đầu đặt hàng.
+      </p>
+      <div class="pt-2">
+        <a
+          routerLink="/buyer/catalog"
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white font-bold text-xs shadow-md transition-all"
+        >
+          <span>Khám phá Sàn Nông Sản</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  }
+
+  <!-- Inline Edit Note Modal (Fix BUY-19: Native UI modal instead of window.prompt) -->
+  @if (editingItem(); as item) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fadeIn">
+      <div class="bg-white rounded-3xl border border-[#dce9e0] max-w-md w-full p-6 shadow-2xl space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-[#edf1ea]">
+          <h4 class="text-sm font-bold text-[#08492d]">Ghi chú cho sản phẩm</h4>
+          <button (click)="closeNoteModal()" class="text-stone-400 hover:text-stone-700 text-lg">✕</button>
+        </div>
+        <p class="text-xs text-stone-600 font-semibold">{{ item.product.name }}</p>
+        <textarea
+          [(ngModel)]="editingNoteText"
+          rows="3"
+          placeholder="Nhập yêu cầu đặc biệt về quy cách đóng thùng, độ chín, thời gian nhận..."
+          class="w-full p-3 rounded-xl border border-[#bbd2c2] text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-[#fbfaf6]"
+        ></textarea>
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button
+            type="button"
+            (click)="closeNoteModal()"
+            class="px-4 py-2 rounded-xl border border-[#bbd2c2] text-xs font-semibold text-stone-700 hover:bg-stone-50"
+          >
+            Hủy
+          </button>
+          <button
+            type="button"
+            (click)="saveNote()"
+            class="px-4 py-2 rounded-xl bg-[#0d623b] text-white text-xs font-bold hover:bg-[#08492d]"
+          >
+            Lưu ghi chú
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>
+

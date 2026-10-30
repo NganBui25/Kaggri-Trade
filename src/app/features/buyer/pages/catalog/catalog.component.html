@@ -1,0 +1,158 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  
+  <!-- Hero Section -->
+  <div class="relative rounded-3xl bg-gradient-to-r from-[#08492d] via-[#0d623b] to-[#127a4b] text-white p-6 sm:p-10 shadow-xl overflow-hidden">
+    <div class="absolute -right-10 -bottom-10 w-72 h-72 rounded-full bg-emerald-400/10 blur-3xl pointer-events-none"></div>
+    <div class="relative z-10 max-w-2xl space-y-3">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-emerald-200 text-xs font-bold border border-white/15">
+        🌿 Danh mục Nông sản B2B Trực tiếp
+      </span>
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+        Nông sản Sạch Từ Nông Trại Lâm Đồng
+      </h1>
+      <p class="text-emerald-100/90 text-sm leading-relaxed">
+        Bảng giá sỉ minh bạch theo số lượng (Tier Pricing), kiểm định chất lượng VietGAP, GlobalGAP và hỗ trợ giao xe tải lạnh tận kho doanh nghiệp.
+      </p>
+    </div>
+  </div>
+
+  <!-- Filter & Controls Bar -->
+  <div class="bg-white rounded-2xl border border-[#dce9e0] p-4 sm:p-5 shadow-xs space-y-4">
+    
+    <!-- Top Row: Search & Quick Categories -->
+    <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+      
+      <!-- Category Pills -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+        @for (cat of categories; track cat) {
+          <button
+            type="button"
+            (click)="selectedCategory.set(cat === 'Tất cả' ? 'all' : cat)"
+            [class.bg-[#0d623b]]="selectedCategory() === (cat === 'Tất cả' ? 'all' : cat)"
+            [class.text-white]="selectedCategory() === (cat === 'Tất cả' ? 'all' : cat)"
+            [class.border-emerald-700]="selectedCategory() === (cat === 'Tất cả' ? 'all' : cat)"
+            [class.bg-[#fbfaf6]]="selectedCategory() !== (cat === 'Tất cả' ? 'all' : cat)"
+            [class.text-stone-700]="selectedCategory() !== (cat === 'Tất cả' ? 'all' : cat)"
+            [class.border-[#bbd2c2]]="selectedCategory() !== (cat === 'Tất cả' ? 'all' : cat)"
+            class="px-4 py-2 rounded-xl text-xs font-bold border transition-all whitespace-nowrap cursor-pointer hover:border-emerald-600"
+          >
+            {{ cat }}
+          </button>
+        }
+      </div>
+
+      <!-- Sort By Dropdown -->
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <label for="sortSelect" class="text-xs font-bold text-stone-500 whitespace-nowrap">Sắp xếp:</label>
+        <select
+          id="sortSelect"
+          [ngModel]="sortBy()"
+          (ngModelChange)="sortBy.set($event)"
+          class="py-2 px-3 rounded-xl border border-[#bbd2c2] text-xs font-semibold bg-white text-[#19392d] focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        >
+          <option value="default">Mặc định phổ biến</option>
+          <option value="price_asc">Giá sỉ: Thấp đến cao</option>
+          <option value="price_desc">Giá sỉ: Cao đến thấp</option>
+          <option value="stock_desc">Tồn kho sẵn có nhiều nhất</option>
+        </select>
+      </div>
+
+    </div>
+
+    <!-- Secondary Filters Row (Vendor, Certification, Clear filter) -->
+    <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#edf1ea] text-xs">
+      
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- Vendor Filter -->
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-stone-600">Người bán:</span>
+          <select
+            [ngModel]="selectedVendorId()"
+            (ngModelChange)="selectedVendorId.set($event)"
+            class="py-1.5 px-2.5 rounded-lg border border-[#bbd2c2] bg-white text-xs font-medium text-stone-800 focus:outline-none"
+          >
+            <option value="all">Tất cả Người bán / HTX</option>
+            @for (v of vendors(); track v.id) {
+              <option [value]="v.id">{{ v.shortName }} ({{ v.avatarCode }})</option>
+            }
+          </select>
+        </div>
+
+        <!-- Certification Filter -->
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-stone-600">Chứng nhận:</span>
+          <select
+            [ngModel]="selectedCert()"
+            (ngModelChange)="selectedCert.set($event)"
+            class="py-1.5 px-2.5 rounded-lg border border-[#bbd2c2] bg-white text-xs font-medium text-stone-800 focus:outline-none"
+          >
+            @for (cert of certifications; track cert) {
+              <option [value]="cert === 'Tất cả' ? 'all' : cert">{{ cert }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <!-- Results Count & Reset Filter -->
+      <div class="flex items-center gap-3">
+        <span class="text-stone-500">
+          Hiển thị <strong class="text-emerald-950 font-bold">{{ filteredProducts().length }}</strong> nông sản
+        </span>
+        @if (selectedCategory() !== 'all' || selectedVendorId() !== 'all' || selectedCert() !== 'all' || searchKeyword()) {
+          <button
+            type="button"
+            (click)="resetFilters()"
+            class="text-rose-600 hover:text-rose-800 font-bold underline cursor-pointer"
+          >
+            Xóa bộ lọc
+          </button>
+        }
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="bg-white rounded-2xl border border-[#dce9e0] p-4 h-96 animate-pulse space-y-4">
+          <div class="aspect-[4/3] bg-stone-200 rounded-xl"></div>
+          <div class="h-4 bg-stone-200 rounded w-3/4"></div>
+          <div class="h-4 bg-stone-200 rounded w-1/2"></div>
+          <div class="h-10 bg-stone-100 rounded-xl"></div>
+        </div>
+      }
+    </div>
+  } @else {
+    
+    <!-- Product Grid -->
+    @if (filteredProducts().length > 0) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        @for (item of filteredProducts(); track item.id) {
+          <app-product-card [product]="item"></app-product-card>
+        }
+      </div>
+    } @else {
+      <!-- Empty Search Results -->
+      <div class="bg-white rounded-3xl border border-[#dce9e0] p-12 text-center space-y-4">
+        <span class="text-5xl">🌾</span>
+        <h3 class="text-lg font-bold text-[#08492d]">Không tìm thấy nông sản phù hợp</h3>
+        <p class="text-sm text-stone-500 max-w-md mx-auto">
+          Không có kết quả nào khớp với tiêu chí tìm kiếm hoặc bộ lọc hiện tại. Vui lòng thử tìm từ khóa khác hoặc xóa bộ lọc.
+        </p>
+        <button
+          type="button"
+          (click)="resetFilters()"
+          class="px-5 py-2.5 rounded-xl bg-[#0d623b] text-white font-bold text-xs hover:bg-[#08492d] transition-all cursor-pointer"
+        >
+          Xem tất cả nông sản
+        </button>
+      </div>
+    }
+
+  }
+
+</div>
+

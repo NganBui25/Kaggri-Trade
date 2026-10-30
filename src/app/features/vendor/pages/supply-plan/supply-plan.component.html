@@ -1,0 +1,171 @@
+<div class="max-w-7xl mx-auto space-y-6">
+  
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
+        Kế Hoạch Nguồn Cung Dự Kiến (Harvest Forecast)
+      </h1>
+      <p class="text-xs text-stone-500 mt-1">
+        Khai báo sản lượng thu hoạch theo ngày giúp Người mua đặt trước nông sản trong tương lai mà không bị từ chối đơn.
+      </p>
+    </div>
+
+    <!-- Add Button -->
+    <button
+      type="button"
+      (click)="openAddModal()"
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#0d623b] to-[#08492d] text-white text-xs font-bold shadow-md hover:shadow-lg transition-all cursor-pointer w-fit"
+    >
+      <span>+ Thêm kế hoạch thu hoạch</span>
+    </button>
+  </div>
+
+  <!-- Dynamic Summary Cards (Fix VND-14: Calculated dynamically from plans, no hardcoded fixed numbers) -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 text-xs">
+    
+    <div class="p-5 bg-white rounded-3xl border border-[#dce9e0] shadow-xs space-y-2">
+      <span class="text-stone-400 font-bold uppercase tracking-wider block">Tổng sản lượng dự kiến có</span>
+      <strong class="text-2xl font-black text-stone-900 block">{{ totalExpectedYield() | numberDot }} kg</strong>
+      <p class="text-stone-500 text-[11px]">Tổng khối lượng theo các kế hoạch thu hoạch đang theo dõi.</p>
+    </div>
+
+    <div class="p-5 bg-white rounded-3xl border border-[#dce9e0] shadow-xs space-y-2">
+      <span class="text-amber-700 font-bold uppercase tracking-wider block">Đã cam kết cho đơn đặt trước</span>
+      <strong class="text-2xl font-black text-amber-700 block">{{ totalCommittedPreorders() | numberDot }} kg</strong>
+      <p class="text-stone-500 text-[11px]">Đã chốt giữ hàng cho Người mua đặt lịch giao tương lai.</p>
+    </div>
+
+    <div class="p-5 bg-white rounded-3xl border border-[#dce9e0] shadow-xs space-y-2">
+      <span class="text-emerald-800 font-bold uppercase tracking-wider block">Còn nhận thêm đặt trước</span>
+      <strong class="text-2xl font-black text-[#0d623b] block">{{ totalAvailableForPreorder() | numberDot }} kg</strong>
+      <p class="text-stone-500 text-[11px]">Khả năng tối đa có thể tiếp nhận thêm đơn mới trong kỳ.</p>
+    </div>
+
+  </div>
+
+  <!-- Plans List Table (Fix VND-14: Has edit and delete actions) -->
+  <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs space-y-4">
+    <div class="flex items-center justify-between pb-2 border-b border-[#edf1ea]">
+      <h3 class="text-sm font-extrabold text-[#08492d]">Danh sách kế hoạch thu hoạch & cung ứng</h3>
+      <span class="text-xs font-bold text-stone-400">{{ vendorData.harvestPlans().length }} kế hoạch</span>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse text-xs">
+        <thead>
+          <tr class="bg-[#fbfaf6] border-b border-[#edf1ea] text-stone-400 uppercase font-bold text-[10px] tracking-wider">
+            <th class="py-3 px-4">Ngày thu hoạch</th>
+            <th class="py-3 px-4">Nông sản</th>
+            <th class="py-3 px-4">Sản lượng dự kiến</th>
+            <th class="py-3 px-4">Độ chắc chắn</th>
+            <th class="py-3 px-4">Đã cam kết</th>
+            <th class="py-3 px-4">Còn nhận thêm</th>
+            <th class="py-3 px-4 text-right">Thao tác (Fix VND-14)</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#edf1ea]">
+          @for (hp of vendorData.harvestPlans(); track hp.id) {
+            <tr class="hover:bg-stone-50/60">
+              <td class="py-3.5 px-4 font-bold text-emerald-950 font-mono">📅 {{ hp.harvestDate }}</td>
+              <td class="py-3.5 px-4 font-bold text-stone-900">
+                {{ hp.productName }}
+                <span class="text-[11px] text-stone-400 font-normal block">{{ hp.notes }}</span>
+              </td>
+              <td class="py-3.5 px-4 font-extrabold">{{ hp.expectedQty | numberDot }} {{ hp.unit }}</td>
+              <td class="py-3.5 px-4">
+                <span 
+                  [class.bg-emerald-100]="hp.confidence === 'high'"
+                  [class.text-emerald-800]="hp.confidence === 'high'"
+                  [class.bg-amber-100]="hp.confidence === 'medium'"
+                  [class.text-amber-800]="hp.confidence === 'medium'"
+                  class="px-2 py-0.5 rounded text-[10px] font-bold"
+                >
+                  {{ hp.confidenceLabel }}
+                </span>
+              </td>
+              <td class="py-3.5 px-4 font-bold text-amber-700">{{ hp.alreadyCommittedQty | numberDot }} kg</td>
+              <td class="py-3.5 px-4 font-extrabold text-[#0d623b]">{{ hp.availableForPreorder | numberDot }} kg</td>
+              
+              <!-- Fix VND-14: Edit and Delete actions -->
+              <td class="py-3.5 px-4 text-right space-x-2 whitespace-nowrap">
+                <button
+                  type="button"
+                  (click)="openEditModal(hp)"
+                  class="px-2.5 py-1 rounded-lg border border-[#bbd2c2] hover:bg-emerald-50 text-stone-700 font-bold cursor-pointer"
+                >
+                  Sửa
+                </button>
+                <button
+                  type="button"
+                  (click)="deletePlan(hp.id)"
+                  class="px-2.5 py-1 rounded-lg border border-rose-200 hover:bg-rose-50 text-rose-600 font-bold cursor-pointer"
+                >
+                  Hủy
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Add/Edit Harvest Plan Modal (Fix VND-14) -->
+  @if (modalOpen()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fadeIn">
+      <div class="bg-white rounded-3xl border border-[#dce9e0] max-w-md w-full p-6 shadow-2xl space-y-4 text-xs">
+        
+        <div class="flex items-center justify-between pb-2 border-b border-[#edf1ea]">
+          <h4 class="text-sm font-extrabold text-[#08492d]">
+            {{ isEdit() ? 'Chỉnh sửa kế hoạch thu hoạch' : 'Thêm kế hoạch thu hoạch mới' }}
+          </h4>
+          <button (click)="closeModal()" class="text-stone-400 text-lg">✕</button>
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">Chọn sản phẩm nông sản</label>
+          <select [(ngModel)]="form.productId" class="w-full p-2.5 rounded-xl border border-[#bbd2c2] bg-white font-semibold">
+            @for (p of vendorData.products(); track p.id) {
+              <option [value]="p.id">{{ p.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">Ngày dự kiến thu hoạch</label>
+          <input type="text" [(ngModel)]="form.harvestDate" placeholder="VD: 08/11/2026" class="w-full p-2.5 rounded-xl border border-[#bbd2c2] font-mono font-bold" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">Sản lượng dự kiến (kg)</label>
+          <input type="number" [(ngModel)]="form.expectedQty" class="w-full p-2.5 rounded-xl border border-[#bbd2c2] font-bold text-base text-[#0d623b]" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">Mức độ chắc chắn nguồn cung</label>
+          <select [(ngModel)]="form.confidence" class="w-full p-2.5 rounded-xl border border-[#bbd2c2] bg-white font-semibold">
+            <option value="high">Chắc chắn cao (Đã vào giai đoạn bắp cuộn/trái lớn)</option>
+            <option value="medium">Trung bình (Đang theo dõi thời tiết)</option>
+            <option value="estimated">Ước tính sơ bộ vụ mùa</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">Ghi chú luống trồng / giống</label>
+          <input type="text" [(ngModel)]="form.notes" placeholder="VD: Luống B1-B8 nhà kính..." class="w-full p-2.5 rounded-xl border border-[#bbd2c2]" />
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#edf1ea]">
+          <button type="button" (click)="closeModal()" class="px-4 py-2 rounded-xl border border-[#bbd2c2]">Hủy</button>
+          <button type="button" (click)="savePlan()" class="px-5 py-2 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white font-bold cursor-pointer">
+            Lưu kế hoạch
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+
+</div>
+

@@ -1,0 +1,658 @@
+<div class="space-y-6">
+  <!-- Top Status Banner & Status Simulator (Fix VND-12 & VND-21) -->
+  <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1.5">
+          @if (vendorData.kycProfile().approvalStatus === 'approved') {
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+              <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              HỒ SƠ ĐÃ PHÊ DUYỆT CHÍNH THỨC
+            </span>
+          } @else if (vendorData.kycProfile().approvalStatus === 'pending') {
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
+              <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+              ĐANG CHỜ ADMIN XÉT DUYỆT (24H)
+            </span>
+          } @else {
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-stone-100 text-stone-700 border border-stone-300">
+              BẢN THẢO HỒ SƠ ĐĂNG KÝ
+            </span>
+          }
+          <span class="text-xs text-stone-500">Mã định danh trang trại: <strong>VN-FARM-LD-042</strong></span>
+        </div>
+
+        <h1 class="text-2xl font-bold text-stone-900">{{ farmDisplayName() }}</h1>
+        <p class="text-sm text-stone-600 mt-1">
+          Hồ sơ pháp lý: <strong class="text-stone-800">{{ legalName() }}</strong> • Số GCN: <strong class="text-stone-800 font-mono">{{ registrationNo() }}</strong>
+        </p>
+      </div>
+
+      <!-- Simulator pill toolbar for testing/QA -->
+      <div class="flex items-center gap-2 p-2 bg-stone-50 rounded-xl border border-stone-200 text-xs">
+        <span class="font-semibold text-stone-500 px-1">Chế độ kiểm thử:</span>
+        <button 
+          (click)="simulateStatus('approved')"
+          [class.bg-emerald-600]="vendorData.kycProfile().approvalStatus === 'approved'"
+          [class.text-white]="vendorData.kycProfile().approvalStatus === 'approved'"
+          [class.text-stone-700]="vendorData.kycProfile().approvalStatus !== 'approved'"
+          class="px-2.5 py-1 rounded-lg font-medium transition hover:bg-stone-200">
+          Đã duyệt
+        </button>
+        <button 
+          (click)="simulateStatus('pending')"
+          [class.bg-amber-600]="vendorData.kycProfile().approvalStatus === 'pending'"
+          [class.text-white]="vendorData.kycProfile().approvalStatus === 'pending'"
+          [class.text-stone-700]="vendorData.kycProfile().approvalStatus !== 'pending'"
+          class="px-2.5 py-1 rounded-lg font-medium transition hover:bg-stone-200">
+          Chờ duyệt
+        </button>
+        <button 
+          (click)="simulateStatus('draft')"
+          [class.bg-stone-700]="vendorData.kycProfile().approvalStatus === 'draft'"
+          [class.text-white]="vendorData.kycProfile().approvalStatus === 'draft'"
+          [class.text-stone-700]="vendorData.kycProfile().approvalStatus !== 'draft'"
+          class="px-2.5 py-1 rounded-lg font-medium transition hover:bg-stone-200">
+          Bản thảo mới
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3-Step Wizard Navigation (Fix VND-25) -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <!-- Step 1 Card -->
+    <button 
+      (click)="goToStep(1)"
+      [class.border-emerald-600]="currentStep() === 1"
+      [class.bg-emerald-50/40]="currentStep() === 1"
+      class="p-4 rounded-2xl border text-left bg-white transition shadow-sm flex items-start gap-3">
+      <div 
+        [class.bg-emerald-600]="currentStep() === 1 || isStep1Complete()"
+        [class.text-white]="currentStep() === 1 || isStep1Complete()"
+        [class.bg-stone-100]="currentStep() !== 1 && !isStep1Complete()"
+        [class.text-stone-600]="currentStep() !== 1 && !isStep1Complete()"
+        class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">
+        @if (isStep1Complete()) {
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+          </svg>
+        } @else {
+          1
+        }
+      </div>
+      <div>
+        <div class="text-xs font-bold uppercase tracking-wider text-stone-500">Phần 1</div>
+        <div class="text-sm font-bold text-stone-900 mt-0.5">Thông tin doanh nghiệp & Tên gian hàng</div>
+        <div class="text-xs text-stone-500 mt-1">Loại hình kinh doanh, tên hiển thị cho Người mua</div>
+      </div>
+    </button>
+
+    <!-- Step 2 Card -->
+    <button 
+      (click)="goToStep(2)"
+      [class.border-emerald-600]="currentStep() === 2"
+      [class.bg-emerald-50/40]="currentStep() === 2"
+      class="p-4 rounded-2xl border text-left bg-white transition shadow-sm flex items-start gap-3">
+      <div 
+        [class.bg-emerald-600]="currentStep() === 2 || isStep2Complete()"
+        [class.text-white]="currentStep() === 2 || isStep2Complete()"
+        [class.bg-stone-100]="currentStep() !== 2 && !isStep2Complete()"
+        [class.text-stone-600]="currentStep() !== 2 && !isStep2Complete()"
+        class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">
+        @if (isStep2Complete()) {
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+          </svg>
+        } @else {
+          2
+        }
+      </div>
+      <div>
+        <div class="text-xs font-bold uppercase tracking-wider text-stone-500">Phần 2</div>
+        <div class="text-sm font-bold text-stone-900 mt-0.5">Xác minh pháp lý & Giấy chứng nhận</div>
+        <div class="text-xs text-stone-500 mt-1">Mã số DN/HKD, người đại diện, tệp tài liệu</div>
+      </div>
+    </button>
+
+    <!-- Step 3 Card -->
+    <button 
+      (click)="goToStep(3)"
+      [class.border-emerald-600]="currentStep() === 3"
+      [class.bg-emerald-50/40]="currentStep() === 3"
+      class="p-4 rounded-2xl border text-left bg-white transition shadow-sm flex items-start gap-3">
+      <div 
+        [class.bg-emerald-600]="currentStep() === 3 || isStep3Complete()"
+        [class.text-white]="currentStep() === 3 || isStep3Complete()"
+        [class.bg-stone-100]="currentStep() !== 3 && !isStep3Complete()"
+        [class.text-stone-600]="currentStep() !== 3 && !isStep3Complete()"
+        class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">
+        @if (isStep3Complete()) {
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+          </svg>
+        } @else {
+          3
+        }
+      </div>
+      <div>
+        <div class="text-xs font-bold uppercase tracking-wider text-stone-500">Phần 3</div>
+        <div class="text-sm font-bold text-stone-900 mt-0.5">Thông tin liên hệ bổ sung & Xác thực OTP</div>
+        <div class="text-xs text-stone-500 mt-1">Người phụ trách, số điện thoại, email nhận đối soát</div>
+      </div>
+    </button>
+  </div>
+
+  <!-- STEP 1 CONTENT: Business Type & Store Info -->
+  @if (currentStep() === 1) {
+    <div class="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm space-y-6">
+      <div class="flex items-center justify-between pb-4 border-b border-stone-200">
+        <div class="flex items-center gap-2">
+          <h2 class="text-lg font-bold text-stone-900">Phần 1: Thông tin doanh nghiệp & Tên gian hàng</h2>
+          <!-- Info Tooltip (Fix VND-31) -->
+          <div class="group relative">
+            <svg class="w-4 h-4 text-stone-400 hover:text-stone-600 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <div class="invisible group-hover:visible absolute left-0 bottom-full mb-2 w-72 p-3 bg-stone-900 text-white text-xs rounded-xl shadow-xl z-20 leading-relaxed">
+              Chọn đúng loại hình kinh doanh theo giấy tờ pháp lý hiện có. Biểu mẫu đăng ký và giấy chứng nhận yêu cầu sẽ tự động điều chỉnh tương ứng.
+            </div>
+          </div>
+        </div>
+        <span class="text-xs text-stone-500">Bước 1/3</span>
+      </div>
+
+      <!-- Business Type Selector (Fix VND-22 & VND-32) -->
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2">
+          1. Chọn loại hình tổ chức kinh doanh <span class="text-rose-500">*</span>
+        </label>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <!-- Option 1: Cá nhân / Nhà vườn -->
+          <div 
+            (click)="selectBusinessType('individual')"
+            [class.border-emerald-600]="businessType() === 'individual'"
+            [class.bg-emerald-50/50]="businessType() === 'individual'"
+            class="p-4 rounded-xl border border-stone-200 hover:border-emerald-400 cursor-pointer transition">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-stone-900">Cá nhân / Nhà vườn</span>
+              <input type="radio" name="bType" [checked]="businessType() === 'individual'" class="text-emerald-600 focus:ring-emerald-500">
+            </div>
+            <p class="text-xs text-stone-500 leading-relaxed">Dành cho hộ nông dân nhỏ lẻ, vườn gia đình có xác nhận địa phương.</p>
+          </div>
+
+          <!-- Option 2: Hộ kinh doanh (Default) -->
+          <div 
+            (click)="selectBusinessType('household')"
+            [class.border-emerald-600]="businessType() === 'household'"
+            [class.bg-emerald-50/50]="businessType() === 'household'"
+            class="p-4 rounded-xl border border-stone-200 hover:border-emerald-400 cursor-pointer transition">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-stone-900">Hộ kinh doanh cá thể</span>
+              <input type="radio" name="bType" [checked]="businessType() === 'household'" class="text-emerald-600 focus:ring-emerald-500">
+            </div>
+            <p class="text-xs text-stone-500 leading-relaxed">Trang trại, cơ sở chế biến có Giấy chứng nhận đăng ký hộ kinh doanh.</p>
+          </div>
+
+          <!-- Option 3: Doanh nghiệp & HTX -->
+          <div 
+            (click)="selectBusinessType('enterprise')"
+            [class.border-emerald-600]="businessType() === 'enterprise'"
+            [class.bg-emerald-50/50]="businessType() === 'enterprise'"
+            class="p-4 rounded-xl border border-stone-200 hover:border-emerald-400 cursor-pointer transition">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-stone-900">Doanh nghiệp & Hợp tác xã</span>
+              <input type="radio" name="bType" [checked]="businessType() === 'enterprise'" class="text-emerald-600 focus:ring-emerald-500">
+            </div>
+            <p class="text-xs text-stone-500 leading-relaxed">Công ty TNHH/CP, Hợp tác xã nông nghiệp có Giấy chứng nhận ĐKDN.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Farm / Store Display Name with Character Counter (Fix VND-24 & VND-31) -->
+      <div>
+        <div class="flex items-center justify-between mb-1.5">
+          <label class="text-xs font-bold uppercase tracking-wider text-stone-700 flex items-center gap-1.5">
+            2. Tên trang trại / Thương hiệu hiển thị cho Người mua <span class="text-rose-500">*</span>
+            <div class="group relative">
+              <svg class="w-3.5 h-3.5 text-stone-400 hover:text-stone-600 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <div class="invisible group-hover:visible absolute left-0 bottom-full mb-2 w-64 p-2.5 bg-stone-900 text-white text-[11px] rounded-lg shadow-xl z-20">
+                Tên này sẽ hiển thị trực tiếp với các nhà hàng, chuỗi siêu thị và Người mua trên sàn Kaggri-Trade.
+              </div>
+            </div>
+          </label>
+          <!-- Real-time counter (Fix VND-24) -->
+          <span 
+            [class.text-rose-600]="displayNameLength() > 120"
+            [class.text-stone-400]="displayNameLength() <= 120"
+            class="text-xs font-mono font-semibold">
+            {{ displayNameLength() }}/120
+          </span>
+        </div>
+
+        <input 
+          type="text" 
+          [ngModel]="farmDisplayName()" 
+          (ngModelChange)="farmDisplayName.set($event); clearError('farmDisplayName')"
+          [class.border-rose-500]="errors()['farmDisplayName']"
+          [class.border-stone-300]="!errors()['farmDisplayName']"
+          placeholder="Ví dụ: Trang Trại Rau Sạch Lạc Dương Xanh"
+          class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+
+        <!-- Error message (Fix VND-30) -->
+        @if (errors()['farmDisplayName']) {
+          <p class="text-xs text-rose-600 mt-1 font-medium flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            {{ errors()['farmDisplayName'] }}
+          </p>
+        }
+      </div>
+
+      <!-- Navigation buttons -->
+      <div class="flex items-center justify-end pt-4 border-t border-stone-200">
+        <button 
+          (click)="goToStep(2)"
+          class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition shadow-sm">
+          Tiếp tục: Xác minh pháp lý
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- STEP 2 CONTENT: Legal Info & Dynamic Document Upload (Fix VND-23 & VND-26) -->
+  @if (currentStep() === 2) {
+    <div class="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm space-y-6">
+      <div class="flex items-center justify-between pb-4 border-b border-stone-200">
+        <div class="flex items-center gap-2">
+          <h2 class="text-lg font-bold text-stone-900">Phần 2: Thông tin pháp lý & Giấy chứng nhận</h2>
+          <div class="group relative">
+            <svg class="w-4 h-4 text-stone-400 hover:text-stone-600 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <div class="invisible group-hover:visible absolute left-0 bottom-full mb-2 w-72 p-3 bg-stone-900 text-white text-xs rounded-xl shadow-xl z-20 leading-relaxed">
+              Kaggri-Trade kiểm duyệt nghiêm ngặt tư cách pháp lý và nguồn gốc nông sản để đảm bảo quyền lợi ký quỹ hợp đồng cho cả người bán và người mua.
+            </div>
+          </div>
+        </div>
+        <span class="text-xs text-stone-500">Bước 2/3</span>
+      </div>
+
+      <!-- Legal Info Group (Fix VND-23: Dynamic fields based on type) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Field 1: Legal Name -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1.5">
+            @if (businessType() === 'enterprise') {
+              Tên công ty / HTX trên GPKD <span class="text-rose-500">*</span>
+            } @else if (businessType() === 'household') {
+              Tên hộ kinh doanh trên Giấy chứng nhận <span class="text-rose-500">*</span>
+            } @else {
+              Họ và tên chủ vườn / cá nhân đăng ký <span class="text-rose-500">*</span>
+            }
+          </label>
+          <input 
+            type="text" 
+            [ngModel]="legalName()" 
+            (ngModelChange)="legalName.set($event); clearError('legalName')"
+            [class.border-rose-500]="errors()['legalName']"
+            [class.border-stone-300]="!errors()['legalName']"
+            class="w-full px-4 py-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+          @if (errors()['legalName']) {
+            <p class="text-xs text-rose-600 mt-1 font-medium">{{ errors()['legalName'] }}</p>
+          }
+        </div>
+
+        <!-- Field 2: Registration No -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1.5">
+            @if (businessType() === 'enterprise') {
+              Mã số doanh nghiệp (MSDN / MST) <span class="text-rose-500">*</span>
+            } @else if (businessType() === 'household') {
+              Số giấy chứng nhận ĐKKD Hộ cá thể <span class="text-rose-500">*</span>
+            } @else {
+              Số CCCD gắn chip chủ vườn <span class="text-rose-500">*</span>
+            }
+          </label>
+          <input 
+            type="text" 
+            [ngModel]="registrationNo()" 
+            (ngModelChange)="registrationNo.set($event); clearError('registrationNo')"
+            [class.border-rose-500]="errors()['registrationNo']"
+            [class.border-stone-300]="!errors()['registrationNo']"
+            class="w-full px-4 py-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono text-sm">
+          @if (errors()['registrationNo']) {
+            <p class="text-xs text-rose-600 mt-1 font-medium">{{ errors()['registrationNo'] }}</p>
+          }
+        </div>
+
+        <!-- Field 3: Representative Person -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1.5">
+            Họ tên người đại diện pháp luật <span class="text-rose-500">*</span>
+          </label>
+          <input 
+            type="text" 
+            [ngModel]="representativeName()" 
+            (ngModelChange)="representativeName.set($event)"
+            class="w-full px-4 py-2.5 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+        </div>
+
+        <!-- Field 4: Representative ID Card -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1.5">
+            Số CCCD/Hộ chiếu người đại diện
+          </label>
+          <input 
+            type="text" 
+            [ngModel]="representativeIdCard()" 
+            (ngModelChange)="representativeIdCard.set($event)"
+            class="w-full px-4 py-2.5 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono text-sm">
+        </div>
+
+        <!-- Field 5: Province -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1.5">
+            Tỉnh / Thành phố vùng trồng <span class="text-rose-500">*</span>
+          </label>
+          <input 
+            type="text" 
+            [ngModel]="province()" 
+            (ngModelChange)="province.set($event)"
+            class="w-full px-4 py-2.5 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+        </div>
+
+        <!-- Field 6: Full Address -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1.5">
+            Địa chỉ cụ thể trang trại / kho xuất hàng
+          </label>
+          <input 
+            type="text" 
+            [ngModel]="address()" 
+            (ngModelChange)="address.set($event)"
+            class="w-full px-4 py-2.5 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+        </div>
+      </div>
+
+      <!-- Dynamic File Upload & Preview Section (Fix VND-26) -->
+      <div class="pt-2">
+        <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2">
+          {{ documentLabel() }} <span class="text-rose-500">*</span>
+        </label>
+
+        @if (!uploadedFileName()) {
+          <!-- Dropzone -->
+          <div class="border-2 border-dashed border-stone-300 hover:border-emerald-500 rounded-2xl p-6 text-center transition cursor-pointer bg-stone-50/50 relative">
+            <input 
+              type="file" 
+              (change)="handleFileUpload($event)"
+              accept=".pdf,.png,.jpg,.jpeg"
+              class="absolute inset-0 opacity-0 cursor-pointer">
+            <svg class="w-10 h-10 text-stone-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+            </svg>
+            <p class="text-sm font-semibold text-stone-700">Kéo thả tệp hoặc bấm vào đây để tải lên</p>
+            <p class="text-xs text-stone-500 mt-1">Định dạng hỗ trợ: PDF, JPG, PNG (tối đa 15MB)</p>
+          </div>
+        } @else {
+          <!-- File Preview Card (Fix VND-26) -->
+          <div class="p-4 rounded-xl border border-emerald-300 bg-emerald-50/50 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xs">
+                PDF
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-stone-900">{{ uploadedFileName() }}</p>
+                <div class="flex items-center gap-2 text-xs text-stone-500 mt-0.5">
+                  <span>{{ uploadedFileSize() }}</span>
+                  <span>•</span>
+                  <span class="text-emerald-700 font-medium">Đã tải lên sẵn sàng xét duyệt</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <label class="cursor-pointer px-3 py-1.5 text-xs font-semibold text-stone-700 bg-white border border-stone-300 rounded-lg hover:bg-stone-50 transition shadow-sm">
+                Đổi tệp khác
+                <input type="file" (change)="handleFileUpload($event)" accept=".pdf,.png,.jpg,.jpeg" class="hidden">
+              </label>
+              <button 
+                (click)="removeFile()"
+                class="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                title="Xóa tệp">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Navigation buttons -->
+      <div class="flex items-center justify-between pt-4 border-t border-stone-200">
+        <button 
+          (click)="goToStep(1)"
+          class="inline-flex items-center gap-2 px-5 py-2.5 text-stone-700 hover:bg-stone-100 rounded-xl text-sm font-semibold transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+          Quay lại: Tên gian hàng
+        </button>
+
+        <button 
+          (click)="goToStep(3)"
+          class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition shadow-sm">
+          Tiếp tục: Thông tin liên hệ & OTP
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- STEP 3 CONTENT: Additional Contacts & OTP Verification (Fix VND-27, VND-28, VND-29) -->
+  @if (currentStep() === 3) {
+    <div class="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm space-y-6">
+      <div class="flex items-center justify-between pb-4 border-b border-stone-200">
+        <div class="flex items-center gap-2">
+          <h2 class="text-lg font-bold text-stone-900">Phần 3: Thông tin liên hệ bổ sung & Xác thực OTP</h2>
+          <div class="group relative">
+            <svg class="w-4 h-4 text-stone-400 hover:text-stone-600 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <div class="invisible group-hover:visible absolute left-0 bottom-full mb-2 w-72 p-3 bg-stone-900 text-white text-xs rounded-xl shadow-xl z-20 leading-relaxed">
+              Thông tin liên hệ này được dùng để gửi thông báo đơn hàng mới, thông báo đối soát dòng tiền và xác minh bảo mật tài khoản.
+            </div>
+          </div>
+        </div>
+        <span class="text-xs text-stone-500">Bước 3/3</span>
+      </div>
+
+      <div class="space-y-4">
+        <!-- Contact Person (Fix VND-27) -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1.5">
+            Họ tên người phụ trách liên hệ trực tiếp <span class="text-rose-500">*</span>
+          </label>
+          <input 
+            type="text" 
+            [ngModel]="contactPerson()" 
+            (ngModelChange)="contactPerson.set($event); clearError('contactPerson')"
+            [class.border-rose-500]="errors()['contactPerson']"
+            [class.border-stone-300]="!errors()['contactPerson']"
+            placeholder="Ví dụ: Nguyễn Văn Nông (Phụ trách kinh doanh)"
+            class="w-full px-4 py-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+          @if (errors()['contactPerson']) {
+            <p class="text-xs text-rose-600 mt-1 font-medium">{{ errors()['contactPerson'] }}</p>
+          }
+        </div>
+
+        <!-- Phone Selection (Fix VND-28: Option to use account masked phone or custom) -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2">
+            Số điện thoại liên hệ nhận đơn & SMS OTP <span class="text-rose-500">*</span>
+          </label>
+
+          <div class="space-y-2.5">
+            <!-- Option 1: Use account phone -->
+            <label class="flex items-center gap-3 p-3 rounded-xl border border-stone-200 hover:border-emerald-400 cursor-pointer transition bg-stone-50/50">
+              <input 
+                type="radio" 
+                name="phoneOption" 
+                [checked]="useAccountPhone()" 
+                (change)="useAccountPhone.set(true)"
+                class="text-emerald-600 focus:ring-emerald-500">
+              <span class="text-sm font-medium text-stone-900">
+                Sử dụng số điện thoại của tài khoản đăng nhập: 
+                <strong class="font-mono text-emerald-800">{{ accountPhoneMasked() }}</strong>
+              </span>
+            </label>
+
+            <!-- Option 2: Custom phone -->
+            <label class="flex items-center gap-3 p-3 rounded-xl border border-stone-200 hover:border-emerald-400 cursor-pointer transition bg-stone-50/50">
+              <input 
+                type="radio" 
+                name="phoneOption" 
+                [checked]="!useAccountPhone()" 
+                (change)="useAccountPhone.set(false)"
+                class="text-emerald-600 focus:ring-emerald-500">
+              <span class="text-sm font-medium text-stone-900">Sử dụng số điện thoại liên hệ khác</span>
+            </label>
+
+            @if (!useAccountPhone()) {
+              <div class="pl-7 pt-1">
+                <input 
+                  type="text" 
+                  [ngModel]="customPhone()" 
+                  (ngModelChange)="customPhone.set($event); clearError('customPhone')"
+                  placeholder="Nhập số điện thoại liên hệ mới (ví dụ: 0987 654 321)"
+                  [class.border-rose-500]="errors()['customPhone']"
+                  [class.border-stone-300]="!errors()['customPhone']"
+                  class="w-full px-4 py-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono text-sm">
+                @if (errors()['customPhone']) {
+                  <p class="text-xs text-rose-600 mt-1 font-medium">{{ errors()['customPhone'] }}</p>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Email & OTP Verification (Fix VND-29) -->
+        <div class="p-5 rounded-2xl bg-stone-50 border border-stone-200 space-y-4">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1.5">
+              Địa chỉ Email nhận báo cáo đối soát & Hóa đơn điện tử <span class="text-rose-500">*</span>
+            </label>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              <input 
+                type="email" 
+                [ngModel]="contactEmail()" 
+                (ngModelChange)="contactEmail.set($event); clearError('contactEmail')"
+                [class.border-rose-500]="errors()['contactEmail']"
+                [class.border-stone-300]="!errors()['contactEmail']"
+                placeholder="vendor@lacduongfarm.vn"
+                class="flex-1 px-4 py-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm bg-white">
+              
+              <button 
+                (click)="sendOtp()"
+                [disabled]="otpTimer() > 0"
+                class="px-4 py-2.5 text-xs font-semibold rounded-xl transition shadow-sm whitespace-nowrap"
+                [class.bg-emerald-600]="otpTimer() === 0"
+                [class.hover:bg-emerald-700]="otpTimer() === 0"
+                [class.text-white]="otpTimer() === 0"
+                [class.bg-stone-300]="otpTimer() > 0"
+                [class.text-stone-600]="otpTimer() > 0">
+                @if (otpTimer() > 0) {
+                  Gửi lại sau ({{ otpTimer() }}s)
+                } @else {
+                  Gửi mã xác minh OTP
+                }
+              </button>
+            </div>
+            @if (errors()['contactEmail']) {
+              <p class="text-xs text-rose-600 mt-1 font-medium">{{ errors()['contactEmail'] }}</p>
+            }
+          </div>
+
+          <!-- OTP Input Section (Fix VND-29 & VND-30) -->
+          @if (isOtpSent()) {
+            <div class="pt-2 border-t border-stone-200">
+              <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1.5">
+                Nhập mã xác thực OTP (6 chữ số)
+              </label>
+              <div class="flex items-center gap-3">
+                <input 
+                  type="text" 
+                  maxlength="6"
+                  [ngModel]="otpCode()" 
+                  (ngModelChange)="otpCode.set($event); clearError('otpCode')"
+                  [class.border-rose-500]="errors()['otpCode']"
+                  [class.border-stone-300]="!errors()['otpCode']"
+                  placeholder="888888"
+                  class="w-40 px-4 py-2.5 text-center font-mono text-base font-bold tracking-widest rounded-xl border focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+
+                <button 
+                  (click)="verifyOtp()"
+                  class="px-5 py-2.5 bg-stone-900 hover:bg-black text-white text-xs font-semibold rounded-xl transition shadow-sm">
+                  Xác nhận mã
+                </button>
+
+                @if (isOtpVerified()) {
+                  <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
+                    <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    Đã xác thực thành công
+                  </span>
+                }
+              </div>
+
+              <!-- Error below OTP (Fix VND-30) -->
+              @if (errors()['otpCode']) {
+                <p class="text-xs text-rose-600 mt-1.5 font-medium flex items-center gap-1">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  {{ errors()['otpCode'] }}
+                </p>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Submit Footer -->
+      <div class="flex items-center justify-between pt-6 border-t border-stone-200">
+        <button 
+          (click)="goToStep(2)"
+          class="inline-flex items-center gap-2 px-5 py-2.5 text-stone-700 hover:bg-stone-100 rounded-xl text-sm font-semibold transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+          Quay lại: Xác minh pháp lý
+        </button>
+
+        <button 
+          (click)="submitForm()"
+          class="inline-flex items-center gap-2 px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl transition shadow-lg shadow-emerald-700/20">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          Lưu & Nộp hồ sơ đăng ký bán hàng
+        </button>
+      </div>
+    </div>
+  }
+</div>
+

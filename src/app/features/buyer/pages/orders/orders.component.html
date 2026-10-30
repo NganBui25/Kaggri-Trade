@@ -1,0 +1,377 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+  
+  <!-- Page Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
+        Đơn Mua Của Tôi
+      </h1>
+      <p class="text-xs text-stone-500 mt-1">
+        Theo dõi tiến độ chuẩn bị nông sản, lộ trình xe tải lạnh và đối soát ký quỹ Escrow.
+      </p>
+    </div>
+
+    <a
+      routerLink="/buyer/catalog"
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold transition-all shadow-xs w-fit"
+    >
+      <span>+ Đặt thêm nông sản</span>
+    </a>
+  </div>
+
+  @if (orders().length > 0) {
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Left Column: Orders List (4 cols) -->
+      <div class="lg:col-span-4 space-y-3">
+        <span class="text-xs font-bold uppercase tracking-wider text-stone-400 block px-1">
+          Danh sách {{ orders().length }} đơn đặt hàng
+        </span>
+
+        <div class="space-y-3">
+          @for (order of orders(); track order.id) {
+            <div
+              (click)="selectOrder(order)"
+              [class.ring-2]="selectedOrder()?.id === order.id"
+              [class.ring-[#0d623b]]="selectedOrder()?.id === order.id"
+              [class.bg-white]="selectedOrder()?.id === order.id"
+              [class.bg-[#fbfaf6]]="selectedOrder()?.id !== order.id"
+              class="p-4 rounded-2xl border border-[#bbd2c2] hover:border-emerald-600 transition-all cursor-pointer shadow-xs space-y-3"
+            >
+              <div class="flex items-center justify-between">
+                <strong class="font-mono text-xs text-[#08492d] font-bold">{{ order.id }}</strong>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                  {{ order.paymentStatus === 'paid' ? 'Đã thanh toán Escrow' : 'Chờ thanh toán' }}
+                </span>
+              </div>
+
+              <div class="space-y-1 text-xs text-stone-600">
+                <div class="flex justify-between">
+                  <span>Ngày đặt:</span>
+                  <span>{{ order.createdAt }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Số Người bán liên kết (Fix BUY-31):</span>
+                  <strong class="text-stone-800">{{ getVendorCount(order) }} Người bán</strong>
+                </div>
+                <div class="flex justify-between font-bold pt-1 border-t border-[#edf1ea]">
+                  <span>Tổng tiền:</span>
+                  <strong class="text-sm text-[#0d623b]">{{ order.totalAmount | price }}</strong>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Right Column: Order Detail View (8 cols - Fix BUY-34: Balanced full layout) -->
+      <div class="lg:col-span-8">
+        @if (selectedOrder(); as ord) {
+          <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-sm space-y-6">
+            
+            <!-- Detail Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#edf1ea]">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h2 class="text-lg font-extrabold text-[#08492d]">
+                    Chi Tiết Đơn Mua: {{ ord.id }}
+                  </h2>
+                </div>
+                <p class="text-xs text-stone-400 mt-0.5">Mã thanh toán: {{ ord.paymentId }} • Ngày tạo: {{ ord.createdAt }}</p>
+              </div>
+
+              <!-- Summary Chips (Fix BUY-31: Accurate unique vendor count) -->
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  {{ getVendorCount(ord) }} Người bán liên kết
+                </span>
+              </div>
+            </div>
+
+            <!-- Tab Navigation (Fix BUY-30: Distinct contents per tab) -->
+            <div class="flex items-center gap-2 border-b border-[#edf1ea] pb-2 text-xs font-bold overflow-x-auto">
+              <button
+                type="button"
+                (click)="activeDetailTab.set('overview')"
+                [class.text-[#0d623b]]="activeDetailTab() === 'overview'"
+                [class.border-[#0d623b]]="activeDetailTab() === 'overview'"
+                class="pb-2 px-3 border-b-2 transition-all cursor-pointer whitespace-nowrap"
+                [class.border-transparent]="activeDetailTab() !== 'overview'"
+              >
+                Tổng Quan Đơn Hàng
+              </button>
+
+              <button
+                type="button"
+                (click)="activeDetailTab.set('vendors')"
+                [class.text-[#0d623b]]="activeDetailTab() === 'vendors'"
+                [class.border-[#0d623b]]="activeDetailTab() === 'vendors'"
+                class="pb-2 px-3 border-b-2 transition-all cursor-pointer whitespace-nowrap"
+                [class.border-transparent]="activeDetailTab() !== 'vendors'"
+              >
+                Đơn Theo Người Bán ({{ ord.subOrders.length }})
+              </button>
+
+              <button
+                type="button"
+                (click)="activeDetailTab.set('payment')"
+                [class.text-[#0d623b]]="activeDetailTab() === 'payment'"
+                [class.border-[#0d623b]]="activeDetailTab() === 'payment'"
+                class="pb-2 px-3 border-b-2 transition-all cursor-pointer whitespace-nowrap"
+                [class.border-transparent]="activeDetailTab() !== 'payment'"
+              >
+                Thanh Toán & Escrow
+              </button>
+
+              <button
+                type="button"
+                (click)="activeDetailTab.set('invoice')"
+                [class.text-[#0d623b]]="activeDetailTab() === 'invoice'"
+                [class.border-[#0d623b]]="activeDetailTab() === 'invoice'"
+                class="pb-2 px-3 border-b-2 transition-all cursor-pointer whitespace-nowrap"
+                [class.border-transparent]="activeDetailTab() !== 'invoice'"
+              >
+                Hóa Đơn VAT
+              </button>
+            </div>
+
+            <!-- TAB 1: Tổng Quan (Fix BUY-30) -->
+            @if (activeDetailTab() === 'overview') {
+              <div class="space-y-5 animate-fadeIn">
+                <!-- Status Timeline Cards -->
+                <div class="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100 text-xs space-y-2">
+                  <span class="font-bold text-emerald-950 flex items-center gap-1.5">
+                    <span>🚚</span> Tiến độ đơn hàng
+                  </span>
+                  <p class="text-stone-600">
+                    Đơn hàng đã được thanh toán Escrow thành công. Các Người bán đang chuẩn bị đóng thùng nông sản sạch theo tiêu chuẩn vận chuyển lạnh.
+                  </p>
+                </div>
+
+                <!-- Destination Warehouse Info -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs p-4 bg-[#fbfaf6] rounded-2xl border border-[#dce9e0]">
+                  <div>
+                    <span class="text-stone-400 block font-medium">Kho nhận hàng:</span>
+                    <strong class="text-stone-900 font-bold block mt-0.5">{{ ord.deliveryAddress.companyName }}</strong>
+                    <p class="text-stone-600 mt-1">{{ ord.deliveryAddress.address }}</p>
+                  </div>
+                  <div>
+                    <span class="text-stone-400 block font-medium">Người liên hệ & Khung giờ:</span>
+                    <strong class="text-stone-900 font-bold block mt-0.5">
+                      {{ ord.deliveryAddress.recipientName }} • {{ ord.deliveryAddress.phone }}
+                    </strong>
+                    <p class="text-emerald-800 font-semibold mt-1">⏰ Khung giờ: {{ ord.deliveryAddress.receivingWindow }}</p>
+                    <p class="text-[11px] text-stone-500 italic mt-0.5">{{ ord.deliveryAddress.deliveryNote }}</p>
+                  </div>
+                </div>
+
+                <!-- Overview of Sub-Orders -->
+                <div class="space-y-3">
+                  <h4 class="text-xs font-bold uppercase tracking-wider text-stone-500">
+                    Trạng thái theo từng Người bán (Fix BUY-33: Rõ ràng từng đơn)
+                  </h4>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    @for (sub of ord.subOrders; track sub.id) {
+                      <div class="p-3.5 rounded-2xl border border-[#bbd2c2] bg-white space-y-2">
+                        <div class="flex items-center justify-between">
+                          <strong class="font-bold text-[#08492d]">{{ sub.vendorShortName }}</strong>
+                          <span class="text-[10px] font-bold px-2 py-0.5 rounded border" [ngClass]="sub.statusBadgeClass">
+                            {{ sub.statusLabel }}
+                          </span>
+                        </div>
+                        <p class="text-stone-500 text-[11px]">Mã vận đơn: {{ sub.trackingCode || 'Đang cập nhật' }}</p>
+                        <div class="flex justify-between pt-1 border-t border-[#edf1ea] font-semibold text-stone-700">
+                          <span>{{ sub.items.length }} mặt hàng</span>
+                          <strong class="text-[#0d623b]">{{ sub.totalAmount | price }}</strong>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+              </div>
+            }
+
+            <!-- TAB 2: Đơn theo Người bán (Fix BUY-29: Đầy đủ sản phẩm, số lượng, đơn giá) -->
+            @if (activeDetailTab() === 'vendors') {
+              <div class="space-y-6 animate-fadeIn">
+                @for (sub of ord.subOrders; track sub.id) {
+                  <div class="p-5 rounded-2xl border border-[#bbd2c2] bg-[#fbfaf6] space-y-4">
+                    
+                    <!-- Sub-order Header -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#dce9e0]">
+                      <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-bold text-xs">
+                          {{ sub.vendorAvatarCode }}
+                        </div>
+                        <div>
+                          <strong class="text-sm font-extrabold text-[#08492d]">{{ sub.vendorName }}</strong>
+                          <p class="text-[11px] text-stone-400">Mã đơn Người bán: {{ sub.id }} • Lô xe lạnh: {{ sub.trackingCode }}</p>
+                        </div>
+                      </div>
+
+                      <span class="text-xs font-bold px-3 py-1 rounded-full border w-fit" [ngClass]="sub.statusBadgeClass">
+                        {{ sub.statusLabel }}
+                      </span>
+                    </div>
+
+                    <!-- Items Detail Table (Fix BUY-29) -->
+                    <div class="divide-y divide-[#edf1ea] bg-white rounded-xl border border-[#dce9e0] overflow-hidden">
+                      @for (it of sub.items; track it.sku) {
+                        <div class="p-3 flex items-center justify-between gap-4 text-xs">
+                          <div class="flex items-center gap-3 min-w-0">
+                            <img [src]="it.image" [alt]="it.productName" class="w-12 h-12 rounded-lg object-cover border border-emerald-100 flex-shrink-0" />
+                            <div class="min-w-0">
+                              <strong class="font-bold text-stone-900 block truncate">{{ it.productName }}</strong>
+                              <span class="text-[11px] text-stone-400 font-mono">{{ it.sku }}</span>
+                            </div>
+                          </div>
+
+                          <div class="text-right flex-shrink-0">
+                            <span class="text-stone-500">{{ it.quantity | numberDot }} {{ it.unit }} × {{ it.unitPrice | price }}</span>
+                            <strong class="block text-emerald-950 font-bold">{{ it.amount | price }}</strong>
+                          </div>
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Action Buttons for this Sub-Order -->
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 text-xs">
+                      <span class="text-stone-500">
+                        Phí xe lạnh: <strong>{{ sub.shippingFee | price }}</strong> • Tổng đơn con: <strong class="text-emerald-800 text-sm font-extrabold">{{ sub.totalAmount | price }}</strong>
+                      </span>
+
+                      <div class="flex items-center gap-2">
+                        @if (sub.status === 'confirmed' || sub.status === 'preparing' || sub.status === 'shipped') {
+                          <button
+                            type="button"
+                            (click)="confirmReceipt(sub)"
+                            class="px-3.5 py-1.5 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white font-bold transition-all shadow-xs cursor-pointer"
+                          >
+                            ✓ Xác nhận đã nhận hàng
+                          </button>
+                        }
+
+                        <a
+                          routerLink="/buyer/dispute"
+                          [queryParams]="{ orderId: ord.id, subOrderId: sub.id }"
+                          class="px-3.5 py-1.5 rounded-xl border border-rose-300 hover:bg-rose-50 text-rose-700 font-bold transition-all cursor-pointer"
+                        >
+                          Khiếu nại / Hoàn tiền
+                        </a>
+                      </div>
+                    </div>
+
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- TAB 3: Thanh Toán & Escrow (Fix BUY-32, BUY-34: Balanced 2-card layout) -->
+            @if (activeDetailTab() === 'payment') {
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs animate-fadeIn">
+                
+                <div class="p-5 rounded-2xl bg-[#fbfaf6] border border-[#dce9e0] space-y-3">
+                  <h4 class="font-extrabold text-[#08492d] text-sm pb-2 border-b border-[#edf1ea]">
+                    Chi tiết giao dịch thanh toán
+                  </h4>
+                  <div class="space-y-2">
+                    <div class="flex justify-between">
+                      <span class="text-stone-500">Phương thức:</span>
+                      <strong class="text-stone-800 uppercase">{{ ord.paymentMethod }} (VietQR)</strong>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-stone-500">Mã giao dịch ngân hàng:</span>
+                      <strong class="font-mono">{{ ord.paymentId }}</strong>
+                    </div>
+                    <!-- Fix BUY-32: Tiếng Việt chuẩn thay vì SUCCESS/FAILED -->
+                    <div class="flex justify-between">
+                      <span class="text-stone-500">Trạng thái thanh toán:</span>
+                      <span class="font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
+                        Thành công (Đã đối soát)
+                      </span>
+                    </div>
+                    <div class="flex justify-between pt-2 border-t border-[#edf1ea]">
+                      <span class="font-bold">Số tiền đã giữ Escrow:</span>
+                      <strong class="text-[#0d623b] font-extrabold text-sm">{{ ord.totalAmount | price }}</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-emerald-50/60 border border-emerald-100 space-y-3">
+                  <h4 class="font-extrabold text-emerald-950 text-sm pb-2 border-b border-emerald-100">
+                    Chính sách bảo đảm Escrow
+                  </h4>
+                  <p class="text-stone-600 leading-relaxed">
+                    Khoản thanh toán của bạn hiện được bảo lưu an toàn tại tài khoản trung gian ký quỹ. Sau khi kho kiểm nhận hàng đạt chuẩn chất lượng VietGAP, tiền mới được giải ngân tự động cho Người bán.
+                  </p>
+                  <div class="p-2.5 rounded-xl bg-white border border-emerald-200 text-emerald-900 font-semibold">
+                    🔒 Được bảo hiểm chất lượng chuỗi cung ứng nông sản 100%.
+                  </div>
+                </div>
+
+              </div>
+            }
+
+            <!-- TAB 4: Hóa Đơn VAT (Fix BUY-34) -->
+            @if (activeDetailTab() === 'invoice') {
+              <div class="p-5 rounded-2xl bg-[#fbfaf6] border border-[#dce9e0] text-xs space-y-3 animate-fadeIn">
+                <h4 class="font-extrabold text-[#08492d] text-sm pb-2 border-b border-[#edf1ea]">
+                  Thông tin Hóa đơn Điện tử (VAT)
+                </h4>
+                @if (ord.invoiceRequested && ord.invoiceProfile) {
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <span class="text-stone-400 block">Doanh nghiệp xuất hóa đơn:</span>
+                      <strong class="text-stone-800 text-sm">{{ ord.invoiceProfile.companyName }}</strong>
+                    </div>
+                    <div>
+                      <span class="text-stone-400 block">Mã số thuế:</span>
+                      <strong class="text-stone-800 font-mono text-sm">{{ ord.invoiceProfile.taxCode }}</strong>
+                    </div>
+                    <div class="sm:col-span-2">
+                      <span class="text-stone-400 block">Địa chỉ đăng ký kinh doanh:</span>
+                      <p class="text-stone-700">{{ ord.invoiceProfile.billingAddress }}</p>
+                    </div>
+                    <div class="sm:col-span-2">
+                      <span class="text-stone-400 block">Email nhận hóa đơn:</span>
+                      <strong class="text-emerald-800">{{ ord.invoiceProfile.invoiceEmail }}</strong>
+                    </div>
+                  </div>
+                } @else {
+                  <p class="text-stone-500 italic">Đơn hàng không yêu cầu phát hành hóa đơn VAT.</p>
+                }
+              </div>
+            }
+
+          </div>
+        }
+      </div>
+
+    </div>
+  } @else {
+    <!-- Empty Orders State (Fix BUY-08: Friendly empty state) -->
+    <div class="bg-white rounded-3xl border border-[#dce9e0] p-12 text-center space-y-4 max-w-lg mx-auto shadow-sm">
+      <div class="w-20 h-20 rounded-full bg-emerald-50 text-[#0d623b] flex items-center justify-center text-4xl mx-auto shadow-inner">
+        📦
+      </div>
+      <h3 class="text-xl font-extrabold text-[#08492d]">Chưa có đơn mua nào</h3>
+      <p class="text-xs text-stone-500 leading-relaxed">
+        Bạn chưa thực hiện đơn mua nông sản nào trên hệ thống Kaggri-Trade. Hãy tham khảo nguồn hàng nông sản tươi ngon trực tiếp từ các nhà vườn.
+      </p>
+      <div class="pt-2">
+        <a
+          routerLink="/buyer/catalog"
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white font-bold text-xs shadow-md transition-all"
+        >
+          <span>Khám phá Sàn Nông Sản</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  }
+
+</div>
+

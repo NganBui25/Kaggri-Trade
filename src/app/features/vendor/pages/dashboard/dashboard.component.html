@@ -1,0 +1,276 @@
+<div class="max-w-7xl mx-auto space-y-8">
+  
+  <!-- Welcome Banner -->
+  <div class="relative rounded-3xl bg-gradient-to-r from-[#08492d] via-[#0d623b] to-[#127a4b] text-white p-6 sm:p-8 shadow-xl overflow-hidden">
+    <div class="absolute -right-8 -bottom-8 w-64 h-64 rounded-full bg-emerald-400/10 blur-3xl pointer-events-none"></div>
+    <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="space-y-2 max-w-xl">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-emerald-200 text-xs font-bold border border-white/15">
+          🌾 Cổng Quản Trị Trang Trại Kaggri
+        </span>
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+          Xin chào, {{ vendorData.kycProfile().representativeName }}!
+        </h1>
+        <p class="text-emerald-100/90 text-xs sm:text-sm leading-relaxed">
+          Trang trại đang vận hành <strong>{{ vendorData.products().length }} mặt hàng</strong> với <strong>{{ vendorData.pendingOrdersCount() }} đơn chờ xác nhận</strong>. Hãy phản hồi Người mua sớm để duy trì tỷ lệ giao đúng hẹn 98.5%.
+        </p>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex flex-wrap items-center gap-3">
+        <a
+          routerLink="/vendor/products/new"
+          class="px-4 py-2.5 rounded-xl bg-white text-[#08492d] hover:bg-emerald-50 text-xs font-bold shadow-md transition-all flex items-center gap-2"
+        >
+          <span>➕ Đăng nông sản</span>
+        </a>
+        <a
+          routerLink="/vendor/inventory"
+          class="px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/20 text-white text-xs font-bold border border-white/20 backdrop-blur-sm transition-all flex items-center gap-2"
+        >
+          <span>📦 Nhập kho thu hoạch</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 KPI Stat Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    
+    <!-- 1. Doanh thu tháng -->
+    <div class="p-5 bg-white rounded-3xl border border-[#dce9e0] shadow-xs space-y-3">
+      <div class="flex items-center justify-between text-stone-400">
+        <span class="text-xs font-bold uppercase tracking-wider">Doanh thu tháng 10</span>
+        <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center text-sm font-bold">💰</span>
+      </div>
+      <div>
+        <strong class="text-2xl font-black text-[#08492d] block">
+          {{ vendorData.settlement().totalGrossSales | price }}
+        </strong>
+        <span class="text-[11px] text-emerald-700 font-semibold flex items-center gap-1 mt-1">
+          <span>↑ 14.2%</span> so với tháng trước
+        </span>
+      </div>
+    </div>
+
+    <!-- 2. Đơn hàng chờ xác nhận (Fix VND-11) -->
+    <div class="p-5 bg-white rounded-3xl border border-[#dce9e0] shadow-xs space-y-3">
+      <div class="flex items-center justify-between text-stone-400">
+        <span class="text-xs font-bold uppercase tracking-wider">Đơn chờ xác nhận</span>
+        <span class="w-8 h-8 rounded-xl bg-amber-50 text-amber-800 flex items-center justify-center text-sm font-bold">📋</span>
+      </div>
+      <div>
+        <strong class="text-2xl font-black text-amber-700 block">
+          {{ vendorData.pendingOrdersCount() }} đơn
+        </strong>
+        <span class="text-[11px] text-stone-500 block mt-1">
+          Hạn xác nhận: trong vòng 4 giờ
+        </span>
+      </div>
+    </div>
+
+    <!-- 3. Nông sản sẵn bán -->
+    <div class="p-5 bg-white rounded-3xl border border-[#dce9e0] shadow-xs space-y-3">
+      <div class="flex items-center justify-between text-stone-400">
+        <span class="text-xs font-bold uppercase tracking-wider">Tồn kho sẵn bán</span>
+        <span class="w-8 h-8 rounded-xl bg-blue-50 text-blue-800 flex items-center justify-center text-sm font-bold">🏬</span>
+      </div>
+      <div>
+        <strong class="text-2xl font-black text-stone-900 block">
+          3.160 kg
+        </strong>
+        <span class="text-[11px] text-stone-500 block mt-1">
+          Đang giữ cam kết: 350 kg
+        </span>
+      </div>
+    </div>
+
+    <!-- 4. Tỷ lệ giao đúng hạn -->
+    <div class="p-5 bg-white rounded-3xl border border-[#dce9e0] shadow-xs space-y-3">
+      <div class="flex items-center justify-between text-stone-400">
+        <span class="text-xs font-bold uppercase tracking-wider">Giao đúng hẹn (SLA)</span>
+        <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center text-sm font-bold">⭐</span>
+      </div>
+      <div>
+        <strong class="text-2xl font-black text-[#0d623b] block">
+          98.5%
+        </strong>
+        <span class="text-[11px] text-emerald-700 font-semibold block mt-1">
+          Đạt chuẩn đối tác Kim Cương
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 2-Column Operational Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    
+    <!-- Left: Dynamic Next Tasks & Recent Orders (7 cols) -->
+    <div class="lg:col-span-7 space-y-6">
+      
+      <!-- Dynamic Next Tasks Card (Fix VND-09: Updates dynamically when orders/disputes change) -->
+      <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-[#edf1ea]">
+          <div class="flex items-center gap-2.5">
+            <span class="text-lg">⚡</span>
+            <h3 class="text-sm font-extrabold text-[#08492d]">Việc tiếp theo cần xử lý</h3>
+          </div>
+          <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800">
+            {{ vendorData.dynamicNextTasks().length }} việc
+          </span>
+        </div>
+
+        @if (vendorData.dynamicNextTasks().length > 0) {
+          <div class="space-y-3">
+            @for (task of vendorData.dynamicNextTasks(); track task.id) {
+              <div class="p-4 rounded-2xl bg-[#fbfaf6] border border-[#bbd2c2] hover:border-emerald-600 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <strong class="font-bold text-[#08492d]">{{ task.title }}</strong>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200">
+                      {{ task.badge }}
+                    </span>
+                  </div>
+                  <p class="text-stone-600">{{ task.desc }}</p>
+                </div>
+
+                <a
+                  [routerLink]="task.link"
+                  class="px-4 py-2 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white font-bold text-center whitespace-nowrap shadow-xs transition-all flex-shrink-0"
+                >
+                  Xử lý ngay →
+                </a>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="p-6 text-center text-xs text-stone-500 space-y-2">
+            <span class="text-3xl">🎉</span>
+            <p class="font-bold text-emerald-900">Tuyệt vời! Bạn không còn việc tồn đọng nào.</p>
+            <p>Tất cả đơn hàng và khiếu nại đã được xử lý xong.</p>
+          </div>
+        }
+      </div>
+
+      <!-- Recent Orders Stream -->
+      <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-[#edf1ea]">
+          <h3 class="text-sm font-extrabold text-[#08492d]">Đơn hàng gần đây</h3>
+          <a routerLink="/vendor/orders" class="text-xs font-bold text-[#0d623b] hover:underline">
+            Xem tất cả ({{ vendorData.orders().length }}) →
+          </a>
+        </div>
+
+        <div class="divide-y divide-[#edf1ea]">
+          @for (ord of vendorData.orders(); track ord.id) {
+            <div class="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                  <strong class="font-bold text-stone-900 font-mono">{{ ord.id }}</strong>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded border" [ngClass]="ord.statusBadgeClass">
+                    {{ ord.statusLabel }}
+                  </span>
+                </div>
+                <p class="text-stone-600">
+                  {{ ord.buyerCompany }} • {{ ord.items.length }} mặt hàng ({{ ord.totalAmount | price }})
+                </p>
+                <span class="text-[11px] text-stone-400">Khung giờ giao: {{ ord.receivingWindow }}</span>
+              </div>
+
+              <a
+                routerLink="/vendor/orders"
+                class="px-3 py-1.5 rounded-lg border border-[#bbd2c2] hover:bg-emerald-50 text-stone-700 font-semibold text-center w-fit"
+              >
+                Chi tiết đơn
+              </a>
+            </div>
+          }
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right: Inventory Alerts & Fast Links (5 cols) -->
+    <div class="lg:col-span-5 space-y-6">
+      
+      <!-- Low Stock Warning (Fix VND-10: Ignores hidden products with 0kg, only active ones) -->
+      <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-[#edf1ea]">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">⚠️</span>
+            <h3 class="text-sm font-extrabold text-amber-900">Cảnh báo tồn kho thấp</h3>
+          </div>
+          <span class="text-xs font-bold text-stone-500">Mức ngưỡng ≤ 200kg</span>
+        </div>
+
+        @if (vendorData.lowStockProducts().length > 0) {
+          <div class="space-y-3 text-xs">
+            @for (p of vendorData.lowStockProducts(); track p.id) {
+              <div class="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200 flex items-center justify-between gap-3">
+                <div>
+                  <strong class="font-bold text-amber-950 block">{{ p.name }}</strong>
+                  <span class="text-[11px] text-amber-800">Tồn khả dụng chỉ còn: <strong>{{ p.availableQty | numberDot: p.unit }}</strong></span>
+                </div>
+                <a
+                  routerLink="/vendor/inventory"
+                  class="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-[11px] shadow-xs whitespace-nowrap"
+                >
+                  + Nhập kho
+                </a>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="text-xs text-stone-500 italic p-3 text-center">
+            Tất cả các sản phẩm đang bán đều có mức tồn kho dồi dào.
+          </p>
+        }
+      </div>
+
+      <!-- Settlement Quick Summary (Fix VND-18) -->
+      <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-[#edf1ea]">
+          <h3 class="text-sm font-extrabold text-[#08492d]">Đối soát sắp tới</h3>
+          <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded">
+            Dự kiến 05/11
+          </span>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <div class="flex justify-between text-stone-600">
+            <span>Tổng doanh thu thô:</span>
+            <strong>{{ vendorData.settlement().totalGrossSales | price }}</strong>
+          </div>
+          <div class="flex justify-between text-stone-600">
+            <span>Phí sàn Kaggri (5%):</span>
+            <strong class="text-stone-700">- {{ vendorData.settlement().platformFeeAmount | price }}</strong>
+          </div>
+          <div class="flex justify-between text-stone-600">
+            <span>Quỹ dự phòng Escrow (5%):</span>
+            <strong class="text-stone-700">- {{ vendorData.settlement().escrowReserveAmount | price }}</strong>
+          </div>
+          <div class="flex justify-between text-stone-600">
+            <span>Khấu trừ bồi hoàn khiếu nại (Fix VND-17):</span>
+            <strong class="text-rose-600">- {{ vendorData.settlement().resolvedDisputeDeductions | price }}</strong>
+          </div>
+          <div class="pt-2 border-t border-[#edf1ea] flex justify-between font-extrabold text-sm">
+            <span class="text-emerald-950">Thực nhận về tài khoản:</span>
+            <strong class="text-[#0d623b] text-base">{{ vendorData.settlement().netPayoutAmount | price }}</strong>
+          </div>
+        </div>
+
+        <a
+          routerLink="/vendor/settlement"
+          class="block text-center py-2.5 rounded-xl border border-[#bbd2c2] hover:bg-emerald-50 text-xs font-bold text-[#08492d] transition-all"
+        >
+          Xem chi tiết sổ đối soát →
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
