@@ -18,8 +18,10 @@
         
         <!-- Header -->
         <div class="flex items-center justify-between pb-3 border-b border-[#edf1ea]">
-          <div class="flex items-center gap-2">
-            <span class="text-xl">📅</span>
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-[#0d623b] flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            </div>
             <div>
               <strong class="text-sm font-extrabold text-[#08492d]">{{ sub.buyerCompany }}</strong>
               <span class="text-[11px] text-stone-400 font-mono block">Mã đề xuất: {{ sub.id }}</span>
@@ -125,7 +127,9 @@
         
         <div class="flex items-center justify-between pb-2 border-b border-[#edf1ea]">
           <h4 class="text-sm font-extrabold text-[#08492d]">Đề xuất lại giá / điều khoản định kỳ</h4>
-          <button (click)="closeCounterModal()" class="text-stone-400 text-lg">✕</button>
+          <button (click)="closeCounterModal()" class="w-8 h-8 rounded-full flex items-center justify-center text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
         </div>
 
         <div>

@@ -30,7 +30,7 @@ export class AdminDashboardComponent {
         value: 4258000000,
         change: '+12,4%',
         changeDir: 'up', // ↗ (Fix ADM-11)
-        icon: '💰',
+        icon: 'gmv',
         category: 'fin',
         targetModule: '/admin/transactions'
       },
@@ -40,7 +40,7 @@ export class AdminDashboardComponent {
         value: 212900000,
         change: '+11,8%',
         changeDir: 'up', // ↗ (Fix ADM-11)
-        icon: '💵',
+        icon: 'commission',
         category: 'fin',
         targetModule: '/admin/settlements'
       },
@@ -50,7 +50,7 @@ export class AdminDashboardComponent {
         value: 184000000,
         change: '+9,3%',
         changeDir: 'up',
-        icon: '💎',
+        icon: 'netRevenue',
         category: 'fin',
         targetModule: '/admin/settlements'
       },
@@ -61,7 +61,7 @@ export class AdminDashboardComponent {
         unit: 'nhà vườn',
         change: '+6',
         changeDir: 'up',
-        icon: '🌾',
+        icon: 'vendorsActive',
         category: 'ops',
         targetModule: '/admin/accounts-vendor'
       },
@@ -72,7 +72,7 @@ export class AdminDashboardComponent {
         unit: 'doanh nghiệp',
         change: '+12',
         changeDir: 'up',
-        icon: '🏢',
+        icon: 'buyersActive',
         category: 'ops',
         targetModule: '/admin/accounts-buyer'
       },
@@ -83,7 +83,7 @@ export class AdminDashboardComponent {
         unit: '%',
         change: '+0,3%',
         changeDir: 'up',
-        icon: '✅',
+        icon: 'paymentSuccess',
         category: 'fin',
         targetModule: '/admin/transactions'
       },
@@ -94,7 +94,7 @@ export class AdminDashboardComponent {
         unit: '%',
         change: '-0,4%',
         changeDir: 'down', // ↘ (Fix ADM-11)
-        icon: '📦',
+        icon: 'orderComplete',
         category: 'ops',
         targetModule: '/admin/reports'
       },
@@ -105,7 +105,7 @@ export class AdminDashboardComponent {
         unit: '%',
         change: '+0,2%',
         changeDir: 'up', // Tranh chấp tăng là cảnh báo
-        icon: '⚖️',
+        icon: 'disputeRate',
         category: 'ops',
         targetModule: '/admin/disputes'
       }

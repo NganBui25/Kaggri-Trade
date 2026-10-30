@@ -99,8 +99,14 @@
                   <strong class="text-stone-800">{{ getVendorCount(order) }} Người bán</strong>
                 </div>
                 <div class="flex justify-between items-center pt-1.5 border-t border-[#edf1ea]">
-                  <span class="text-[11px] text-stone-500">
-                    {{ order.paymentStatus === 'paid' ? '🔒 Đã ký quỹ Escrow' : '⏳ Chờ thanh toán' }}
+                  <span class="text-[11px] text-stone-500 inline-flex items-center gap-1">
+                    @if (order.paymentStatus === 'paid') {
+                      <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                      <span>Đã ký quỹ Escrow</span>
+                    } @else {
+                      <svg class="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      <span>Chờ thanh toán</span>
+                    }
                   </span>
                   <strong class="text-sm text-[#0d623b] font-extrabold">{{ order.totalAmount | price }}</strong>
                 </div>
@@ -353,8 +359,9 @@
                   <p class="text-stone-600 leading-relaxed">
                     Khoản thanh toán của bạn hiện được bảo lưu an toàn tại tài khoản trung gian ký quỹ. Sau khi kho kiểm nhận hàng đạt chuẩn chất lượng VietGAP, tiền mới được giải ngân tự động cho Người bán.
                   </p>
-                  <div class="p-2.5 rounded-xl bg-white border border-emerald-200 text-emerald-900 font-semibold">
-                    🔒 Được bảo hiểm chất lượng chuỗi cung ứng nông sản 100%.
+                  <div class="p-2.5 rounded-xl bg-white border border-emerald-200 text-emerald-900 font-semibold inline-flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                    <span>Được bảo hiểm chất lượng chuỗi cung ứng nông sản 100%.</span>
                   </div>
                 </div>
 
@@ -400,8 +407,8 @@
   } @else {
     <!-- Empty Orders State -->
     <div class="bg-white rounded-3xl border border-[#dce9e0] p-12 text-center space-y-4 max-w-lg mx-auto shadow-sm">
-      <div class="w-20 h-20 rounded-full bg-emerald-50 text-[#0d623b] flex items-center justify-center text-4xl mx-auto shadow-inner">
-        📦
+      <div class="w-20 h-20 rounded-full bg-emerald-50 text-[#0d623b] flex items-center justify-center mx-auto shadow-inner">
+        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
       </div>
       <h3 class="text-xl font-extrabold text-[#08492d]">Chưa có đơn mua nào</h3>
       <p class="text-xs text-stone-500 leading-relaxed">

@@ -6,7 +6,10 @@
     <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
       <div class="space-y-2 max-w-xl">
         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-emerald-200 text-xs font-bold border border-white/15">
-          🌾 Cổng Quản Trị Trang Trại Kaggri
+          <svg class="w-3.5 h-3.5 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22v-9m0 0a5 5 0 015-5h2a7 7 0 01-7 7m0-2a5 5 0 00-5-5H5a7 7 0 007 7" />
+          </svg>
+          <span>Cổng Quản Trị Trang Trại Kaggri</span>
         </span>
         <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
           Xin chào, {{ vendorData.kycProfile().representativeName }}!
@@ -22,13 +25,19 @@
           routerLink="/vendor/products/new"
           class="px-4 py-2.5 rounded-xl bg-white text-[#08492d] hover:bg-emerald-50 text-xs font-bold shadow-md transition-all flex items-center gap-2"
         >
-          <span>➕ Đăng nông sản</span>
+          <svg class="w-4 h-4 text-[#08492d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          <span>Đăng nông sản</span>
         </a>
         <a
           routerLink="/vendor/inventory"
           class="px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/20 text-white text-xs font-bold border border-white/20 backdrop-blur-sm transition-all flex items-center gap-2"
         >
-          <span>📦 Nhập kho thu hoạch</span>
+          <svg class="w-4 h-4 text-emerald-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+          <span>Nhập kho thu hoạch</span>
         </a>
       </div>
     </div>
@@ -41,7 +50,11 @@
     <div class="p-5 bg-white rounded-3xl border border-[#dce9e0] shadow-xs space-y-3">
       <div class="flex items-center justify-between text-stone-400">
         <span class="text-xs font-bold uppercase tracking-wider">Doanh thu tháng 10</span>
-        <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center text-sm font-bold">💰</span>
+        <div class="w-9 h-9 rounded-xl bg-emerald-50/80 border border-emerald-100 text-[#0d623b] flex items-center justify-center">
+          <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
       </div>
       <div>
         <strong class="text-2xl font-black text-[#08492d] block">
@@ -57,7 +70,11 @@
     <div class="p-5 bg-white rounded-3xl border border-[#dce9e0] shadow-xs space-y-3">
       <div class="flex items-center justify-between text-stone-400">
         <span class="text-xs font-bold uppercase tracking-wider">Đơn chờ xác nhận</span>
-        <span class="w-8 h-8 rounded-xl bg-amber-50 text-amber-800 flex items-center justify-center text-sm font-bold">📋</span>
+        <div class="w-9 h-9 rounded-xl bg-amber-50/80 border border-amber-100 text-amber-700 flex items-center justify-center">
+          <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+          </svg>
+        </div>
       </div>
       <div>
         <strong class="text-2xl font-black text-amber-700 block">
@@ -73,7 +90,11 @@
     <div class="p-5 bg-white rounded-3xl border border-[#dce9e0] shadow-xs space-y-3">
       <div class="flex items-center justify-between text-stone-400">
         <span class="text-xs font-bold uppercase tracking-wider">Tồn kho sẵn bán</span>
-        <span class="w-8 h-8 rounded-xl bg-blue-50 text-blue-800 flex items-center justify-center text-sm font-bold">🏬</span>
+        <div class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200/80 text-slate-700 flex items-center justify-center">
+          <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+        </div>
       </div>
       <div>
         <strong class="text-2xl font-black text-stone-900 block">
@@ -89,7 +110,11 @@
     <div class="p-5 bg-white rounded-3xl border border-[#dce9e0] shadow-xs space-y-3">
       <div class="flex items-center justify-between text-stone-400">
         <span class="text-xs font-bold uppercase tracking-wider">Giao đúng hẹn (SLA)</span>
-        <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center text-sm font-bold">⭐</span>
+        <div class="w-9 h-9 rounded-xl bg-emerald-50/80 border border-emerald-100 text-[#0d623b] flex items-center justify-center">
+          <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
       </div>
       <div>
         <strong class="text-2xl font-black text-[#0d623b] block">
@@ -113,7 +138,11 @@
       <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-[#edf1ea]">
           <div class="flex items-center gap-2.5">
-            <span class="text-lg">⚡</span>
+            <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
             <h3 class="text-sm font-extrabold text-[#08492d]">Việc tiếp theo cần xử lý</h3>
           </div>
           <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800">
@@ -146,7 +175,11 @@
           </div>
         } @else {
           <div class="p-6 text-center text-xs text-stone-500 space-y-2">
-            <span class="text-3xl">🎉</span>
+            <div class="w-12 h-12 mx-auto rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
             <p class="font-bold text-emerald-900">Tuyệt vời! Bạn không còn việc tồn đọng nào.</p>
             <p>Tất cả đơn hàng và khiếu nại đã được xử lý xong.</p>
           </div>
@@ -156,7 +189,14 @@
       <!-- Recent Orders Stream -->
       <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-[#edf1ea]">
-          <h3 class="text-sm font-extrabold text-[#08492d]">Đơn hàng gần đây</h3>
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-lg bg-emerald-50 text-[#0d623b] flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+            </div>
+            <h3 class="text-sm font-extrabold text-[#08492d]">Đơn hàng gần đây</h3>
+          </div>
           <a routerLink="/vendor/orders" class="text-xs font-bold text-[#0d623b] hover:underline">
             Xem tất cả ({{ vendorData.orders().length }}) →
           </a>
@@ -198,7 +238,11 @@
       <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-[#edf1ea]">
           <div class="flex items-center gap-2">
-            <span class="text-lg">⚠️</span>
+            <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
             <h3 class="text-sm font-extrabold text-amber-900">Cảnh báo tồn kho thấp</h3>
           </div>
           <span class="text-xs font-bold text-stone-500">Mức ngưỡng ≤ 200kg</span>
@@ -231,7 +275,14 @@
       <!-- Settlement Quick Summary (Fix VND-18) -->
       <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-[#edf1ea]">
-          <h3 class="text-sm font-extrabold text-[#08492d]">Đối soát sắp tới</h3>
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-lg bg-emerald-50 text-[#0d623b] flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z" />
+              </svg>
+            </div>
+            <h3 class="text-sm font-extrabold text-[#08492d]">Đối soát sắp tới</h3>
+          </div>
           <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded">
             Dự kiến 05/11
           </span>

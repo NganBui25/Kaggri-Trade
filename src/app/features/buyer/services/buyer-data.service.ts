@@ -238,7 +238,7 @@ export class BuyerDataService {
       badge: 'Thanh toán tức thì 24/7',
       isEligible: true,
       settlementType: 'PREPAID',
-      icon: '📱'
+      icon: 'vietqr'
     },
     {
       id: 'va',
@@ -247,7 +247,7 @@ export class BuyerDataService {
       badge: 'Tự động đối soát Escrow',
       isEligible: true,
       settlementType: 'PREPAID',
-      icon: '🏦'
+      icon: 'va'
     },
     {
       id: 'napas',
@@ -256,7 +256,7 @@ export class BuyerDataService {
       badge: 'Cổng thanh toán an toàn',
       isEligible: true,
       settlementType: 'PREPAID',
-      icon: '💳'
+      icon: 'napas'
     },
     {
       id: 'cod',
@@ -265,7 +265,7 @@ export class BuyerDataService {
       badge: 'Thanh toán tại kho',
       isEligible: true,
       settlementType: 'COD',
-      icon: '📦'
+      icon: 'cod'
     },
     {
       id: 'credit',
@@ -274,7 +274,7 @@ export class BuyerDataService {
       badge: 'Hạn mức khả dụng 38.000.000 ₫',
       isEligible: true,
       settlementType: 'CREDIT',
-      icon: '📑'
+      icon: 'credit'
     }
   ];
 

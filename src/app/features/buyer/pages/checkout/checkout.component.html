@@ -28,7 +28,7 @@
           <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 space-y-4 shadow-xs">
             <div class="flex items-center justify-between pb-3 border-b border-[#edf1ea]">
               <div class="flex items-center gap-2">
-                <span class="text-lg">📍</span>
+                <svg class="w-4 h-4 text-[#0d623b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                 <h3 class="text-sm font-extrabold text-[#08492d]">Thông tin địa điểm giao hàng B2B</h3>
               </div>
               <span class="text-xs text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded font-bold">Đã lưu hồ sơ</span>
@@ -90,7 +90,7 @@
           <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 space-y-4 shadow-xs">
             <div class="flex items-center justify-between pb-3 border-b border-[#edf1ea]">
               <div class="flex items-center gap-2">
-                <span class="text-lg">🧾</span>
+                <svg class="w-4 h-4 text-[#0d623b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                 <h3 class="text-sm font-extrabold text-[#08492d]">Hóa đơn giá trị gia tăng (VAT)</h3>
               </div>
               <label class="inline-flex items-center gap-2 cursor-pointer select-none">
@@ -173,7 +173,28 @@
                     />
                     <div>
                       <div class="flex items-center gap-2">
-                        <span class="text-base">{{ method.icon }}</span>
+                        <span class="w-6 h-6 rounded-lg bg-emerald-50 text-[#0d623b] flex items-center justify-center flex-shrink-0">
+                          @switch (method.id) {
+                            @case ('vietqr') {
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
+                            }
+                            @case ('va') {
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" /></svg>
+                            }
+                            @case ('napas') {
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                            }
+                            @case ('cod') {
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+                            }
+                            @case ('credit') {
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                            }
+                            @default {
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                            }
+                          }
+                        </span>
                         <strong class="text-xs font-bold text-emerald-950">{{ method.title }}</strong>
                       </div>
                       <p class="text-xs text-stone-500 mt-1">{{ method.description }}</p>
@@ -336,9 +357,15 @@
               </div>
             </div>
 
-            <div class="p-3 rounded-xl bg-stone-50 border border-stone-200 text-[11px] text-stone-600 space-y-1">
-              <p>💡 Sau khi chuyển khoản, hệ thống sẽ tự động cập nhật trạng thái trong 30 giây.</p>
-              <p>🔒 Tiền được ký quỹ bảo đảm tại ngân hàng cho đến khi giao nhận thành công.</p>
+            <div class="p-3 rounded-xl bg-stone-50 border border-stone-200 text-[11px] text-stone-600 space-y-1.5">
+              <p class="flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                <span>Sau khi chuyển khoản, hệ thống sẽ tự động cập nhật trạng thái trong 30 giây.</span>
+              </p>
+              <p class="flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-emerald-700 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                <span>Tiền được ký quỹ bảo đảm tại ngân hàng cho đến khi giao nhận thành công.</span>
+              </p>
             </div>
           </div>
 

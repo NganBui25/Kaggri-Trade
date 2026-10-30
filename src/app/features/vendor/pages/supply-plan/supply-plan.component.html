@@ -67,7 +67,12 @@
         <tbody class="divide-y divide-[#edf1ea]">
           @for (hp of vendorData.harvestPlans(); track hp.id) {
             <tr class="hover:bg-stone-50/60">
-              <td class="py-3.5 px-4 font-bold text-emerald-950 font-mono">📅 {{ hp.harvestDate }}</td>
+              <td class="py-3.5 px-4 font-bold text-emerald-950 font-mono">
+                <span class="inline-flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                  <span>{{ hp.harvestDate }}</span>
+                </span>
+              </td>
               <td class="py-3.5 px-4 font-bold text-stone-900">
                 {{ hp.productName }}
                 <span class="text-[11px] text-stone-400 font-normal block">{{ hp.notes }}</span>
@@ -120,7 +125,9 @@
           <h4 class="text-sm font-extrabold text-[#08492d]">
             {{ isEdit() ? 'Chỉnh sửa kế hoạch thu hoạch' : 'Thêm kế hoạch thu hoạch mới' }}
           </h4>
-          <button (click)="closeModal()" class="text-stone-400 text-lg">✕</button>
+          <button (click)="closeModal()" class="w-8 h-8 rounded-full flex items-center justify-center text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
         </div>
 
         <div>
