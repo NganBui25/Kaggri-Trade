@@ -239,7 +239,7 @@
 
               <button
                 type="button"
-                (click)="cancelSubscription(plan.id)"
+                (click)="cancelSubscription(plan)"
                 class="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition cursor-pointer"
                 title="Hủy hợp đồng định kỳ"
                 aria-label="Hủy hợp đồng định kỳ"
@@ -330,7 +330,18 @@
         }
       </div>
 
-      <div class="pt-3 border-t border-stone-200 flex justify-end gap-2">
+      <div class="pt-3 border-t border-stone-200 flex items-center justify-between gap-2">
+        <button
+          type="button"
+          (click)="cancelSubscription(selectedDetailPlan()!)"
+          class="px-3.5 py-2 rounded-xl text-rose-600 hover:bg-rose-50 text-xs font-bold transition cursor-pointer flex items-center gap-1.5"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+          </svg>
+          <span>Hủy hợp đồng này</span>
+        </button>
+
         <button
           type="button"
           (click)="closeDetail()"
@@ -351,3 +362,13 @@
     (submitPlan)="handleCreateSubscription($event)"
   ></app-buyer-subscription-modal>
 }
+
+<!-- Confirm Dialog Component for Cancelling / Deleting Subscription -->
+<app-confirm-dialog
+  [isOpen]="confirmDeleteOpen()"
+  title="Xác nhận hủy hợp đồng định kỳ"
+  [message]="'Bạn có chắc chắn muốn kết thúc và hủy hợp đồng cung ứng định kỳ ' + (pendingDeletePlan()?.id || '') + ' (' + (pendingDeletePlan()?.productName || '') + ') không? Kế hoạch giao hàng lặp lại sẽ bị ngừng vĩnh viễn.'"
+  confirmText="Xác nhận hủy"
+  (confirm)="onConfirmDelete()"
+  (cancel)="onCancelDelete()"
+></app-confirm-dialog>

@@ -1,5 +1,57 @@
 import { UserRole } from '../../../core/models/role.model';
 
+export type BusinessType = 'personal' | 'household' | 'enterprise';
+
+export interface BusinessTypeOption {
+  type: BusinessType;
+  label: string;
+  description: string;
+  tip?: string;
+}
+
+export interface UploadedLicenseFile {
+  name: string;
+  size: string;
+  type: string;
+  uploadedAt: Date;
+  previewUrl?: string;
+}
+
+export interface RegisterFormState {
+  role: 'buyer' | 'vendor';
+  storeName: string;
+  businessType: BusinessType;
+  licenseFile: UploadedLicenseFile | null;
+  companyName: string;
+  taxCode: string;
+  contactPerson: string;
+  phoneOption: 'default' | 'other';
+  phoneNumber: string;
+  email: string;
+  otpCode: string;
+  password: string;
+  confirmPassword: string;
+  agreeTerms: boolean;
+}
+
+export const BUSINESS_TYPE_OPTIONS: BusinessTypeOption[] = [
+  {
+    type: 'personal',
+    label: 'Cá nhân',
+    description: 'Dành cho cá nhân kinh doanh nông sản nhỏ lẻ, chưa đăng ký pháp nhân.'
+  },
+  {
+    type: 'household',
+    label: 'Hộ kinh doanh',
+    description: 'Dành cho hộ sản xuất nông nghiệp, trang trại gia đình đã có giấy chứng nhận HKD.'
+  },
+  {
+    type: 'enterprise',
+    label: 'Doanh nghiệp',
+    description: 'Dành cho Công ty TNHH, Cổ phần, Hợp tác xã (HTX) có mã số thuế doanh nghiệp.'
+  }
+];
+
 export interface LoginFormState {
   email: string;
   password: string;

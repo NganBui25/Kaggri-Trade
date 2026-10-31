@@ -8,6 +8,11 @@ export const AUTH_ROUTES: Routes = [
     title: 'Đăng nhập · Kaggri-Trade'
   },
   {
+    path: 'register',
+    loadComponent: () => import('./pages/register/register.component').then(m => m.RegisterComponent),
+    title: 'Đăng ký tài khoản đối tác · Kaggri-Trade'
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'

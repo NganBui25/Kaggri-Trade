@@ -1,430 +1,546 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-  
-  <!-- Page Header -->
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
-    <div>
-      <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
-        Đơn Mua Của Tôi
-      </h1>
-      <p class="text-xs text-stone-500 mt-1">
-        Theo dõi tiến độ đơn hàng qua 6 giai đoạn chuẩn B2B nông sản, giám sát xe tải lạnh và bảo chứng ký quỹ Escrow.
-      </p>
-    </div>
 
-    <a
-      routerLink="/buyer/catalog"
-      class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold transition-all shadow-xs w-fit"
-    >
-      <span>+ Đặt thêm nông sản</span>
-    </a>
-  </div>
-
-  @if (orders().length > 0) {
-    <!-- Filter Pills Bar -->
-    <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
-      <button
-        type="button"
-        (click)="setFilter('all')"
-        class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
-        [ngClass]="activeFilter() === 'all' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600 hover:border-emerald-500'"
-      >
-        Tất cả đơn ({{ orders().length }})
-      </button>
-
-      <button
-        type="button"
-        (click)="setFilter('processing')"
-        class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
-        [ngClass]="activeFilter() === 'processing' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600 hover:border-emerald-500'"
-      >
-        Đang xử lý / Chuẩn bị
-      </button>
-
-      <button
-        type="button"
-        (click)="setFilter('shipping')"
-        class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
-        [ngClass]="activeFilter() === 'shipping' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600 hover:border-emerald-500'"
-      >
-        Đang vận chuyển xe lạnh
-      </button>
-
-      <button
-        type="button"
-        (click)="setFilter('completed')"
-        class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
-        [ngClass]="activeFilter() === 'completed' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600 hover:border-emerald-500'"
-      >
-        Đã hoàn tất nghiệm thu
-      </button>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+  <!-- ============================================================== -->
+  <!-- VIEW 1: ORDERS LIST TABLE (Matching Reference Image)            -->
+  <!-- ============================================================== -->
+  @if (!selectedOrder()) {
+    <div class="space-y-6 animate-fadeIn">
       
-      <!-- Left Column: Orders List (4 cols) -->
-      <div class="lg:col-span-4 space-y-3">
-        <div class="flex items-center justify-between px-1">
-          <span class="text-xs font-bold uppercase tracking-wider text-stone-400">
-            Danh sách đơn hàng ({{ filteredOrders().length }})
+      <!-- Top Page Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-[#0d623b] block mb-1">
+            MUA HÀNG
           </span>
-          <span class="text-[11px] text-stone-400">Nhấn để xem luồng tiến độ</span>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d] tracking-tight">
+            Đơn mua của tôi
+          </h1>
+          <p class="text-xs text-stone-500 mt-1">
+            Theo dõi và quản lý toàn bộ các đơn hàng nông sản đã đặt mua trên sàn Kaggri.
+          </p>
         </div>
 
-        <div class="space-y-3">
-          @for (order of filteredOrders(); track order.id) {
-            @let stepInfo = getOrderStepInfo(order);
-            <div
-              (click)="selectOrder(order)"
-              [class.ring-2]="selectedOrder()?.id === order.id"
-              [class.ring-[#0d623b]]="selectedOrder()?.id === order.id"
-              [class.bg-white]="selectedOrder()?.id === order.id"
-              [class.bg-[#fbfaf6]]="selectedOrder()?.id !== order.id"
-              class="p-4 rounded-2xl border border-[#bbd2c2] hover:border-emerald-600 transition-all cursor-pointer shadow-xs space-y-2.5"
-            >
-              <div class="flex items-center justify-between">
-                <strong class="font-mono text-xs text-[#08492d] font-bold">{{ order.id }}</strong>
-                <!-- Step Badge directly indicates progress on each order card -->
-                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border shadow-2xs" [ngClass]="stepInfo.badgeClass">
-                  Bước {{ stepInfo.step }}/6: {{ stepInfo.label }}
-                </span>
-              </div>
-
-              <div class="space-y-1 text-xs text-stone-600">
-                <div class="flex justify-between">
-                  <span>Ngày đặt:</span>
-                  <span>{{ order.createdAt }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span>Người bán liên kết:</span>
-                  <strong class="text-stone-800">{{ getVendorCount(order) }} Người bán</strong>
-                </div>
-                <div class="flex justify-between items-center pt-1.5 border-t border-[#edf1ea]">
-                  <span class="text-[11px] text-stone-500 inline-flex items-center gap-1">
-                    @if (order.paymentStatus === 'paid') {
-                      <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                      <span>Đã ký quỹ Escrow</span>
-                    } @else {
-                      <svg class="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                      <span>Chờ thanh toán</span>
-                    }
-                  </span>
-                  <strong class="text-sm text-[#0d623b] font-extrabold">{{ order.totalAmount | price }}</strong>
-                </div>
-              </div>
-            </div>
-          } @empty {
-            <div class="p-8 text-center bg-white rounded-2xl border border-[#dce9e0] text-xs text-stone-500">
-              Không có đơn hàng nào trong bộ lọc này.
-            </div>
-          }
-        </div>
-      </div>
-
-      <!-- Right Column: Order Detail & Real-Time Progress Flow View (8 cols) -->
-      <div class="lg:col-span-8 space-y-6">
-        @if (selectedOrder(); as ord) {
-          
-          <!-- COMPONENT: Real-time 6-Stage Progress Stepper -->
-          <app-order-progress-stepper [order]="ord" />
-
-          <!-- Order Content Tabs Card -->
-          <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-sm space-y-6">
-            
-            <!-- Detail Header -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#edf1ea]">
-              <div>
-                <div class="flex items-center gap-2">
-                  <h2 class="text-lg font-extrabold text-[#08492d]">
-                    Chi Tiết Đơn Mua: {{ ord.id }}
-                  </h2>
-                </div>
-                <p class="text-xs text-stone-400 mt-0.5">Mã thanh toán: {{ ord.paymentId }} • Ngày tạo: {{ ord.createdAt }}</p>
-              </div>
-
-              <!-- Summary Chips -->
-              <div class="flex flex-wrap items-center gap-2">
-                <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
-                  {{ getVendorCount(ord) }} Người bán liên kết
-                </span>
-                <span class="text-xs font-bold px-3 py-1 rounded-full" [ngClass]="ord.paymentStatus === 'paid' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'">
-                  {{ ord.paymentStatus === 'paid' ? 'Đã thanh toán Escrow' : 'Chờ thanh toán' }}
-                </span>
-              </div>
-            </div>
-
-            <!-- Tab Navigation (Overview, Vendors, Payment, Invoice) -->
-            <div class="flex items-center gap-2 border-b border-[#edf1ea] pb-2 text-xs font-bold overflow-x-auto">
-              <button
-                type="button"
-                (click)="activeDetailTab.set('overview')"
-                [class.text-[#0d623b]]="activeDetailTab() === 'overview'"
-                [class.border-[#0d623b]]="activeDetailTab() === 'overview'"
-                class="pb-2 px-3 border-b-2 transition-all cursor-pointer whitespace-nowrap"
-                [class.border-transparent]="activeDetailTab() !== 'overview'"
-              >
-                Tổng Quan & Kho Nhận
-              </button>
-
-              <button
-                type="button"
-                (click)="activeDetailTab.set('vendors')"
-                [class.text-[#0d623b]]="activeDetailTab() === 'vendors'"
-                [class.border-[#0d623b]]="activeDetailTab() === 'vendors'"
-                class="pb-2 px-3 border-b-2 transition-all cursor-pointer whitespace-nowrap"
-                [class.border-transparent]="activeDetailTab() !== 'vendors'"
-              >
-                Chi Tiết Từng Người Bán ({{ ord.subOrders.length }})
-              </button>
-
-              <button
-                type="button"
-                (click)="activeDetailTab.set('payment')"
-                [class.text-[#0d623b]]="activeDetailTab() === 'payment'"
-                [class.border-[#0d623b]]="activeDetailTab() === 'payment'"
-                class="pb-2 px-3 border-b-2 transition-all cursor-pointer whitespace-nowrap"
-                [class.border-transparent]="activeDetailTab() !== 'payment'"
-              >
-                Thanh Toán & Escrow
-              </button>
-
-              <button
-                type="button"
-                (click)="activeDetailTab.set('invoice')"
-                [class.text-[#0d623b]]="activeDetailTab() === 'invoice'"
-                [class.border-[#0d623b]]="activeDetailTab() === 'invoice'"
-                class="pb-2 px-3 border-b-2 transition-all cursor-pointer whitespace-nowrap"
-                [class.border-transparent]="activeDetailTab() !== 'invoice'"
-              >
-                Hóa Đơn VAT
-              </button>
-            </div>
-
-            <!-- TAB 1: Tổng Quan & Kho Nhận -->
-            @if (activeDetailTab() === 'overview') {
-              <div class="space-y-5 animate-fadeIn">
-                
-                <!-- Destination Warehouse Info -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs p-4 bg-[#fbfaf6] rounded-2xl border border-[#dce9e0]">
-                  <div>
-                    <span class="text-stone-400 block font-medium">Kho nhận hàng:</span>
-                    <strong class="text-stone-900 font-bold block mt-0.5">{{ ord.deliveryAddress.companyName }}</strong>
-                    <p class="text-stone-600 mt-1">{{ ord.deliveryAddress.address }}</p>
-                  </div>
-                  <div>
-                    <span class="text-stone-400 block font-medium">Người liên hệ & Khung giờ:</span>
-                    <strong class="text-stone-900 font-bold block mt-0.5">
-                      {{ ord.deliveryAddress.recipientName }} • {{ ord.deliveryAddress.phone }}
-                    </strong>
-                    <p class="text-emerald-800 font-semibold mt-1">⏰ Khung giờ: {{ ord.deliveryAddress.receivingWindow }}</p>
-                    <p class="text-[11px] text-stone-500 italic mt-0.5">{{ ord.deliveryAddress.deliveryNote }}</p>
-                  </div>
-                </div>
-
-                <!-- Overview of Sub-Orders -->
-                <div class="space-y-3">
-                  <h4 class="text-xs font-bold uppercase tracking-wider text-stone-500">
-                    Trạng thái theo từng Người bán
-                  </h4>
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                    @for (sub of ord.subOrders; track sub.id) {
-                      <div class="p-3.5 rounded-2xl border border-[#bbd2c2] bg-white space-y-2">
-                        <div class="flex items-center justify-between">
-                          <strong class="font-bold text-[#08492d]">{{ sub.vendorShortName }}</strong>
-                          <span class="text-[10px] font-bold px-2 py-0.5 rounded border" [ngClass]="sub.statusBadgeClass">
-                            {{ sub.statusLabel }}
-                          </span>
-                        </div>
-                        <p class="text-stone-500 text-[11px]">Mã vận đơn: {{ sub.trackingCode || 'Đang cập nhật' }}</p>
-                        <div class="flex justify-between pt-1 border-t border-[#edf1ea] font-semibold text-stone-700">
-                          <span>{{ sub.items.length }} mặt hàng</span>
-                          <strong class="text-[#0d623b]">{{ sub.totalAmount | price }}</strong>
-                        </div>
-                      </div>
-                    }
-                  </div>
-                </div>
-
-              </div>
-            }
-
-            <!-- TAB 2: Đơn theo Người bán -->
-            @if (activeDetailTab() === 'vendors') {
-              <div class="space-y-6 animate-fadeIn">
-                @for (sub of ord.subOrders; track sub.id) {
-                  <div class="p-5 rounded-2xl border border-[#bbd2c2] bg-[#fbfaf6] space-y-4">
-                    
-                    <!-- Sub-order Header -->
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#dce9e0]">
-                      <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-bold text-xs">
-                          {{ sub.vendorAvatarCode }}
-                        </div>
-                        <div>
-                          <strong class="text-sm font-extrabold text-[#08492d]">{{ sub.vendorName }}</strong>
-                          <p class="text-[11px] text-stone-400">Mã đơn Người bán: {{ sub.id }} • Lô xe lạnh: {{ sub.trackingCode || 'Đang điều phối' }}</p>
-                        </div>
-                      </div>
-
-                      <span class="text-xs font-bold px-3 py-1 rounded-full border w-fit" [ngClass]="sub.statusBadgeClass">
-                        {{ sub.statusLabel }}
-                      </span>
-                    </div>
-
-                    <!-- Items Detail Table -->
-                    <div class="divide-y divide-[#edf1ea] bg-white rounded-xl border border-[#dce9e0] overflow-hidden">
-                      @for (it of sub.items; track it.sku) {
-                        <div class="p-3 flex items-center justify-between gap-4 text-xs">
-                          <div class="flex items-center gap-3 min-w-0">
-                            <img [src]="it.image" [alt]="it.productName" class="w-12 h-12 rounded-lg object-cover border border-emerald-100 flex-shrink-0" />
-                            <div class="min-w-0">
-                              <strong class="font-bold text-stone-900 block truncate">{{ it.productName }}</strong>
-                              <span class="text-[11px] text-stone-400 font-mono">{{ it.sku }}</span>
-                            </div>
-                          </div>
-
-                          <div class="text-right flex-shrink-0">
-                            <span class="text-stone-500">{{ it.quantity | numberDot }} {{ it.unit }} × {{ it.unitPrice | price }}</span>
-                            <strong class="block text-emerald-950 font-bold">{{ it.amount | price }}</strong>
-                          </div>
-                        </div>
-                      }
-                    </div>
-
-                    <!-- Action Buttons for this Sub-Order -->
-                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 text-xs">
-                      <span class="text-stone-500">
-                        Phí xe lạnh: <strong>{{ sub.shippingFee | price }}</strong> • Tổng đơn con: <strong class="text-emerald-800 text-sm font-extrabold">{{ sub.totalAmount | price }}</strong>
-                      </span>
-
-                      <div class="flex items-center gap-2">
-                        @if (sub.status === 'confirmed' || sub.status === 'preparing' || sub.status === 'shipped') {
-                          <button
-                            type="button"
-                            (click)="confirmReceipt(sub)"
-                            class="px-3.5 py-1.5 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white font-bold transition-all shadow-xs cursor-pointer"
-                          >
-                            ✓ Xác nhận đã nhận hàng
-                          </button>
-                        }
-
-                        <a
-                          routerLink="/buyer/dispute"
-                          [queryParams]="{ orderId: ord.id, subOrderId: sub.id }"
-                          class="px-3.5 py-1.5 rounded-xl border border-rose-300 hover:bg-rose-50 text-rose-700 font-bold transition-all cursor-pointer"
-                        >
-                          Khiếu nại / Hoàn tiền
-                        </a>
-                      </div>
-                    </div>
-
-                  </div>
-                }
-              </div>
-            }
-
-            <!-- TAB 3: Thanh Toán & Escrow -->
-            @if (activeDetailTab() === 'payment') {
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs animate-fadeIn">
-                
-                <div class="p-5 rounded-2xl bg-[#fbfaf6] border border-[#dce9e0] space-y-3">
-                  <h4 class="font-extrabold text-[#08492d] text-sm pb-2 border-b border-[#edf1ea]">
-                    Chi tiết giao dịch thanh toán
-                  </h4>
-                  <div class="space-y-2">
-                    <div class="flex justify-between">
-                      <span class="text-stone-500">Phương thức:</span>
-                      <strong class="text-stone-800 uppercase">{{ ord.paymentMethod }} (VietQR)</strong>
-                    </div>
-                    <div class="flex justify-between">
-                      <span class="text-stone-500">Mã giao dịch ngân hàng:</span>
-                      <strong class="font-mono">{{ ord.paymentId }}</strong>
-                    </div>
-                    <div class="flex justify-between">
-                      <span class="text-stone-500">Trạng thái thanh toán:</span>
-                      <span class="font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
-                        {{ ord.paymentStatus === 'paid' ? 'Thành công (Đã đối soát Escrow)' : 'Chờ quét mã VietQR' }}
-                      </span>
-                    </div>
-                    <div class="flex justify-between pt-2 border-t border-[#edf1ea]">
-                      <span class="font-bold">Số tiền ký quỹ Escrow:</span>
-                      <strong class="text-[#0d623b] font-extrabold text-sm">{{ ord.totalAmount | price }}</strong>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="p-5 rounded-2xl bg-emerald-50/60 border border-emerald-100 space-y-3">
-                  <h4 class="font-extrabold text-emerald-950 text-sm pb-2 border-b border-emerald-100">
-                    Chính sách bảo đảm Escrow
-                  </h4>
-                  <p class="text-stone-600 leading-relaxed">
-                    Khoản thanh toán của bạn hiện được bảo lưu an toàn tại tài khoản trung gian ký quỹ. Sau khi kho kiểm nhận hàng đạt chuẩn chất lượng VietGAP, tiền mới được giải ngân tự động cho Người bán.
-                  </p>
-                  <div class="p-2.5 rounded-xl bg-white border border-emerald-200 text-emerald-900 font-semibold inline-flex items-center gap-1.5">
-                    <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                    <span>Được bảo hiểm chất lượng chuỗi cung ứng nông sản 100%.</span>
-                  </div>
-                </div>
-
-              </div>
-            }
-
-            <!-- TAB 4: Hóa Đơn VAT -->
-            @if (activeDetailTab() === 'invoice') {
-              <div class="p-5 rounded-2xl bg-[#fbfaf6] border border-[#dce9e0] text-xs space-y-3 animate-fadeIn">
-                <h4 class="font-extrabold text-[#08492d] text-sm pb-2 border-b border-[#edf1ea]">
-                  Thông tin Hóa đơn Điện tử (VAT)
-                </h4>
-                @if (ord.invoiceRequested && ord.invoiceProfile) {
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <span class="text-stone-400 block">Doanh nghiệp xuất hóa đơn:</span>
-                      <strong class="text-stone-800 text-sm">{{ ord.invoiceProfile.companyName }}</strong>
-                    </div>
-                    <div>
-                      <span class="text-stone-400 block">Mã số thuế:</span>
-                      <strong class="text-stone-800 font-mono text-sm">{{ ord.invoiceProfile.taxCode }}</strong>
-                    </div>
-                    <div class="sm:col-span-2">
-                      <span class="text-stone-400 block">Địa chỉ đăng ký kinh doanh:</span>
-                      <p class="text-stone-700">{{ ord.invoiceProfile.billingAddress }}</p>
-                    </div>
-                    <div class="sm:col-span-2">
-                      <span class="text-stone-400 block">Email nhận hóa đơn:</span>
-                      <strong class="text-emerald-800">{{ ord.invoiceProfile.invoiceEmail }}</strong>
-                    </div>
-                  </div>
-                } @else {
-                  <p class="text-stone-500 italic">Đơn hàng không yêu cầu phát hành hóa đơn VAT.</p>
-                }
-              </div>
-            }
-
-          </div>
-        }
-      </div>
-
-    </div>
-  } @else {
-    <!-- Empty Orders State -->
-    <div class="bg-white rounded-3xl border border-[#dce9e0] p-12 text-center space-y-4 max-w-lg mx-auto shadow-sm">
-      <div class="w-20 h-20 rounded-full bg-emerald-50 text-[#0d623b] flex items-center justify-center mx-auto shadow-inner">
-        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
-      </div>
-      <h3 class="text-xl font-extrabold text-[#08492d]">Chưa có đơn mua nào</h3>
-      <p class="text-xs text-stone-500 leading-relaxed">
-        Bạn chưa thực hiện đơn mua nông sản nào trên hệ thống Kaggri-Trade. Hãy tham khảo nguồn hàng nông sản tươi ngon trực tiếp từ các nhà vườn.
-      </p>
-      <div class="pt-2">
         <a
           routerLink="/buyer/catalog"
-          class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white font-bold text-xs shadow-md transition-all"
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold transition-all shadow-xs w-fit cursor-pointer flex-shrink-0"
         >
-          <span>Khám phá Sàn Nông Sản</span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          <span>+ Đặt mua nông sản</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
           </svg>
         </a>
       </div>
+
+      <!-- Main White Card Container -->
+      <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs space-y-6">
+        
+        <!-- Toolbar: Search on left, Filter Tabs on right -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          
+          <!-- Search Box -->
+          <div class="relative w-full md:w-80">
+            <svg class="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              [ngModel]="searchQuery()"
+              (ngModelChange)="searchQuery.set($event)"
+              placeholder="Tìm mã đơn hoặc Người bán..."
+              class="w-full pl-9 pr-4 py-2 bg-[#fbfaf6] border border-[#dce9e0] rounded-xl text-xs text-stone-800 placeholder-stone-400 focus:bg-white focus:border-emerald-600 focus:outline-none transition"
+            />
+          </div>
+
+          <!-- Status Filter Pills -->
+          <div class="flex items-center gap-1 p-1 bg-[#fbfaf6] rounded-2xl border border-[#dce9e0] overflow-x-auto text-xs">
+            <button
+              type="button"
+              (click)="setFilter('all')"
+              [class.bg-white]="activeFilter() === 'all'"
+              [class.text-[#08492d]]="activeFilter() === 'all'"
+              [class.shadow-xs]="activeFilter() === 'all'"
+              [class.text-stone-500]="activeFilter() !== 'all'"
+              class="px-3 py-1.5 rounded-xl font-bold transition whitespace-nowrap cursor-pointer"
+            >
+              Tất cả
+            </button>
+
+            <button
+              type="button"
+              (click)="setFilter('pending')"
+              [class.bg-white]="activeFilter() === 'pending'"
+              [class.text-[#08492d]]="activeFilter() === 'pending'"
+              [class.shadow-xs]="activeFilter() === 'pending'"
+              [class.text-stone-500]="activeFilter() !== 'pending'"
+              class="px-3 py-1.5 rounded-xl font-bold transition whitespace-nowrap cursor-pointer"
+            >
+              Chờ xác nhận
+            </button>
+
+            <button
+              type="button"
+              (click)="setFilter('confirmed')"
+              [class.bg-white]="activeFilter() === 'confirmed'"
+              [class.text-[#08492d]]="activeFilter() === 'confirmed'"
+              [class.shadow-xs]="activeFilter() === 'confirmed'"
+              [class.text-stone-500]="activeFilter() !== 'confirmed'"
+              class="px-3 py-1.5 rounded-xl font-bold transition whitespace-nowrap cursor-pointer"
+            >
+              Đã xác nhận
+            </button>
+
+            <button
+              type="button"
+              (click)="setFilter('preparing')"
+              [class.bg-white]="activeFilter() === 'preparing'"
+              [class.text-[#08492d]]="activeFilter() === 'preparing'"
+              [class.shadow-xs]="activeFilter() === 'preparing'"
+              [class.text-stone-500]="activeFilter() !== 'preparing'"
+              class="px-3 py-1.5 rounded-xl font-bold transition whitespace-nowrap cursor-pointer"
+            >
+              Đang chuẩn bị
+            </button>
+
+            <button
+              type="button"
+              (click)="setFilter('shipping')"
+              [class.bg-white]="activeFilter() === 'shipping'"
+              [class.text-[#08492d]]="activeFilter() === 'shipping'"
+              [class.shadow-xs]="activeFilter() === 'shipping'"
+              [class.text-stone-500]="activeFilter() !== 'shipping'"
+              class="px-3 py-1.5 rounded-xl font-bold transition whitespace-nowrap cursor-pointer"
+            >
+              Đang vận chuyển
+            </button>
+
+            <button
+              type="button"
+              (click)="setFilter('delivered')"
+              [class.bg-white]="activeFilter() === 'delivered'"
+              [class.text-[#08492d]]="activeFilter() === 'delivered'"
+              [class.shadow-xs]="activeFilter() === 'delivered'"
+              [class.text-stone-500]="activeFilter() !== 'delivered'"
+              class="px-3 py-1.5 rounded-xl font-bold transition whitespace-nowrap cursor-pointer"
+            >
+              Đã giao
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Orders Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-stone-200/80 text-[11px] font-bold uppercase tracking-wider text-stone-400">
+                <th class="py-3 px-4">Đơn</th>
+                <th class="py-3 px-4">Người bán</th>
+                <th class="py-3 px-4">Sản phẩm</th>
+                <th class="py-3 px-4">Ngày giao</th>
+                <th class="py-3 px-4 text-right sm:text-left">Giá trị</th>
+                <th class="py-3 px-4 text-center">Trạng thái</th>
+                <th class="py-3 px-3 w-8"></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-stone-100">
+              @for (order of filteredOrders(); track order.id) {
+                @let status = getOrderStatusInfo(order);
+                <tr
+                  (click)="selectOrder(order)"
+                  class="hover:bg-[#fbfaf6] cursor-pointer transition-colors group"
+                >
+                  <!-- Code Column -->
+                  <td class="py-4 px-4 font-mono font-bold text-stone-900 group-hover:text-emerald-800 transition whitespace-nowrap">
+                    <div>{{ order.id }}</div>
+                    @if (order.subOrders && order.subOrders.length > 1) {
+                      <span class="text-[10px] text-stone-400 font-sans block mt-0.5">
+                        {{ order.subOrders.length }} Nhà vườn
+                      </span>
+                    }
+                  </td>
+
+                  <!-- Vendor Column -->
+                  <td class="py-4 px-4 font-medium text-stone-800 whitespace-nowrap">
+                    {{ getVendorNames(order) }}
+                  </td>
+
+                  <!-- Product Summary Column -->
+                  <td class="py-4 px-4 text-stone-700 max-w-xs truncate" [title]="getProductSummary(order)">
+                    {{ getProductSummary(order) }}
+                  </td>
+
+                  <!-- Delivery Date Column -->
+                  <td class="py-4 px-4 text-stone-600 font-mono whitespace-nowrap">
+                    {{ getDeliveryDate(order) }}
+                  </td>
+
+                  <!-- Value Column -->
+                  <td class="py-4 px-4 font-black text-stone-900 whitespace-nowrap text-right sm:text-left">
+                    {{ order.totalAmount | price }}
+                  </td>
+
+                  <!-- Status Column -->
+                  <td class="py-4 px-4 text-center whitespace-nowrap">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold border" [ngClass]="status.class">
+                      {{ status.label }}
+                    </span>
+                  </td>
+
+                  <!-- Action Chevron Column -->
+                  <td class="py-4 px-3 text-right">
+                    <svg class="w-4 h-4 text-stone-300 group-hover:text-emerald-700 group-hover:translate-x-0.5 transition-all inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="7" class="py-12 text-center text-stone-400">
+                    <p class="text-sm font-medium">Không tìm thấy đơn hàng nào phù hợp với bộ lọc.</p>
+                    <p class="text-xs text-stone-400 mt-1">Vui lòng thử đổi từ khóa tìm kiếm hoặc chọn phân loại khác.</p>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+  }
+
+  <!-- ============================================================== -->
+  <!-- VIEW 2: ORDER DETAIL & PROGRESS STEPPER VIEW                    -->
+  <!-- ============================================================== -->
+  @if (selectedOrder(); as ord) {
+    <div class="space-y-6 animate-fadeIn">
+      
+      <!-- Top Navigation & Return Button -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
+        <div class="flex items-center gap-3">
+          <button
+            type="button"
+            (click)="backToList()"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 text-xs font-bold transition shadow-2xs cursor-pointer"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            <span>Quay lại danh sách đơn</span>
+          </button>
+
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-xl sm:text-2xl font-extrabold text-[#08492d]">
+                Đơn mua #{{ ord.id }}
+              </h2>
+              <span
+                class="text-xs font-bold px-2.5 py-0.5 rounded-full"
+                [ngClass]="ord.paymentStatus === 'paid' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'"
+              >
+                {{ ord.paymentStatus === 'paid' ? 'Đã thanh toán Escrow' : 'Chờ thanh toán' }}
+              </span>
+            </div>
+            <p class="text-xs text-stone-500 mt-0.5">
+              Thời gian tạo đơn: {{ ord.createdAt }} • Mã bảo chứng thanh toán: {{ ord.paymentId }}
+            </p>
+          </div>
+        </div>
+
+        <a
+          routerLink="/buyer/dispute"
+          class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-rose-200 text-rose-700 bg-rose-50 hover:bg-rose-100 text-xs font-bold transition cursor-pointer w-fit"
+        >
+          <span>Gửi khiếu nại đơn này</span>
+        </a>
+      </div>
+
+      <!-- Live Progress Stepper (Elevated B2B Flow) -->
+      <app-order-progress-stepper [order]="ord"></app-order-progress-stepper>
+
+      <!-- Detail Card & Content -->
+      <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs space-y-6">
+        
+        <!-- Tabs Bar -->
+        <div class="flex items-center gap-3 border-b border-[#edf1ea] pb-3 text-xs overflow-x-auto">
+          <button
+            type="button"
+            (click)="activeDetailTab.set('overview')"
+            [class.text-[#0d623b]]="activeDetailTab() === 'overview'"
+            [class.border-[#0d623b]]="activeDetailTab() === 'overview'"
+            [class.font-bold]="activeDetailTab() === 'overview'"
+            [class.border-transparent]="activeDetailTab() !== 'overview'"
+            [class.text-stone-500]="activeDetailTab() !== 'overview'"
+            class="pb-2 border-b-2 transition whitespace-nowrap cursor-pointer"
+          >
+            Tổng quan & Giao nhận
+          </button>
+
+          <button
+            type="button"
+            (click)="activeDetailTab.set('vendors')"
+            [class.text-[#0d623b]]="activeDetailTab() === 'vendors'"
+            [class.border-[#0d623b]]="activeDetailTab() === 'vendors'"
+            [class.font-bold]="activeDetailTab() === 'vendors'"
+            [class.border-transparent]="activeDetailTab() !== 'vendors'"
+            [class.text-stone-500]="activeDetailTab() !== 'vendors'"
+            class="pb-2 border-b-2 transition whitespace-nowrap cursor-pointer"
+          >
+            Gói hàng từ Người bán ({{ ord.subOrders.length }})
+          </button>
+
+          <button
+            type="button"
+            (click)="activeDetailTab.set('payment')"
+            [class.text-[#0d623b]]="activeDetailTab() === 'payment'"
+            [class.border-[#0d623b]]="activeDetailTab() === 'payment'"
+            [class.font-bold]="activeDetailTab() === 'payment'"
+            [class.border-transparent]="activeDetailTab() !== 'payment'"
+            [class.text-stone-500]="activeDetailTab() !== 'payment'"
+            class="pb-2 border-b-2 transition whitespace-nowrap cursor-pointer"
+          >
+            Bảo chứng Escrow
+          </button>
+
+          @if (ord.invoiceRequested) {
+            <button
+              type="button"
+              (click)="activeDetailTab.set('invoice')"
+              [class.text-[#0d623b]]="activeDetailTab() === 'invoice'"
+              [class.border-[#0d623b]]="activeDetailTab() === 'invoice'"
+              [class.font-bold]="activeDetailTab() === 'invoice'"
+              [class.border-transparent]="activeDetailTab() !== 'invoice'"
+              [class.text-stone-500]="activeDetailTab() !== 'invoice'"
+              class="pb-2 border-b-2 transition whitespace-nowrap cursor-pointer"
+            >
+              Hóa đơn VAT
+            </button>
+          }
+        </div>
+
+        <!-- TAB 1: OVERVIEW -->
+        @if (activeDetailTab() === 'overview') {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs animate-fadeIn">
+            <!-- Delivery Info -->
+            <div class="p-4 bg-[#fbfaf6] rounded-2xl border border-stone-200/80 space-y-2.5">
+              <span class="text-stone-400 font-bold uppercase tracking-wider block text-[11px]">
+                Địa điểm giao hàng kho lạnh
+              </span>
+              <div>
+                <strong class="text-sm font-bold text-stone-900 block">{{ ord.deliveryAddress.companyName }}</strong>
+                <span class="text-stone-600 block mt-0.5">{{ ord.deliveryAddress.address }}</span>
+              </div>
+              <div class="pt-2 border-t border-stone-200/60 flex items-center justify-between text-stone-600">
+                <span>Người phụ trách nhận:</span>
+                <strong class="text-stone-800">{{ ord.deliveryAddress.recipientName }} • {{ ord.deliveryAddress.phone }}</strong>
+              </div>
+              @if (ord.deliveryAddress.receivingWindow) {
+                <div class="flex items-center justify-between text-stone-600">
+                  <span>Khung giờ nhận:</span>
+                  <strong class="text-emerald-800">{{ ord.deliveryAddress.receivingWindow }}</strong>
+                </div>
+              }
+              @if (ord.deliveryAddress.deliveryNote) {
+                <div class="p-2.5 bg-white rounded-xl border border-stone-200 text-stone-600 mt-2">
+                  <span class="font-bold text-stone-800">Lưu ý bốc dỡ:</span> {{ ord.deliveryAddress.deliveryNote }}
+                </div>
+              }
+            </div>
+
+            <!-- Financial Summary -->
+            <div class="p-4 bg-[#fbfaf6] rounded-2xl border border-stone-200/80 space-y-2.5 flex flex-col justify-between">
+              <div>
+                <span class="text-stone-400 font-bold uppercase tracking-wider block text-[11px]">
+                  Tóm tắt thanh toán
+                </span>
+                <div class="space-y-1.5 mt-2">
+                  <div class="flex justify-between text-stone-600">
+                    <span>Số lượng Nhà vườn:</span>
+                    <strong class="text-stone-800">{{ getVendorCount(ord) }} Nhà vườn</strong>
+                  </div>
+                  <div class="flex justify-between text-stone-600">
+                    <span>Hình thức thanh toán:</span>
+                    <strong class="text-stone-800 uppercase">{{ ord.paymentMethod }}</strong>
+                  </div>
+                  <div class="flex justify-between text-stone-600">
+                    <span>Trạng thái bảo chứng:</span>
+                    <span class="font-bold text-emerald-800">Khóa an toàn trong Kaggri Escrow</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-3 border-t border-stone-200/80 flex items-center justify-between">
+                <span class="font-bold text-stone-800 text-sm">Tổng giá trị đơn hàng:</span>
+                <strong class="text-xl font-black text-[#0d623b]">
+                  {{ ord.totalAmount | price }}
+                </strong>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- TAB 2: VENDORS & SUB-ORDERS -->
+        @if (activeDetailTab() === 'vendors') {
+          <div class="space-y-5 animate-fadeIn">
+            @for (sub of ord.subOrders; track sub.id) {
+              <div class="p-5 rounded-2xl border border-[#dce9e0] bg-[#fbfaf6] space-y-4">
+                
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-stone-200">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-[#0d623b] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                      {{ sub.vendorAvatarCode }}
+                    </div>
+                    <div>
+                      <h4 class="font-extrabold text-[#08492d] text-sm">{{ sub.vendorName }}</h4>
+                      <span class="text-stone-400 text-xs font-mono">Mã kiện: {{ sub.id }}</span>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-3">
+                    <span class="text-xs font-bold px-3 py-1 rounded-full border w-fit" [ngClass]="sub.statusBadgeClass">
+                      {{ sub.statusLabel }}
+                    </span>
+                    @if (sub.status === 'shipped') {
+                      <button
+                        type="button"
+                        (click)="confirmReceipt(sub)"
+                        class="px-3.5 py-1.5 bg-[#0d623b] hover:bg-[#08492d] text-white rounded-xl font-bold text-xs shadow-xs transition cursor-pointer"
+                      >
+                        Xác nhận nhận hàng
+                      </button>
+                    }
+                  </div>
+                </div>
+
+                <!-- Items Table -->
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr class="text-stone-400 font-bold border-b border-stone-200/60 text-[11px]">
+                        <th class="py-2 px-2">Sản phẩm nông sản</th>
+                        <th class="py-2 px-2">Quy cách</th>
+                        <th class="py-2 px-2 text-center">Số lượng</th>
+                        <th class="py-2 px-2 text-right">Đơn giá</th>
+                        <th class="py-2 px-2 text-right">Thành tiền</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-stone-200/40">
+                      @for (item of sub.items; track item.sku) {
+                        <tr>
+                          <td class="py-3 px-2">
+                            <div class="flex items-center gap-2.5">
+                              @if (item.image) {
+                                <img [src]="item.image" [alt]="item.productName" class="w-10 h-10 rounded-lg object-cover border border-stone-200" />
+                              }
+                              <div>
+                                <strong class="font-bold text-stone-900 block">{{ item.productName }}</strong>
+                                <span class="text-stone-400 text-[10px] font-mono block">{{ item.sku }}</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td class="py-3 px-2 text-stone-600 font-medium">Bao gói lạnh</td>
+                          <td class="py-3 px-2 text-center font-bold text-stone-800">
+                            {{ item.quantity | numberDot }} {{ item.unit }}
+                          </td>
+                          <td class="py-3 px-2 text-right text-stone-600 font-mono">
+                            {{ item.unitPrice | price }}/{{ item.unit }}
+                          </td>
+                          <td class="py-3 px-2 text-right font-bold text-[#0d623b] font-mono">
+                            {{ item.amount | price }}
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Sub-order Footer -->
+                <div class="pt-3 border-t border-stone-200/60 flex flex-col sm:flex-row sm:items-center justify-between text-xs text-stone-600 gap-2">
+                  <div class="flex items-center gap-3">
+                    @if (sub.trackingCode) {
+                      <span>Mã vận đơn: <strong class="text-stone-800 font-mono">{{ sub.trackingCode }}</strong></span>
+                    }
+                    @if (sub.estimatedDelivery) {
+                      <span>Dự kiến: <strong class="text-emerald-800">{{ sub.estimatedDelivery }}</strong></span>
+                    }
+                  </div>
+                  <div class="flex items-center gap-2 sm:self-end">
+                    <span>Tổng gói hàng:</span>
+                    <strong class="text-sm font-extrabold text-[#0d623b]">{{ sub.totalAmount | price }}</strong>
+                  </div>
+                </div>
+
+              </div>
+            }
+          </div>
+        }
+
+        <!-- TAB 3: PAYMENT & ESCROW -->
+        @if (activeDetailTab() === 'payment') {
+          <div class="p-5 rounded-2xl bg-[#fbfaf6] border border-stone-200/80 space-y-4 text-xs animate-fadeIn">
+            <div class="flex items-center gap-3 pb-3 border-b border-stone-200">
+              <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#0d623b] flex items-center justify-center font-bold">
+                ✓
+              </div>
+              <div>
+                <h4 class="font-extrabold text-stone-900 text-sm">Cơ chế bảo vệ ký quỹ Kaggri Escrow</h4>
+                <p class="text-stone-500">Tiền hàng được giữ trung gian an toàn, chỉ giải ngân cho Người bán sau khi bạn nghiệm thu đạt chất lượng.</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <span class="text-stone-400 block">Phương thức thanh toán:</span>
+                <strong class="text-stone-800 uppercase font-mono">{{ ord.paymentMethod }}</strong>
+              </div>
+              <div>
+                <span class="text-stone-400 block">Mã giao dịch ký quỹ:</span>
+                <strong class="text-stone-800 font-mono">{{ ord.paymentId }}</strong>
+              </div>
+              <div>
+                <span class="text-stone-400 block">Trạng thái tiền ký quỹ:</span>
+                <strong class="text-emerald-800">
+                  {{ ord.paymentStatus === 'paid' ? 'Đã khóa bảo chứng tại Escrow' : 'Chờ hoàn tất thanh toán' }}
+                </strong>
+              </div>
+              <div>
+                <span class="text-stone-400 block">Chính sách khiếu nại:</span>
+                <span class="text-stone-700">Được quyền khiếu nại chất lượng trong 24h kể từ khi nhận hàng.</span>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- TAB 4: INVOICE -->
+        @if (activeDetailTab() === 'invoice' && ord.invoiceRequested && ord.invoiceProfile) {
+          <div class="p-5 rounded-2xl bg-[#fbfaf6] border border-stone-200/80 space-y-3 text-xs animate-fadeIn">
+            <h4 class="font-extrabold text-stone-900 text-sm pb-2 border-b border-stone-200">
+              Thông tin xuất hóa đơn điện tử (VAT)
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <span class="text-stone-400 block">Tên doanh nghiệp:</span>
+                <strong class="text-stone-900">{{ ord.invoiceProfile.companyName }}</strong>
+              </div>
+              <div>
+                <span class="text-stone-400 block">Mã số thuế:</span>
+                <strong class="text-stone-900 font-mono">{{ ord.invoiceProfile.taxCode }}</strong>
+              </div>
+              <div class="sm:col-span-2">
+                <span class="text-stone-400 block">Địa chỉ trụ sở công ty:</span>
+                <span class="text-stone-800">{{ ord.invoiceProfile.billingAddress }}</span>
+              </div>
+              <div class="sm:col-span-2">
+                <span class="text-stone-400 block">Email nhận hóa đơn:</span>
+                <strong class="text-emerald-800">{{ ord.invoiceProfile.invoiceEmail }}</strong>
+              </div>
+            </div>
+          </div>
+        }
+
+      </div>
+
     </div>
   }
 

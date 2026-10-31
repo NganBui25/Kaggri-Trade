@@ -23,6 +23,7 @@ export class AdminAccountsVendorComponent {
 
   selectedVendor = signal<VendorAccount | null>(null);
   modalAction = signal<'SUSPEND' | 'REACTIVATE' | 'TERMINATE' | null>(null);
+  detailVendor = signal<VendorAccount | null>(null);
 
   // Permissions (Rule D3)
   readonly canSuspend = computed(() => this.auth.canPerformAction('accounts-vendor', 'SUSPEND'));
@@ -43,6 +44,14 @@ export class AdminAccountsVendorComponent {
 
     return list;
   });
+
+  openDetail(v: VendorAccount): void {
+    this.detailVendor.set(v);
+  }
+
+  closeDetail(): void {
+    this.detailVendor.set(null);
+  }
 
   openSuspendModal(v: VendorAccount): void {
     this.selectedVendor.set(v);

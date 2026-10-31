@@ -1,0 +1,820 @@
+<div class="min-h-screen bg-[#fbfaf6] text-[#19392d] flex flex-col font-sans selection:bg-emerald-200 selection:text-emerald-950">
+  
+  <!-- Top Navigation Header -->
+  <header class="h-20 bg-white/95 backdrop-blur-md border-b border-[#edf1ea] sticky top-0 z-40 transition-all">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+      <!-- Brand Logo -->
+      <a routerLink="/" class="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-xl p-1">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#0d623b] to-[#08492d] text-emerald-100 flex items-center justify-center shadow-md shadow-emerald-900/10 group-hover:scale-105 transition-transform">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22v-9m0 0a5 5 0 015-5h2a7 7 0 01-7 7m0-2a5 5 0 00-5-5H5a7 7 0 007 7" />
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-xl font-extrabold text-[#08492d] tracking-tight leading-tight group-hover:text-emerald-700 transition-colors">
+            Kaggri-Trade
+          </span>
+          <span class="text-[11px] font-bold text-[#789285] uppercase tracking-widest">
+            Sàn Nông Sản B2B Từ Trang Trại
+          </span>
+        </div>
+      </a>
+
+      <!-- Right Login Link -->
+      <div class="flex items-center gap-4">
+        <span class="text-xs text-[#617468] hidden sm:inline">Đã có tài khoản đối tác?</span>
+        <a routerLink="/auth/login" [queryParams]="{ role: formState.role }"
+          class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold text-[#0d623b] bg-emerald-50/80 hover:bg-emerald-100/80 border border-[#bbd2c2]/60 hover:border-emerald-600 transition-all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+          </svg>
+          Đăng nhập ngay
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto space-y-6">
+
+      <!-- Registration Hero Banner & Role Switcher -->
+      <div class="bg-white border border-[#dce9e0] rounded-3xl p-6 sm:p-8 shadow-sm relative overflow-hidden">
+        <div class="max-w-2xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200/60 mb-3">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            Đăng ký tài khoản Đối tác Kinh doanh Nông sản B2B
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d] tracking-tight">
+            Thiết lập hồ sơ doanh nghiệp
+          </h1>
+          <p class="text-sm text-[#617468] mt-1.5 leading-relaxed">
+            Tham gia chuỗi cung ứng nông sản chất lượng cao Kaggri-Trade. Minh bạch pháp lý, giao dịch Escrow và truy xuất nguồn gốc từng lô hàng.
+          </p>
+        </div>
+
+        <!-- Role Toggle Tabs -->
+        <div class="mt-6 pt-6 border-t border-[#edf1ea]">
+          <label class="block text-xs font-bold uppercase tracking-wider text-emerald-950/70 mb-3">
+            Bạn đăng ký với tư cách đối tác nào? <span class="text-rose-500">*</span>
+          </label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Vendor Choice -->
+            <button
+              type="button"
+              (click)="setRole('vendor')"
+              [class.border-emerald-600]="formState.role === 'vendor'"
+              [class.bg-emerald-50/40]="formState.role === 'vendor'"
+              [class.ring-2]="formState.role === 'vendor'"
+              [class.ring-emerald-500/20]="formState.role === 'vendor'"
+              class="flex items-start gap-3.5 p-4 rounded-2xl border border-[#dce9e0] bg-white text-left transition-all hover:border-[#b2cebe] cursor-pointer">
+              <div class="w-10 h-10 rounded-xl bg-emerald-100/80 text-emerald-800 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-bold text-[#08492d]">Bên Bán (Nhà vườn / HTX)</span>
+                  <span class="w-4 h-4 rounded-full border flex items-center justify-center"
+                    [class.border-emerald-600]="formState.role === 'vendor'"
+                    [class.border-stone-300]="formState.role !== 'vendor'">
+                    @if (formState.role === 'vendor') {
+                      <span class="w-2 h-2 rounded-full bg-emerald-700"></span>
+                    }
+                  </span>
+                </div>
+                <p class="text-xs text-[#617468] mt-1">Cung cấp nông sản sỉ, hợp tác xã, trang trại, đơn vị phân phối.</p>
+              </div>
+            </button>
+
+            <!-- Buyer Choice -->
+            <button
+              type="button"
+              (click)="setRole('buyer')"
+              [class.border-emerald-600]="formState.role === 'buyer'"
+              [class.bg-emerald-50/40]="formState.role === 'buyer'"
+              [class.ring-2]="formState.role === 'buyer'"
+              [class.ring-emerald-500/20]="formState.role === 'buyer'"
+              class="flex items-start gap-3.5 p-4 rounded-2xl border border-[#dce9e0] bg-white text-left transition-all hover:border-[#b2cebe] cursor-pointer">
+              <div class="w-10 h-10 rounded-xl bg-emerald-100/80 text-emerald-800 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-bold text-[#08492d]">Bên Mua (Doanh nghiệp F&B / Thu mua)</span>
+                  <span class="w-4 h-4 rounded-full border flex items-center justify-center"
+                    [class.border-emerald-600]="formState.role === 'buyer'"
+                    [class.border-stone-300]="formState.role !== 'buyer'">
+                    @if (formState.role === 'buyer') {
+                      <span class="w-2 h-2 rounded-full bg-emerald-700"></span>
+                    }
+                  </span>
+                </div>
+                <p class="text-xs text-[#617468] mt-1">Chuỗi nhà hàng, siêu thị, bếp ăn công nghiệp, đơn vị bán lẻ.</p>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Registration Form -->
+      <form (ngSubmit)="onSubmit()" class="space-y-6" novalidate>
+
+        <!-- ========================================== -->
+        <!-- SECTION 1: THÔNG TIN DOANH NGHIỆP / CỬA HÀNG -->
+        <!-- ========================================== -->
+        <div class="bg-white border border-[#dce9e0] rounded-3xl p-6 sm:p-8 shadow-sm">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-[#19392d] tracking-tight">
+              Thông tin doanh nghiệp
+            </h2>
+            <button
+              type="button"
+              (click)="toggleTooltip('business-info')"
+              class="w-7 h-7 rounded-lg text-emerald-700/70 hover:text-emerald-800 hover:bg-emerald-50 flex items-center justify-center transition-colors focus:outline-none cursor-pointer"
+              title="Thông tin trợ giúp">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </button>
+          </div>
+
+          @if (activeTooltip() === 'business-info') {
+            <div class="mb-5 p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/60 text-xs text-[#23583c] flex items-start gap-2.5 animate-fadeIn">
+              <svg class="w-4 h-4 text-emerald-700 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <strong>Tên cửa hàng / Tên thương hiệu:</strong> Là tên định danh hiển thị trên gian hàng trực tuyến của bạn, trong hóa đơn và các hợp đồng giao dịch nông sản.
+              </div>
+            </div>
+          }
+
+          <!-- Tên cửa hàng field with character counter -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label for="storeName" class="text-sm font-semibold text-[#19392d]">
+                Tên cửa hàng <span class="text-rose-500">*</span>
+              </label>
+              <button
+                type="button"
+                (click)="toggleTooltip('storeNameTip')"
+                class="text-emerald-700/70 hover:text-emerald-800 focus:outline-none cursor-pointer"
+                title="Hướng dẫn nhập tên cửa hàng">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </button>
+            </div>
+
+            <div class="relative">
+              <input
+                id="storeName"
+                name="storeName"
+                type="text"
+                maxlength="120"
+                [(ngModel)]="formState.storeName"
+                placeholder="Nhập tên cửa hàng / gian hàng của bạn"
+                [class.border-rose-400]="errors.storeName"
+                class="w-full pl-4 pr-16 py-3 rounded-xl border border-[#dce9e0] bg-white text-sm text-[#19392d] focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-600 transition-all placeholder:text-stone-400" />
+              <!-- Character counter on the right inside input -->
+              <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none select-none">
+                <span class="text-xs text-stone-400 font-mono">{{ storeNameLength() }}/120</span>
+              </div>
+            </div>
+
+            @if (errors.storeName) {
+              <p class="text-xs text-rose-600 font-medium mt-1 flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <span>{{ errors.storeName }}</span>
+              </p>
+            }
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SECTION 2: XÁC MINH DOANH NGHIỆP          -->
+        <!-- ========================================== -->
+        <div class="bg-white border border-[#dce9e0] rounded-3xl p-6 sm:p-8 shadow-sm">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-[#19392d] tracking-tight">
+              Xác minh doanh nghiệp
+            </h2>
+            <button
+              type="button"
+              (click)="toggleTooltip('kyc-info')"
+              class="w-7 h-7 rounded-lg text-emerald-700/70 hover:text-emerald-800 hover:bg-emerald-50 flex items-center justify-center transition-colors focus:outline-none cursor-pointer"
+              title="Thông tin xác minh">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Sub-label 1: Chọn loại hình kinh doanh -->
+          <div class="space-y-3 mb-6">
+            <div class="flex items-center justify-between">
+              <label class="text-sm font-semibold text-[#19392d]">
+                Chọn loại hình kinh doanh <span class="text-rose-500">*</span>
+              </label>
+              <button
+                type="button"
+                (click)="toggleTooltip('businessTypeTip')"
+                class="text-emerald-700/70 hover:text-emerald-800 focus:outline-none cursor-pointer"
+                title="Hướng dẫn chọn loại hình">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Radio choices exactly as in screenshot: Cá nhân, Hộ kinh doanh, Doanh nghiệp -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              @for (opt of businessTypeOptions; track opt.type) {
+                <button
+                  type="button"
+                  (click)="setBusinessType(opt.type)"
+                  [class.border-emerald-600]="formState.businessType === opt.type"
+                  [class.bg-emerald-50/20]="formState.businessType === opt.type"
+                  [class.ring-1]="formState.businessType === opt.type"
+                  [class.ring-emerald-600]="formState.businessType === opt.type"
+                  class="flex items-center gap-3 px-4 py-3.5 rounded-xl border border-[#dce9e0] bg-white text-left transition-all hover:border-[#b4cfc0] cursor-pointer focus:outline-none">
+                  <!-- Radio circle indicator -->
+                  <div
+                    class="w-5 h-5 rounded-full border flex items-center justify-center flex-shrink-0 transition-colors"
+                    [class.border-emerald-700]="formState.businessType === opt.type"
+                    [class.border-stone-300]="formState.businessType !== opt.type">
+                    @if (formState.businessType === opt.type) {
+                      <div class="w-2.5 h-2.5 rounded-full bg-emerald-700"></div>
+                    }
+                  </div>
+                  <span class="text-sm font-semibold" [class.text-emerald-950]="formState.businessType === opt.type" [class.text-[#19392d]]="formState.businessType !== opt.type">
+                    {{ opt.label }}
+                  </span>
+                </button>
+              }
+            </div>
+
+            @if (errors.businessType) {
+              <p class="text-xs text-rose-600 font-medium mt-1">{{ errors.businessType }}</p>
+            }
+          </div>
+
+          <!-- Sub-label 2: Tải lên Giấy chứng nhận đăng ký doanh nghiệp của công ty -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="text-sm font-semibold text-[#19392d]">
+                Tải lên Giấy chứng nhận đăng ký doanh nghiệp của công ty
+              </label>
+              <button
+                type="button"
+                (click)="toggleTooltip('uploadTip')"
+                class="text-emerald-700/70 hover:text-emerald-800 focus:outline-none cursor-pointer"
+                title="Hướng dẫn tệp đính kèm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </button>
+            </div>
+
+            @if (!formState.licenseFile) {
+              <!-- Dropzone upload area -->
+              <div
+                (dragover)="onDragOver($event)"
+                (dragleave)="onDragLeave($event)"
+                (drop)="onDrop($event)"
+                [class.border-emerald-600]="isDragging()"
+                [class.bg-emerald-50/30]="isDragging()"
+                class="border-2 border-dashed border-[#dce9e0] hover:border-emerald-600 rounded-2xl p-6 sm:p-8 text-center transition-all bg-[#fafbf9] group cursor-pointer relative">
+                
+                <input
+                  type="file"
+                  id="licenseFileInput"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  (change)="onFileSelected($event)"
+                  class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+
+                <div class="flex flex-col items-center justify-center space-y-2 pointer-events-none">
+                  <div class="w-12 h-12 rounded-2xl bg-emerald-100/70 text-emerald-800 flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-bold text-[#08492d]">
+                      Nhấp để tải lên <span class="font-normal text-stone-500">hoặc kéo thả tập tin vào đây</span>
+                    </p>
+                    <p class="text-xs text-stone-400 mt-1">
+                      Định dạng hỗ trợ: PDF, JPG, PNG (Dung lượng tối đa 10MB)
+                    </p>
+                  </div>
+                </div>
+              </div>
+            } @else {
+              <!-- Uploaded file preview card -->
+              <div class="p-4 rounded-2xl border border-emerald-200 bg-emerald-50/40 flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-10 h-10 rounded-xl bg-emerald-700 text-white flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <div class="min-w-0">
+                    <p class="text-sm font-bold text-emerald-950 truncate">{{ formState.licenseFile.name }}</p>
+                    <div class="flex items-center gap-2 text-xs text-emerald-700 mt-0.5">
+                      <span>{{ formState.licenseFile.size }}</span>
+                      <span>•</span>
+                      <span class="inline-flex items-center gap-1 font-semibold text-emerald-800">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Đã tải lên
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2 flex-shrink-0">
+                  <button
+                    type="button"
+                    (click)="removeLicenseFile()"
+                    class="p-2 rounded-xl text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-colors cursor-pointer"
+                    title="Xóa tệp này">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SECTION 3: THÔNG TIN CÔNG TY               -->
+        <!-- ========================================== -->
+        <div class="bg-white border border-[#dce9e0] rounded-3xl p-6 sm:p-8 shadow-sm">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-[#19392d] tracking-tight">
+              Thông tin công ty
+            </h2>
+            <button
+              type="button"
+              (click)="toggleTooltip('companyTip')"
+              class="w-7 h-7 rounded-lg text-emerald-700/70 hover:text-emerald-800 hover:bg-emerald-50 flex items-center justify-center transition-colors focus:outline-none cursor-pointer"
+              title="Thông tin công ty">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="space-y-5">
+            <!-- Tên công ty input with counter 3/300 -->
+            <div class="space-y-1.5">
+              <label for="companyName" class="block text-sm font-semibold text-[#19392d]">
+                Tên công ty @if (formState.businessType === 'enterprise') { <span class="text-rose-500">*</span> }
+              </label>
+              <div class="relative">
+                <input
+                  id="companyName"
+                  name="companyName"
+                  type="text"
+                  maxlength="300"
+                  [(ngModel)]="formState.companyName"
+                  placeholder="Nhập tên công ty / hợp tác xã theo giấy phép ĐKKD"
+                  [class.border-rose-400]="errors.companyName"
+                  class="w-full pl-4 pr-16 py-3 rounded-xl border border-[#dce9e0] bg-white text-sm text-[#19392d] focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-600 transition-all placeholder:text-stone-400" />
+                <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none select-none">
+                  <span class="text-xs text-stone-400 font-mono">{{ companyNameLength() }}/300</span>
+                </div>
+              </div>
+              @if (errors.companyName) {
+                <p class="text-xs text-rose-600 font-medium mt-1">{{ errors.companyName }}</p>
+              }
+            </div>
+
+            <!-- Mã doanh nghiệp input with counter 9/100 -->
+            <div class="space-y-1.5">
+              <label for="taxCode" class="block text-sm font-semibold text-[#19392d]">
+                Mã doanh nghiệp @if (formState.businessType !== 'personal') { <span class="text-rose-500">*</span> }
+              </label>
+              <div class="relative">
+                <input
+                  id="taxCode"
+                  name="taxCode"
+                  type="text"
+                  maxlength="100"
+                  [(ngModel)]="formState.taxCode"
+                  placeholder="Nhập mã số thuế / mã số doanh nghiệp (10 hoặc 13 số)"
+                  [class.border-rose-400]="errors.taxCode"
+                  class="w-full pl-4 pr-16 py-3 rounded-xl border border-[#dce9e0] bg-white text-sm text-[#19392d] focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-600 transition-all placeholder:text-stone-400" />
+                <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none select-none">
+                  <span class="text-xs text-stone-400 font-mono">{{ taxCodeLength() }}/100</span>
+                </div>
+              </div>
+              @if (errors.taxCode) {
+                <p class="text-xs text-rose-600 font-medium mt-1">{{ errors.taxCode }}</p>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SECTION 4: THÔNG TIN LIÊN HỆ BỔ SUNG       -->
+        <!-- ========================================== -->
+        <div class="bg-white border border-[#dce9e0] rounded-3xl p-6 sm:p-8 shadow-sm">
+          <h2 class="text-xl font-bold text-[#19392d] tracking-tight mb-6">
+            Thông tin liên hệ bổ sung
+          </h2>
+
+          <div class="space-y-6">
+            <!-- Người liên hệ with counter 10/100 -->
+            <div class="space-y-1.5">
+              <label for="contactPerson" class="block text-sm font-semibold text-[#19392d]">
+                Người liên hệ <span class="text-rose-500">*</span>
+              </label>
+              <div class="relative">
+                <input
+                  id="contactPerson"
+                  name="contactPerson"
+                  type="text"
+                  maxlength="100"
+                  [(ngModel)]="formState.contactPerson"
+                  placeholder="Nhập họ và tên người đại diện liên hệ"
+                  [class.border-rose-400]="errors.contactPerson"
+                  class="w-full pl-4 pr-16 py-3 rounded-xl border border-[#dce9e0] bg-white text-sm text-[#19392d] focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-600 transition-all placeholder:text-stone-400" />
+                <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none select-none">
+                  <span class="text-xs text-stone-400 font-mono">{{ contactPersonLength() }}/100</span>
+                </div>
+              </div>
+              @if (errors.contactPerson) {
+                <p class="text-xs text-rose-600 font-medium mt-1">{{ errors.contactPerson }}</p>
+              }
+            </div>
+
+            <!-- Số điện thoại with 2 radio options + input -->
+            <div class="space-y-3">
+              <label class="block text-sm font-semibold text-[#19392d]">
+                Số điện thoại <span class="text-rose-500">*</span>
+              </label>
+
+              <!-- Radio choices horizontally: Sử dụng thông tin bên dưới / Sử dụng thông tin khác -->
+              <div class="flex flex-wrap items-center gap-6 text-sm text-[#19392d]">
+                <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                  <div
+                    class="w-4 h-4 rounded-full border flex items-center justify-center transition-colors"
+                    [class.border-emerald-700]="formState.phoneOption === 'default'"
+                    [class.border-stone-300]="formState.phoneOption !== 'default'">
+                    @if (formState.phoneOption === 'default') {
+                      <div class="w-2 h-2 rounded-full bg-emerald-700"></div>
+                    }
+                  </div>
+                  <input
+                    type="radio"
+                    name="phoneOption"
+                    value="default"
+                    [(ngModel)]="formState.phoneOption"
+                    class="sr-only" />
+                  <span class="font-medium text-xs sm:text-sm">Sử dụng thông tin bên dưới</span>
+                </label>
+
+                <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                  <div
+                    class="w-4 h-4 rounded-full border flex items-center justify-center transition-colors"
+                    [class.border-emerald-700]="formState.phoneOption === 'other'"
+                    [class.border-stone-300]="formState.phoneOption !== 'other'">
+                    @if (formState.phoneOption === 'other') {
+                      <div class="w-2 h-2 rounded-full bg-emerald-700"></div>
+                    }
+                  </div>
+                  <input
+                    type="radio"
+                    name="phoneOption"
+                    value="other"
+                    [(ngModel)]="formState.phoneOption"
+                    class="sr-only" />
+                  <span class="font-medium text-xs sm:text-sm text-stone-600">Sử dụng thông tin khác</span>
+                </label>
+              </div>
+
+              <!-- Phone input field with dropdown chevron -->
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-emerald-800/70">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                </div>
+                <input
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  type="tel"
+                  [(ngModel)]="formState.phoneNumber"
+                  placeholder="+84 987 654 321"
+                  [class.border-rose-400]="errors.phoneNumber"
+                  class="w-full pl-10 pr-10 py-3 rounded-xl border border-[#dce9e0] bg-white text-sm text-[#19392d] focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-600 transition-all placeholder:text-stone-400" />
+                <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-stone-400">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+              @if (errors.phoneNumber) {
+                <p class="text-xs text-rose-600 font-medium mt-1">{{ errors.phoneNumber }}</p>
+              }
+            </div>
+
+            <!-- Địa chỉ email with inline "Gửi lại mã" / "Gửi mã" button -->
+            <div class="space-y-1.5">
+              <label for="email" class="block text-sm font-semibold text-[#19392d]">
+                Địa chỉ email <span class="text-rose-500">*</span>
+              </label>
+              <div class="relative">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  [(ngModel)]="formState.email"
+                  placeholder="Nhập email doanh nghiệp (ví dụ: contact@congty.vn)"
+                  [class.border-rose-400]="errors.email"
+                  class="w-full pl-4 pr-28 py-3 rounded-xl border border-[#dce9e0] bg-white text-sm text-[#19392d] focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-600 transition-all placeholder:text-stone-400" />
+
+                <!-- Action button inline: Gửi lại mã / Gửi mã -->
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                  @if (otpCountdown() > 0) {
+                    <span class="text-xs font-semibold text-stone-400">
+                      Gửi lại sau {{ otpCountdown() }}s
+                    </span>
+                  } @else {
+                    <button
+                      type="button"
+                      (click)="sendOtp()"
+                      class="text-xs font-bold text-emerald-700 hover:text-emerald-900 focus:outline-none cursor-pointer py-1 px-2 rounded-lg hover:bg-emerald-50 transition-colors">
+                      {{ otpSent() ? 'Gửi lại mã' : 'Gửi mã xác thực' }}
+                    </button>
+                  }
+                </div>
+              </div>
+              @if (errors.email) {
+                <p class="text-xs text-rose-600 font-medium mt-1">{{ errors.email }}</p>
+              }
+            </div>
+
+            <!-- Mã xác thực email (OTP) - Opens when OTP is requested -->
+            @if (otpSent()) {
+              <div class="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200/80 space-y-2 animate-fadeIn">
+                <div class="flex items-center justify-between">
+                  <label for="otpCode" class="block text-xs font-bold uppercase tracking-wider text-emerald-950">
+                    Mã xác thực email (OTP) <span class="text-rose-500">*</span>
+                  </label>
+                  <span class="text-[11px] text-emerald-700 font-medium">Mã demo test tự điền: 839201</span>
+                </div>
+                <div class="relative">
+                  <input
+                    id="otpCode"
+                    name="otpCode"
+                    type="text"
+                    maxlength="6"
+                    [(ngModel)]="formState.otpCode"
+                    placeholder="Nhập 6 chữ số OTP"
+                    class="w-full px-4 py-2.5 rounded-xl border border-emerald-300 bg-white text-sm font-mono tracking-widest text-[#08492d] focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all" />
+                  <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    <span class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Đã gửi
+                    </span>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Password & Confirm Password -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <!-- Mật khẩu -->
+              <div class="space-y-1.5">
+                <label for="password" class="block text-sm font-semibold text-[#19392d]">
+                  Mật khẩu đăng nhập <span class="text-rose-500">*</span>
+                </label>
+                <div class="relative">
+                  <input
+                    id="password"
+                    name="password"
+                    [type]="showPassword() ? 'text' : 'password'"
+                    [(ngModel)]="formState.password"
+                    placeholder="Tối thiểu 6 ký tự"
+                    [class.border-rose-400]="errors.password"
+                    class="w-full pl-4 pr-11 py-3 rounded-xl border border-[#dce9e0] bg-white text-sm text-[#19392d] focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-600 transition-all placeholder:text-stone-400" />
+                  <button
+                    type="button"
+                    (click)="togglePasswordVisibility()"
+                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-emerald-800 transition-colors focus:outline-none cursor-pointer">
+                    @if (showPassword()) {
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                      </svg>
+                    } @else {
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    }
+                  </button>
+                </div>
+                <!-- Strength bar -->
+                @if (formState.password) {
+                  <div class="mt-1 flex items-center gap-2">
+                    <div class="flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden flex">
+                      <div class="h-full transition-all" [ngClass]="passwordStrength().color" [style.width.%]="passwordStrength().score * 25"></div>
+                    </div>
+                    <span class="text-[11px] font-medium text-stone-500">{{ passwordStrength().text }}</span>
+                  </div>
+                }
+                @if (errors.password) {
+                  <p class="text-xs text-rose-600 font-medium mt-1">{{ errors.password }}</p>
+                }
+              </div>
+
+              <!-- Xác nhận mật khẩu -->
+              <div class="space-y-1.5">
+                <label for="confirmPassword" class="block text-sm font-semibold text-[#19392d]">
+                  Xác nhận lại mật khẩu <span class="text-rose-500">*</span>
+                </label>
+                <div class="relative">
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    [type]="showConfirmPassword() ? 'text' : 'password'"
+                    [(ngModel)]="formState.confirmPassword"
+                    placeholder="Nhập lại mật khẩu đã tạo"
+                    [class.border-rose-400]="errors.confirmPassword"
+                    class="w-full pl-4 pr-11 py-3 rounded-xl border border-[#dce9e0] bg-white text-sm text-[#19392d] focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-600 transition-all placeholder:text-stone-400" />
+                  <button
+                    type="button"
+                    (click)="toggleConfirmPasswordVisibility()"
+                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-emerald-800 transition-colors focus:outline-none cursor-pointer">
+                    @if (showConfirmPassword()) {
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                      </svg>
+                    } @else {
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    }
+                  </button>
+                </div>
+                @if (errors.confirmPassword) {
+                  <p class="text-xs text-rose-600 font-medium mt-1">{{ errors.confirmPassword }}</p>
+                }
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SECTION 5: ĐIỀU KHOẢN & ĐĂNG KÝ            -->
+        <!-- ========================================== -->
+        <div class="bg-white border border-[#dce9e0] rounded-3xl p-6 sm:p-8 shadow-sm space-y-5">
+          <!-- Terms Checkbox -->
+          <label class="flex items-start gap-3 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              name="agreeTerms"
+              [(ngModel)]="formState.agreeTerms"
+              class="w-5 h-5 rounded text-emerald-700 focus:ring-emerald-500 border-[#bbd2c2] accent-[#0d623b] mt-0.5 cursor-pointer" />
+            <span class="text-xs sm:text-sm text-[#455c50] leading-relaxed">
+              Tôi xác nhận thông tin đăng ký doanh nghiệp cung cấp là hoàn toàn chính xác và đồng ý với 
+              <a href="#" class="font-bold text-[#0d623b] hover:underline">Điều khoản dịch vụ</a>, 
+              <a href="#" class="font-bold text-[#0d623b] hover:underline">Quy chế giao dịch B2B Escrow</a> và 
+              <a href="#" class="font-bold text-[#0d623b] hover:underline">Chính sách bảo mật</a> của Kaggri-Trade.
+            </span>
+          </label>
+          @if (errors.agreeTerms) {
+            <p class="text-xs text-rose-600 font-medium">{{ errors.agreeTerms }}</p>
+          }
+
+          <!-- Global Error Banner -->
+          @if (errorMessage()) {
+            <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-start gap-3">
+              <svg class="w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <div>
+                <p class="font-bold">Đăng ký chưa thành công</p>
+                <p class="text-xs text-rose-700 mt-0.5">{{ errorMessage() }}</p>
+              </div>
+            </div>
+          }
+
+          <!-- Submit Button -->
+          <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <a routerLink="/auth/login" class="text-sm font-semibold text-[#617468] hover:text-[#08492d] transition-colors order-2 sm:order-1">
+              ← Quay lại Đăng nhập
+            </a>
+
+            <button
+              type="submit"
+              [disabled]="isLoading()"
+              class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#0d623b] to-[#08492d] hover:from-[#0b5432] hover:to-[#063823] text-white font-bold text-sm tracking-wide shadow-lg shadow-emerald-950/15 hover:shadow-xl hover:shadow-emerald-950/20 active:scale-[0.99] transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 cursor-pointer order-1 sm:order-2">
+              @if (isLoading()) {
+                <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Đang xử lý hồ sơ đối tác...</span>
+              } @else {
+                <span>Đăng ký tài khoản</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              }
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-6 border-t border-[#edf1ea] text-center text-xs text-[#789285] bg-white mt-12">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p>© 2026 Kaggri-Trade. Nền tảng Thương mại Điện tử B2B Nông nghiệp Toàn diện.</p>
+      <div class="flex items-center gap-4">
+        <a href="#" class="hover:text-emerald-800 transition-colors">Điều khoản dịch vụ</a>
+        <span>•</span>
+        <a href="#" class="hover:text-emerald-800 transition-colors">Chính sách bảo mật</a>
+        <span>•</span>
+        <a href="#" class="hover:text-emerald-800 transition-colors">Hỗ trợ đối tác</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================== -->
+  <!-- SUCCESS MODAL POPUP                        -->
+  <!-- ========================================== -->
+  @if (isSuccessModalOpen()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-[#dce9e0] text-center space-y-5 animate-scaleUp">
+        <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto shadow-inner">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+
+        <div>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 mb-2">
+            Hồ sơ đã được tiếp nhận
+          </span>
+          <h3 class="text-2xl font-extrabold text-[#08492d]">
+            Đăng ký tài khoản thành công!
+          </h3>
+          <p class="text-sm text-[#617468] mt-2 leading-relaxed">
+            Chào mừng <strong>{{ formState.contactPerson }}</strong>. Tài khoản đối tác <strong>{{ formState.storeName }}</strong> đã sẵn sàng hoạt động trên hệ sinh thái Kaggri-Trade.
+          </p>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-[#fafbf9] border border-[#dce9e0] text-xs text-left space-y-1.5 text-[#455c50]">
+          <div class="flex justify-between">
+            <span class="text-stone-500">Vai trò:</span>
+            <span class="font-bold text-[#08492d]">{{ formState.role === 'vendor' ? 'Bên Bán (Nhà vườn / HTX)' : 'Bên Mua (Doanh nghiệp F&B)' }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-stone-500">Hình thức:</span>
+            <span class="font-bold text-[#08492d]">{{ formState.businessType === 'enterprise' ? 'Doanh nghiệp' : formState.businessType === 'household' ? 'Hộ kinh doanh' : 'Cá nhân' }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-stone-500">Email:</span>
+            <span class="font-bold text-[#08492d]">{{ formState.email }}</span>
+          </div>
+        </div>
+
+        <div class="space-y-2 pt-2">
+          <button
+            type="button"
+            (click)="navigateToDashboard()"
+            class="w-full py-3 px-6 rounded-xl bg-gradient-to-r from-[#0d623b] to-[#08492d] text-white font-bold text-sm shadow-md hover:from-[#0b5432] hover:to-[#063823] cursor-pointer transition-all">
+            Vào ngay trang quản trị
+          </button>
+          <button
+            type="button"
+            (click)="navigateToLogin()"
+            class="w-full py-2.5 px-6 rounded-xl text-stone-600 hover:text-emerald-900 font-semibold text-xs cursor-pointer transition-colors">
+            Đăng nhập lại bằng tài khoản mới
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>
+

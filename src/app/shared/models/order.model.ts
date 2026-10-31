@@ -27,7 +27,7 @@ export interface PaymentMethod {
   id: PaymentMethodId;
   title: string;
   description: string;
-  badge: string;
+  badge?: string;
   isEligible: boolean;
   settlementType: 'PREPAID' | 'COD' | 'CREDIT';
   icon: string;

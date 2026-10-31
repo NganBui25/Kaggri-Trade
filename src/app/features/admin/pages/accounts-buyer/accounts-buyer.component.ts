@@ -24,6 +24,7 @@ export class AdminAccountsBuyerComponent {
 
   selectedBuyer = signal<BuyerAccount | null>(null);
   modalAction = signal<'SUSPEND' | 'REACTIVATE' | null>(null);
+  detailBuyer = signal<BuyerAccount | null>(null);
 
   readonly canSuspend = computed(() => this.auth.canPerformAction('accounts-buyer', 'SUSPEND'));
 
@@ -42,6 +43,14 @@ export class AdminAccountsBuyerComponent {
 
     return list;
   });
+
+  openDetail(b: BuyerAccount): void {
+    this.detailBuyer.set(b);
+  }
+
+  closeDetail(): void {
+    this.detailBuyer.set(null);
+  }
 
   openSuspendModal(b: BuyerAccount): void {
     this.selectedBuyer.set(b);

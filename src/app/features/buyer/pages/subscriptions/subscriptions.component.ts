@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { PricePipe, NumberDotPipe } from '../../../../shared/pipes/price.pipe';
 import { ToastService } from '../../../../shared/components/toast/toast.service';
 import { BuyerSubscriptionModalComponent, SubscriptionFormData } from '../../components/subscription-modal/subscription-modal.component';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 export interface SubscriptionPlan {
   id: string;
@@ -36,7 +37,8 @@ export interface SubscriptionPlan {
     FormsModule, 
     PricePipe, 
     NumberDotPipe, 
-    BuyerSubscriptionModalComponent
+    BuyerSubscriptionModalComponent,
+    ConfirmDialogComponent
   ],
   templateUrl: './subscriptions.component.html',
   styleUrl: './subscriptions.component.scss'
@@ -48,6 +50,10 @@ export class SubscriptionsComponent {
   isModalOpen = signal<boolean>(false);
   isDetailOpen = signal<boolean>(false);
   selectedDetailPlan = signal<SubscriptionPlan | null>(null);
+
+  // Confirm Dialog states
+  confirmDeleteOpen = signal<boolean>(false);
+  pendingDeletePlan = signal<SubscriptionPlan | null>(null);
 
   // Status Filter: 'all' | 'active' | 'paused'
   statusFilter = signal<'all' | 'active' | 'paused'>('all');
@@ -176,18 +182,34 @@ export class SubscriptionsComponent {
     }
   }
 
-  // Cancel / Delete plan
-  cancelSubscription(id: string): void {
-    const plan = this.subscriptions().find(s => s.id === id);
+  // Cancel / Delete plan - opens confirm dialog
+  cancelSubscription(plan: SubscriptionPlan | string): void {
+    const target = typeof plan === 'string'
+      ? this.subscriptions().find(s => s.id === plan)
+      : plan;
+    if (!target) return;
+
+    this.pendingDeletePlan.set(target);
+    this.confirmDeleteOpen.set(true);
+  }
+
+  onConfirmDelete(): void {
+    const plan = this.pendingDeletePlan();
     if (!plan) return;
 
-    if (confirm(`Bạn có chắc chắn muốn kết thúc và hủy hợp đồng cung ứng định kỳ ${id} (${plan.productName}) không?`)) {
-      this.subscriptions.update(list => list.filter(s => s.id !== id));
-      if (this.selectedDetailPlan()?.id === id) {
-        this.closeDetail();
-      }
-      this.toastService.info(`Đã hủy hợp đồng cung ứng định kỳ ${id}.`, 'Đã chấm dứt');
+    const id = plan.id;
+    this.subscriptions.update(list => list.filter(s => s.id !== id));
+    if (this.selectedDetailPlan()?.id === id) {
+      this.closeDetail();
     }
+    this.toastService.info(`Đã hủy hợp đồng cung ứng định kỳ ${id}.`, 'Đã chấm dứt');
+    this.pendingDeletePlan.set(null);
+    this.confirmDeleteOpen.set(false);
+  }
+
+  onCancelDelete(): void {
+    this.pendingDeletePlan.set(null);
+    this.confirmDeleteOpen.set(false);
   }
 
   // Open Detail modal

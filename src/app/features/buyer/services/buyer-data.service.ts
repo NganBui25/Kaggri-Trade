@@ -235,7 +235,6 @@ export class BuyerDataService {
       id: 'vietqr',
       title: 'VietQR Chuyển Khoản Nhanh',
       description: 'Quét mã VietQR bằng bất kỳ App ngân hàng nào (Vietcombank, MB, Techcombank...).',
-      badge: 'Thanh toán tức thì 24/7',
       isEligible: true,
       settlementType: 'PREPAID',
       icon: 'vietqr'
@@ -244,7 +243,6 @@ export class BuyerDataService {
       id: 'va',
       title: 'Tài khoản định danh Virtual Account',
       description: 'Chuyển khoản trực tiếp tới tài khoản ngân hàng định danh riêng cho đơn hàng này.',
-      badge: 'Tự động đối soát Escrow',
       isEligible: true,
       settlementType: 'PREPAID',
       icon: 'va'
@@ -253,7 +251,6 @@ export class BuyerDataService {
       id: 'napas',
       title: 'Thẻ ATM / Thẻ ghi nợ nội địa NAPAS',
       description: 'Thanh toán trực tuyến qua cổng NAPAS với tất cả ngân hàng thành viên.',
-      badge: 'Cổng thanh toán an toàn',
       isEligible: true,
       settlementType: 'PREPAID',
       icon: 'napas'
@@ -262,7 +259,6 @@ export class BuyerDataService {
       id: 'cod',
       title: 'Thanh toán khi nhận hàng (COD B2B)',
       description: 'Thanh toán tiền mặt hoặc chuyển khoản tại điểm giao nhận sau khi kiểm tra biên bản giao.',
-      badge: 'Thanh toán tại kho',
       isEligible: true,
       settlementType: 'COD',
       icon: 'cod'
@@ -271,7 +267,6 @@ export class BuyerDataService {
       id: 'credit',
       title: 'Công nợ Doanh nghiệp (B2B Net 15)',
       description: 'Kỳ hạn thanh toán 15 ngày từ ngày xuất hóa đơn VAT trong hạn mức 38.000.000 ₫ khả dụng.',
-      badge: 'Hạn mức khả dụng 38.000.000 ₫',
       isEligible: true,
       settlementType: 'CREDIT',
       icon: 'credit'

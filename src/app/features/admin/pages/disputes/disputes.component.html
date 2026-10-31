@@ -7,9 +7,6 @@
         <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
           Giải Quyết Khiếu Nại & Tranh Chấp (Disputes)
         </h1>
-        <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-rose-100 text-rose-900 border border-rose-300">
-          Quyết định D2: Ops phán quyết, Finance thực thi
-        </span>
       </div>
       <p class="text-xs text-stone-500 mt-1">
         Trọng tài đối chiếu bằng chứng nông sản hư hao, phán quyết bồi thường Escrow và chuyển lệnh sang hàng chờ hoàn tiền.
@@ -73,7 +70,7 @@
             <th class="py-3.5 px-4">Đơn hàng & Nông sản</th>
             <th class="py-3.5 px-4">Người mua / Người bán</th>
             <th class="py-3.5 px-4">Tiền giữ Escrow</th>
-            <th class="py-3.5 px-4">Thời hạn SLA</th>
+            <th class="py-3.5 px-4">Thời hạn</th>
             <th class="py-3.5 px-4">Phân công</th>
             <th class="py-3.5 px-4">Trạng thái</th>
             <th class="py-3.5 px-4 text-right">Thao tác</th>
@@ -102,11 +99,12 @@
                 {{ d.escrowAmount | price }}
               </td>
 
-              <!-- Positive SLA Indicator (Fix ADM-16) -->
+              <!-- Thời hạn SLA (Hiển thị thời hạn & ngày tháng năm) -->
               <td class="py-3.5 px-4">
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border" [ngClass]="sla.badgeClass">
                   {{ sla.text }}
                 </span>
+                <span class="block text-[10px] text-stone-500 font-medium mt-1">Hạn chót: {{ d.slaDeadline }}</span>
               </td>
 
               <td class="py-3.5 px-4">

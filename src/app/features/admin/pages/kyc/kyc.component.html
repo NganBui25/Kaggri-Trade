@@ -82,8 +82,7 @@
             <th class="py-3.5 px-4">Mã hồ sơ</th>
             <th class="py-3.5 px-4">Đơn vị & Người đại diện</th>
             <th class="py-3.5 px-4">Mã số thuế</th>
-            <th class="py-3.5 px-4">Hạng & Ưu tiên</th>
-            <th class="py-3.5 px-4">Thời hạn SLA</th>
+            <th class="py-3.5 px-4">Thời hạn</th>
             <th class="py-3.5 px-4">Trạng thái</th>
             <th class="py-3.5 px-4 text-right">Thao tác</th>
           </tr>
@@ -105,21 +104,12 @@
                 {{ item.taxCode }}
               </td>
 
-              <td class="py-3.5 px-4 space-y-1">
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold block w-fit" [ngClass]="item.tier === 'PREMIUM' ? 'bg-amber-100 text-amber-900' : 'bg-stone-100 text-stone-700'">
-                  {{ item.tier }}
-                </span>
-                <span class="text-[10px] font-semibold" [ngClass]="item.priority === 'Khẩn' ? 'text-rose-600 font-bold' : 'text-stone-500'">
-                  Ưu tiên: {{ item.priority }}
-                </span>
-              </td>
-
-              <!-- SLA Status Badge (Fix ADM-15) -->
+              <!-- Thời hạn SLA (Hiển thị thời hạn & ngày tháng năm) -->
               <td class="py-3.5 px-4">
                 <span class="px-2.5 py-1 rounded-full text-[10px] font-bold border" [ngClass]="sla.badgeClass">
                   {{ sla.text }}
                 </span>
-                <span class="block text-[10px] text-stone-400 mt-0.5">Hạn: {{ item.slaDeadline }}</span>
+                <span class="block text-[10px] text-stone-500 font-medium mt-1">Hạn chót: {{ item.slaDeadline }}</span>
               </td>
 
               <td class="py-3.5 px-4">
@@ -137,34 +127,13 @@
               </td>
 
               <td class="py-3.5 px-4 text-right">
-                <div class="flex items-center justify-end gap-1.5">
-                  <button
-                    type="button"
-                    (click)="selectKyc(item)"
-                    class="px-2.5 py-1 rounded-lg border border-stone-200 hover:bg-stone-50 text-stone-700 font-bold transition-all cursor-pointer"
-                  >
-                    Xem xét
-                  </button>
-
-                  <!-- Direct Actions for Ops & Super Admin (Fix ADM-R06) -->
-                  @if (canDecide() && item.status === 'PENDING') {
-                    <button
-                      type="button"
-                      (click)="onApprove(item)"
-                      class="px-2.5 py-1 rounded-lg bg-[#0d623b] hover:bg-[#08492d] text-white font-bold transition-all cursor-pointer shadow-2xs"
-                    >
-                      Duyệt
-                    </button>
-
-                    <button
-                      type="button"
-                      (click)="openRequestDocModal(item)"
-                      class="px-2.5 py-1 rounded-lg border border-amber-300 hover:bg-amber-50 text-amber-800 font-bold transition-all cursor-pointer"
-                    >
-                      Bổ sung
-                    </button>
-                  }
-                </div>
+                <button
+                  type="button"
+                  (click)="selectKyc(item)"
+                  class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#0d623b] border border-emerald-300 font-bold transition-all cursor-pointer shadow-2xs hover:shadow-xs"
+                >
+                  Xét duyệt
+                </button>
               </td>
             </tr>
           } @empty {
