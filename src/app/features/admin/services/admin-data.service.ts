@@ -944,22 +944,486 @@ export class AdminDataService {
 
   private loadInitialVendors(): VendorAccount[] {
     return [
-      { id: 'VND-001', company: 'Hợp tác xã Nông nghiệp CNC Lạc Dương', tier: 'PREMIUM', status: 'active', createdAt: '12/03/2025', lastActive: '18/09/2026', region: 'Lâm Đồng', score: 4.8, pendingOrdersCount: 4 },
-      { id: 'VND-002', company: 'Hợp tác xã Rau sạch Hữu cơ Đơn Dương', tier: 'STANDARD', status: 'active', createdAt: '02/05/2025', lastActive: '18/09/2026', region: 'Lâm Đồng', score: 4.5, pendingOrdersCount: 2 },
-      { id: 'VND-003', company: 'Trang trại Xoài Cát Chu Bình Định', tier: 'STANDARD', status: 'suspended', createdAt: '11/07/2025', lastActive: '30/08/2026', region: 'Bình Định', score: 3.9, pendingOrdersCount: 0, suspendReason: 'Tỷ lệ tranh chấp vượt ngưỡng 8% trong 30 ngày qua' },
-      { id: 'VND-004', company: 'Hộ KD Cam Cao Phong Hòa Bình', tier: 'BASIC', status: 'active', createdAt: '22/01/2026', lastActive: '17/09/2026', region: 'Hòa Bình', score: 4.2, pendingOrdersCount: 1 },
-      { id: 'VND-005', company: 'HTX Dứa Queen Lâm Đồng', tier: 'STANDARD', status: 'pending_kyc', createdAt: '16/09/2026', lastActive: '16/09/2026', region: 'Lâm Đồng', score: null, pendingOrdersCount: 0 },
-      { id: 'VND-006', company: 'Trang trại Thanh Long Hàm Thuận', tier: 'BASIC', status: 'terminated', createdAt: '08/06/2025', lastActive: '01/02/2026', region: 'Bình Thuận', score: 2.8, pendingOrdersCount: 0, terminatedReason: 'Gian lận chất lượng sản phẩm nghiêm trọng có hệ thống' }
+      {
+        id: 'VND-001',
+        company: 'Hợp tác xã Nông nghiệp CNC Lạc Dương',
+        tier: 'PREMIUM',
+        status: 'active',
+        createdAt: '12/03/2025',
+        lastActive: '18/09/2026',
+        region: 'Lâm Đồng',
+        score: 4.8,
+        pendingOrdersCount: 4,
+        taxCode: '5801294821',
+        businessType: 'Hợp tác xã Nông nghiệp',
+        representative: 'Nguyễn Văn Nông',
+        representativeRole: 'Chủ tịch HĐQT & Đại diện pháp luật',
+        phone: '+84 987 654 321',
+        email: 'contact@lacduongfarm.vn',
+        address: 'Thôn Đa Nhim, Xã Lạc Dương, Huyện Lạc Dương, Tỉnh Lâm Đồng',
+        bankAccount: {
+          bankName: 'Vietcombank - Chi nhánh Lâm Đồng',
+          accountNumber: '0011002345678',
+          accountHolder: 'HTX NONG NGHIEP CNC LAC DUONG'
+        },
+        documents: [
+          {
+            id: 'DOC-VND001-01',
+            name: 'Giấy chứng nhận Đăng ký Hợp tác xã',
+            docNumber: '5801294821',
+            issuedBy: 'Phòng Tài chính - Kế hoạch Huyện Lạc Dương',
+            issuedDate: '12/03/2021',
+            status: 'valid',
+            statusLabel: 'Đã xác thực hợp lệ',
+            fileName: 'giay_dang_ky_htx_lacduong.pdf',
+            fileSize: '2.4 MB',
+            fileType: 'pdf',
+            verifiedAt: '12/03/2025 14:30'
+          },
+          {
+            id: 'DOC-VND001-02',
+            name: 'Chứng nhận Tiêu chuẩn Nông nghiệp Công nghệ cao VietGAP',
+            docNumber: 'VietGAP-TT-2025-081',
+            issuedBy: 'Trung tâm Chứng nhận Phù hợp (QUACERT)',
+            issuedDate: '15/08/2024',
+            expiryDate: '15/08/2027',
+            status: 'valid',
+            statusLabel: 'Đang có hiệu lực',
+            fileName: 'chung_nhan_vietgap_lacduong_2027.pdf',
+            fileSize: '3.1 MB',
+            fileType: 'pdf',
+            verifiedAt: '12/03/2025 14:32'
+          },
+          {
+            id: 'DOC-VND001-03',
+            name: 'Giấy chứng nhận Cơ sở Đủ điều kiện An toàn Thực phẩm',
+            docNumber: '142/2024/NNPTNT-LĐ',
+            issuedBy: 'Chi cục Quản lý Chất lượng Nông Lâm Thủy sản Lâm Đồng',
+            issuedDate: '10/11/2024',
+            expiryDate: '10/11/2027',
+            status: 'valid',
+            statusLabel: 'Đang có hiệu lực',
+            fileName: 'attp_chi_cuc_qlcl_lamdong.pdf',
+            fileSize: '1.8 MB',
+            fileType: 'pdf',
+            verifiedAt: '12/03/2025 14:35'
+          },
+          {
+            id: 'DOC-VND001-04',
+            name: 'CCCD Người đại diện theo pháp luật',
+            docNumber: '068088001234',
+            issuedBy: 'Cục Cảnh sát QLHC về TTXH',
+            issuedDate: '20/05/2022',
+            expiryDate: '20/05/2032',
+            status: 'valid',
+            statusLabel: 'Đã định danh CCCD gắn chip',
+            fileName: 'cccd_nguyen_van_nong.jpg',
+            fileSize: '890 KB',
+            fileType: 'img',
+            verifiedAt: '12/03/2025 14:30'
+          }
+        ]
+      },
+      {
+        id: 'VND-002',
+        company: 'Hợp tác xã Rau sạch Hữu cơ Đơn Dương',
+        tier: 'STANDARD',
+        status: 'active',
+        createdAt: '02/05/2025',
+        lastActive: '18/09/2026',
+        region: 'Lâm Đồng',
+        score: 4.5,
+        pendingOrdersCount: 2,
+        taxCode: '5801330922',
+        businessType: 'Hợp tác xã Nông nghiệp',
+        representative: 'Lê Thị Thu Thảo',
+        representativeRole: 'Giám đốc Hợp tác xã',
+        phone: '+84 912 345 678',
+        email: 'rausach@donduongfarm.vn',
+        address: 'Xã Tu Tra, Huyện Đơn Dương, Tỉnh Lâm Đồng',
+        bankAccount: {
+          bankName: 'BIDV - Chi nhánh Đà Lạt',
+          accountNumber: '6411000987654',
+          accountHolder: 'HTX RAU SACH DON DUONG'
+        },
+        documents: [
+          {
+            id: 'DOC-VND002-01',
+            name: 'Giấy chứng nhận Đăng ký Hợp tác xã',
+            docNumber: '5801330922',
+            issuedBy: 'UBND Huyện Đơn Dương',
+            issuedDate: '02/05/2022',
+            status: 'valid',
+            statusLabel: 'Đã xác thực hợp lệ',
+            fileName: 'dkkd_htx_donduong.pdf',
+            fileSize: '2.1 MB',
+            fileType: 'pdf',
+            verifiedAt: '02/05/2025 10:15'
+          },
+          {
+            id: 'DOC-VND002-02',
+            name: 'Chứng chỉ Canh tác Nông nghiệp Hữu cơ Organic',
+            docNumber: 'VN-ORG-2025-044',
+            issuedBy: 'Viện Tiêu chuẩn Chất lượng Nông nghiệp',
+            issuedDate: '10/01/2025',
+            expiryDate: '10/01/2028',
+            status: 'valid',
+            statusLabel: 'Đang có hiệu lực',
+            fileName: 'chung_nhan_organic_donduong.pdf',
+            fileSize: '2.7 MB',
+            fileType: 'pdf',
+            verifiedAt: '02/05/2025 10:20'
+          }
+        ]
+      },
+      {
+        id: 'VND-003',
+        company: 'Trang trại Xoài Cát Chu Bình Định',
+        tier: 'STANDARD',
+        status: 'suspended',
+        createdAt: '11/07/2025',
+        lastActive: '30/08/2026',
+        region: 'Bình Định',
+        score: 3.9,
+        pendingOrdersCount: 0,
+        suspendReason: 'Tỷ lệ tranh chấp vượt ngưỡng 8% trong 30 ngày qua',
+        taxCode: '4101889021',
+        businessType: 'Doanh nghiệp Tư nhân',
+        representative: 'Võ Minh Tuấn',
+        representativeRole: 'Chủ Trang trại',
+        phone: '+84 905 889 021',
+        email: 'tuanvo@xoaiquybhd.vn',
+        address: 'Xã Phù Cát, Huyện Phù Cát, Tỉnh Bình Định',
+        bankAccount: {
+          bankName: 'Agribank - Chi nhánh Phù Cát',
+          accountNumber: '4300205123456',
+          accountHolder: 'VO MINH TUAN'
+        },
+        documents: [
+          {
+            id: 'DOC-VND003-01',
+            name: 'Giấy chứng nhận Đăng ký Doanh nghiệp',
+            docNumber: '4101889021',
+            issuedBy: 'Sở Kế hoạch và Đầu tư Tỉnh Bình Định',
+            issuedDate: '11/07/2023',
+            status: 'valid',
+            statusLabel: 'Đã xác thực hợp lệ',
+            fileName: 'giay_phep_kinh_doanh_xoai.pdf',
+            fileSize: '1.9 MB',
+            fileType: 'pdf',
+            verifiedAt: '11/07/2025 16:00'
+          }
+        ]
+      },
+      {
+        id: 'VND-004',
+        company: 'Hộ KD Cam Cao Phong Hòa Bình',
+        tier: 'BASIC',
+        status: 'active',
+        createdAt: '22/01/2026',
+        lastActive: '17/09/2026',
+        region: 'Hòa Bình',
+        score: 4.2,
+        pendingOrdersCount: 1,
+        taxCode: '5400982314',
+        businessType: 'Hộ kinh doanh cá thể',
+        representative: 'Bùi Văn Hùng',
+        representativeRole: 'Chủ hộ kinh doanh',
+        phone: '+84 978 123 987',
+        email: 'camcaophong.hung@gmail.com',
+        address: 'Thị trấn Cao Phong, Huyện Cao Phong, Tỉnh Hòa Bình',
+        documents: [
+          {
+            id: 'DOC-VND004-01',
+            name: 'Giấy chứng nhận Đăng ký Hộ kinh doanh',
+            docNumber: '5400982314',
+            issuedBy: 'UBND Huyện Cao Phong',
+            issuedDate: '15/01/2024',
+            status: 'valid',
+            statusLabel: 'Đã xác thực',
+            fileName: 'giay_phep_hkd_caophong.pdf',
+            fileSize: '1.5 MB',
+            fileType: 'pdf',
+            verifiedAt: '22/01/2026 09:30'
+          }
+        ]
+      },
+      {
+        id: 'VND-005',
+        company: 'HTX Dứa Queen Lâm Đồng',
+        tier: 'STANDARD',
+        status: 'pending_kyc',
+        createdAt: '16/09/2026',
+        lastActive: '16/09/2026',
+        region: 'Lâm Đồng',
+        score: null,
+        pendingOrdersCount: 0,
+        taxCode: '5801294821',
+        businessType: 'Hợp tác xã Nông nghiệp',
+        representative: 'Lê Thị Hương',
+        representativeRole: 'Đại diện Hợp tác xã',
+        phone: '+84 934 567 890',
+        email: 'duaqueen@lamdong.vn',
+        address: 'Xã Phú Hội, Huyện Đức Trọng, Tỉnh Lâm Đồng',
+        documents: [
+          {
+            id: 'DOC-VND005-01',
+            name: 'Giấy chứng nhận Đăng ký Hợp tác xã',
+            docNumber: '5801294821',
+            issuedBy: 'UBND Huyện Đức Trọng',
+            issuedDate: '10/09/2026',
+            status: 'pending',
+            statusLabel: 'Chờ đối soát',
+            fileName: 'dang_ky_htx_dua_queen.pdf',
+            fileSize: '2.2 MB',
+            fileType: 'pdf'
+          }
+        ]
+      },
+      {
+        id: 'VND-006',
+        company: 'Trang trại Thanh Long Hàm Thuận',
+        tier: 'BASIC',
+        status: 'terminated',
+        createdAt: '08/06/2025',
+        lastActive: '01/02/2026',
+        region: 'Bình Thuận',
+        score: 2.8,
+        pendingOrdersCount: 0,
+        terminatedReason: 'Gian lận chất lượng sản phẩm nghiêm trọng có hệ thống',
+        taxCode: '3401512903',
+        businessType: 'Doanh nghiệp Tư nhân',
+        representative: 'Đỗ Thị Bích',
+        phone: '+84 918 222 333',
+        email: 'thanhlong@hamthuan.vn',
+        address: 'Hàm Thuận Nam, Tỉnh Bình Thuận',
+        documents: [
+          {
+            id: 'DOC-VND006-01',
+            name: 'Giấy phép Kinh doanh (Đã bị đình chỉ)',
+            docNumber: '3401512903',
+            issuedBy: 'Sở KH&ĐT Bình Thuận',
+            issuedDate: '08/06/2023',
+            status: 'expired',
+            statusLabel: 'Hết hiệu lực trên sàn',
+            fileName: 'giay_phep_dinh_chi.pdf',
+            fileSize: '1.4 MB',
+            fileType: 'pdf'
+          }
+        ]
+      }
     ];
   }
 
   private loadInitialBuyers(): BuyerAccount[] {
     return [
-      { id: 'BUY-001', company: 'HTX Bách Hóa Xanh', type: 'Chuỗi bán lẻ F&B', status: 'active', createdAt: '10/01/2025', lastActive: '18/09/2026', region: 'TP.HCM', creditLimit: 50000000, pendingOrdersCount: 3 },
-      { id: 'BUY-002', company: 'Nhà máy Chế biến Rau quả Đà Lạt', type: 'Nhà máy chế biến', status: 'active', createdAt: '14/02/2025', lastActive: '17/09/2026', region: 'Lâm Đồng', creditLimit: 200000000, pendingOrdersCount: 1 },
-      { id: 'BUY-003', company: 'Chuỗi Cà phê & Nông sản Highlands', type: 'Chuỗi F&B', status: 'active', createdAt: '20/03/2025', lastActive: '18/09/2026', region: 'TP.HCM', creditLimit: 80000000, pendingOrdersCount: 2 },
-      { id: 'BUY-004', company: 'Bếp ăn tập thể KCN Tân Bình', type: 'Bếp ăn công nghiệp', status: 'suspended', createdAt: '10/06/2025', lastActive: '02/09/2026', region: 'TP.HCM', creditLimit: 30000000, pendingOrdersCount: 0, suspendReason: 'Chậm thanh toán công nợ vượt quá hạn định 30 ngày' },
-      { id: 'BUY-005', company: 'Siêu thị Co.opmart Cần Thơ', type: 'Hệ thống bán lẻ', status: 'active', createdAt: '05/04/2025', lastActive: '18/09/2026', region: 'Cần Thơ', creditLimit: 250000000, pendingOrdersCount: 2 }
+      {
+        id: 'BUY-001',
+        company: 'HTX Bách Hóa Xanh',
+        type: 'Chuỗi bán lẻ F&B',
+        status: 'active',
+        createdAt: '10/01/2025',
+        lastActive: '18/09/2026',
+        region: 'TP.HCM',
+        creditLimit: 50000000,
+        pendingOrdersCount: 3,
+        taxCode: '0310482190',
+        businessType: 'Hợp tác xã Thương mại & Dịch vụ',
+        representative: 'Trần Minh Đức',
+        representativeRole: 'Giám đốc Thu mua Toàn quốc',
+        phone: '+84 908 123 456',
+        email: 'buyer@bachhoaxanh.vn',
+        address: 'Số 128 Trần Quang Khải, Phường Tân Định, Quận 1, TP.HCM',
+        bankAccount: {
+          bankName: 'Techcombank - Hội sở',
+          accountNumber: '19033458921001',
+          accountHolder: 'HTX THUONG MAI DICH VU BACH HOA XANH'
+        },
+        documents: [
+          {
+            id: 'DOC-BUY001-01',
+            name: 'Giấy chứng nhận Đăng ký Kinh doanh Hệ thống Bán lẻ',
+            docNumber: '0310482190',
+            issuedBy: 'Sở Kế hoạch và Đầu tư TP. Hồ Chí Minh',
+            issuedDate: '10/01/2022',
+            status: 'valid',
+            statusLabel: 'Đã xác thực hợp lệ',
+            fileName: 'giay_dkkd_bach_hoa_xanh.pdf',
+            fileSize: '2.8 MB',
+            fileType: 'pdf',
+            verifiedAt: '10/01/2025 09:00'
+          },
+          {
+            id: 'DOC-BUY001-02',
+            name: 'Chứng nhận Đủ điều kiện An toàn Vệ sinh Thực phẩm',
+            docNumber: 'ATTP-HCM-2025-992',
+            issuedBy: 'Ban Quản lý An toàn Thực phẩm TP. Hồ Chí Minh',
+            issuedDate: '15/03/2024',
+            expiryDate: '15/03/2027',
+            status: 'valid',
+            statusLabel: 'Đang có hiệu lực',
+            fileName: 'chung_nhan_attp_chuoi_sieu_thi.pdf',
+            fileSize: '3.4 MB',
+            fileType: 'pdf',
+            verifiedAt: '10/01/2025 09:15'
+          },
+          {
+            id: 'DOC-BUY001-03',
+            name: 'Hợp đồng Khung Thu mua Nông sản Escrow B2B Kaggri-Trade',
+            docNumber: 'KAGGRI-ESCROW-2025-001',
+            issuedBy: 'Ban Quản trị Sàn Giao dịch Nông sản Kaggri-Trade',
+            issuedDate: '10/01/2025',
+            expiryDate: '10/01/2027',
+            status: 'valid',
+            statusLabel: 'Hợp đồng Escrow điện tử ký số',
+            fileName: 'hop_dong_nguyen_tac_escrow_signed.pdf',
+            fileSize: '4.2 MB',
+            fileType: 'pdf',
+            verifiedAt: '10/01/2025 09:30'
+          }
+        ]
+      },
+      {
+        id: 'BUY-002',
+        company: 'Nhà máy Chế biến Rau quả Đà Lạt',
+        type: 'Nhà máy chế biến',
+        status: 'active',
+        createdAt: '14/02/2025',
+        lastActive: '17/09/2026',
+        region: 'Lâm Đồng',
+        creditLimit: 200000000,
+        pendingOrdersCount: 1,
+        taxCode: '5800451299',
+        businessType: 'Công ty Cổ phần Chế biến Thực phẩm',
+        representative: 'Hoàng Quốc Việt',
+        representativeRole: 'Tổng Giám đốc',
+        phone: '+84 913 888 999',
+        email: 'contact@dalatfoodfactory.com',
+        address: 'Khu Công nghiệp Lộc Phát, TP. Bảo Lộc, Tỉnh Lâm Đồng',
+        documents: [
+          {
+            id: 'DOC-BUY002-01',
+            name: 'Giấy chứng nhận Đăng ký Doanh nghiệp Cổ phần',
+            docNumber: '5800451299',
+            issuedBy: 'Sở Kế hoạch và Đầu tư Tỉnh Lâm Đồng',
+            issuedDate: '14/02/2020',
+            status: 'valid',
+            statusLabel: 'Đã xác thực hợp lệ',
+            fileName: 'dkkd_nha_may_dalat.pdf',
+            fileSize: '2.5 MB',
+            fileType: 'pdf'
+          },
+          {
+            id: 'DOC-BUY002-02',
+            name: 'Chứng nhận Hệ thống Quản lý ATTP ISO 22000:2018',
+            docNumber: 'ISO-22000-2024-81',
+            issuedBy: 'Tổ chức Chứng nhận Quốc tế TUV Rheinland',
+            issuedDate: '20/06/2024',
+            expiryDate: '20/06/2027',
+            status: 'valid',
+            statusLabel: 'Đang có hiệu lực',
+            fileName: 'iso_22000_dalat_factory.pdf',
+            fileSize: '3.0 MB',
+            fileType: 'pdf'
+          }
+        ]
+      },
+      {
+        id: 'BUY-003',
+        company: 'Chuỗi Cà phê & Nông sản Highlands',
+        type: 'Chuỗi F&B',
+        status: 'active',
+        createdAt: '20/03/2025',
+        lastActive: '18/09/2026',
+        region: 'TP.HCM',
+        creditLimit: 80000000,
+        pendingOrdersCount: 2,
+        taxCode: '0303882011',
+        businessType: 'Công ty Cổ phần Dịch vụ F&B',
+        representative: 'Phạm Thanh Thảo',
+        representativeRole: 'Giám đốc Vận hành Chuỗi',
+        phone: '+84 903 999 777',
+        email: 'supplychain@highlandsb2b.vn',
+        address: 'Tòa nhà Landmark 81, Phường 22, Quận Bình Thạnh, TP.HCM',
+        documents: [
+          {
+            id: 'DOC-BUY003-01',
+            name: 'Giấy phép Kinh doanh Chuỗi Dịch vụ Ăn uống F&B',
+            docNumber: '0303882011',
+            issuedBy: 'Sở KH&ĐT TP.HCM',
+            issuedDate: '20/03/2021',
+            status: 'valid',
+            statusLabel: 'Đã xác thực',
+            fileName: 'giay_phep_kinh_doanh_highlands.pdf',
+            fileSize: '2.3 MB',
+            fileType: 'pdf'
+          }
+        ]
+      },
+      {
+        id: 'BUY-004',
+        company: 'Bếp ăn tập thể KCN Tân Bình',
+        type: 'Bếp ăn công nghiệp',
+        status: 'suspended',
+        createdAt: '10/06/2025',
+        lastActive: '02/09/2026',
+        region: 'TP.HCM',
+        creditLimit: 30000000,
+        pendingOrdersCount: 0,
+        suspendReason: 'Chậm thanh toán công nợ vượt quá hạn định 30 ngày',
+        taxCode: '0315890044',
+        businessType: 'Công ty TNHH Dịch vụ Suất ăn Công nghiệp',
+        representative: 'Đỗ Hùng Dũng',
+        phone: '+84 944 555 666',
+        email: 'suatancongnghiep@tanbinh.vn',
+        address: 'Đường CN13, KCN Tân Bình, Quận Tân Phú, TP.HCM',
+        documents: [
+          {
+            id: 'DOC-BUY004-01',
+            name: 'Giấy chứng nhận Đăng ký Kinh doanh',
+            docNumber: '0315890044',
+            issuedBy: 'Sở KH&ĐT TP.HCM',
+            issuedDate: '10/06/2022',
+            status: 'valid',
+            statusLabel: 'Đã xác thực',
+            fileName: 'dkkd_bep_an_tanbinh.pdf',
+            fileSize: '1.7 MB',
+            fileType: 'pdf'
+          }
+        ]
+      },
+      {
+        id: 'BUY-005',
+        company: 'Siêu thị Co.opmart Cần Thơ',
+        type: 'Hệ thống bán lẻ',
+        status: 'active',
+        createdAt: '05/04/2025',
+        lastActive: '18/09/2026',
+        region: 'Cần Thơ',
+        creditLimit: 250000000,
+        pendingOrdersCount: 2,
+        taxCode: '1800234567',
+        businessType: 'Liên hiệp Hợp tác xã Thương mại',
+        representative: 'Vũ Thị Lan',
+        representativeRole: 'Giám đốc Siêu thị',
+        phone: '+84 929 111 222',
+        email: 'coopcantho@saigoncoop.vn',
+        address: 'Số 1 Đại lộ Hòa Bình, Quận Ninh Kiều, TP. Cần Thơ',
+        documents: [
+          {
+            id: 'DOC-BUY005-01',
+            name: 'Giấy phép Chi nhánh Hoạt động Hệ thống Siêu thị',
+            docNumber: '1800234567',
+            issuedBy: 'Sở Công Thương TP. Cần Thơ',
+            issuedDate: '05/04/2023',
+            status: 'valid',
+            statusLabel: 'Đã xác thực hợp lệ',
+            fileName: 'giay_phep_chi_nhanh_coop.pdf',
+            fileSize: '3.5 MB',
+            fileType: 'pdf'
+          }
+        ]
+      }
     ];
   }
 

@@ -1,19 +1,22 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { AdminAuthService } from '../../services/admin-auth.service';
 import { AdminDataService } from '../../services/admin-data.service';
-import { VendorAccount } from '../../models/admin.model';
+import { VendorAccount, BusinessDocument } from '../../models/admin.model';
 import { AdminReasonModalComponent } from '../../components/admin-reason-modal/admin-reason-modal.component';
 
 @Component({
   selector: 'app-admin-accounts-vendor',
   standalone: true,
-  imports: [CommonModule, FormsModule, AdminReasonModalComponent],
+  imports: [CommonModule, FormsModule, RouterModule, AdminReasonModalComponent],
   templateUrl: './accounts-vendor.component.html',
   styleUrl: './accounts-vendor.component.scss'
 })
-export class AdminAccountsVendorComponent {
+export class AdminAccountsVendorComponent implements OnInit {
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   readonly auth = inject(AdminAuthService);
   readonly data = inject(AdminDataService);
 
@@ -22,8 +25,8 @@ export class AdminAccountsVendorComponent {
   statusFilter = signal<string>('ALL');
 
   selectedVendor = signal<VendorAccount | null>(null);
+  activeDocPreview = signal<BusinessDocument | null>(null);
   modalAction = signal<'SUSPEND' | 'REACTIVATE' | 'TERMINATE' | null>(null);
-  detailVendor = signal<VendorAccount | null>(null);
 
   // Permissions (Rule D3)
   readonly canSuspend = computed(() => this.auth.canPerformAction('accounts-vendor', 'SUSPEND'));
@@ -45,12 +48,35 @@ export class AdminAccountsVendorComponent {
     return list;
   });
 
-  openDetail(v: VendorAccount): void {
-    this.detailVendor.set(v);
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      const id = params['id'];
+      if (id) {
+        const found = this.vendors().find(v => v.id === id);
+        if (found) {
+          this.selectedVendor.set(found);
+        }
+      }
+    });
   }
 
-  closeDetail(): void {
-    this.detailVendor.set(null);
+  viewVendorDetail(v: VendorAccount): void {
+    this.selectedVendor.set(v);
+    this.router.navigate([], { queryParams: { id: v.id }, queryParamsHandling: 'merge' });
+  }
+
+  backToList(): void {
+    this.selectedVendor.set(null);
+    this.activeDocPreview.set(null);
+    this.router.navigate([], { queryParams: { id: null }, queryParamsHandling: 'merge' });
+  }
+
+  previewDoc(doc: BusinessDocument): void {
+    this.activeDocPreview.set(doc);
+  }
+
+  closeDocPreview(): void {
+    this.activeDocPreview.set(null);
   }
 
   openSuspendModal(v: VendorAccount): void {
@@ -85,6 +111,12 @@ export class AdminAccountsVendorComponent {
       this.data.terminateVendor(v.id, reason);
     }
 
+    // Refresh current selected vendor reference
+    const updated = this.vendors().find(item => item.id === v.id);
+    if (updated) {
+      this.selectedVendor.set(updated);
+    }
+
     this.closeModal();
   }
 
@@ -99,4 +131,3 @@ export class AdminAccountsVendorComponent {
     return undefined;
   }
 }
-

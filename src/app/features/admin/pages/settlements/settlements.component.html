@@ -1,5 +1,5 @@
 <div class="space-y-6">
-  
+
   <!-- Header -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
     <div>
@@ -7,251 +7,230 @@
         <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
           Đối Soát & Thanh Toán Doanh Số (Settlement)
         </h1>
-        <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 text-[#08492d] border border-emerald-300">
-          Chu kỳ tuần
-        </span>
       </div>
       <p class="text-xs text-stone-500 mt-1">
-        Quy trình 5 bước: Nháp → Tính toán → Rà soát → Chốt kỳ (Khóa sổ) → Giải ngân Net Payout chuyển khoản cho Người bán.
+        Quy trình 5 bước: Nháp → Tính toán → Rà soát → Chốt kỳ (Khóa sổ) → Giải ngân Net Payout chuyển khoản cho Người
+        bán.
       </p>
     </div>
 
     @if (canManage()) {
-      <button
-        type="button"
-        (click)="onCreatePeriod()"
-        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold transition-all shadow-xs cursor-pointer w-fit"
-      >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-        <span>Tạo kỳ đối soát mới</span>
-      </button>
+    <button type="button" (click)="onCreatePeriod()"
+      class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold transition-all shadow-xs cursor-pointer w-fit">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+      <span>Tạo kỳ đối soát mới</span>
+    </button>
     } @else {
-      <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 text-stone-600 text-xs font-bold border border-stone-200">
-        <svg class="w-3.5 h-3.5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-        <span>Chế độ chỉ xem</span>
-      </span>
+    <span
+      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 text-stone-600 text-xs font-bold border border-stone-200">
+      <svg class="w-3.5 h-3.5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+      </svg>
+      <span>Chế độ chỉ xem</span>
+    </span>
     }
   </div>
 
   <!-- Periods Grid / Selector -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     @for (period of settlements(); track period.id) {
-      <div
-        (click)="selectPeriod(period)"
-        class="p-4 rounded-2xl border transition-all cursor-pointer shadow-xs space-y-3"
-        [class.ring-2]="selectedPeriod()?.id === period.id"
-        [class.ring-[#0d623b]]="selectedPeriod()?.id === period.id"
-        [class.bg-white]="selectedPeriod()?.id === period.id"
-        [class.bg-[#fbfaf6]]="selectedPeriod()?.id !== period.id"
-        [class.border-[#bbd2c2]]="selectedPeriod()?.id !== period.id"
-        [class.border-emerald-600]="selectedPeriod()?.id === period.id"
-      >
-        <div class="flex items-center justify-between">
-          <strong class="font-extrabold text-xs text-[#08492d]">{{ period.period }}</strong>
-          <span
-            class="px-2 py-0.5 rounded text-[10px] font-bold"
-            [ngClass]="{
+    <div (click)="selectPeriod(period)" class="p-4 rounded-2xl border transition-all cursor-pointer shadow-xs space-y-3"
+      [class.ring-2]="selectedPeriod()?.id === period.id" [class.ring-[#0d623b]]="selectedPeriod()?.id === period.id"
+      [class.bg-white]="selectedPeriod()?.id === period.id" [class.bg-[#fbfaf6]]="selectedPeriod()?.id !== period.id"
+      [class.border-[#bbd2c2]]="selectedPeriod()?.id !== period.id"
+      [class.border-emerald-600]="selectedPeriod()?.id === period.id">
+      <div class="flex items-center justify-between">
+        <strong class="font-extrabold text-xs text-[#08492d]">{{ period.period }}</strong>
+        <span class="px-2 py-0.5 rounded text-[10px] font-bold" [ngClass]="{
               'bg-stone-100 text-stone-700': period.status === 'DRAFT',
               'bg-sky-100 text-sky-800': period.status === 'CALCULATED',
               'bg-purple-100 text-purple-800': period.status === 'REVIEWED',
               'bg-amber-100 text-amber-800': period.status === 'FINALIZED',
               'bg-emerald-100 text-emerald-900': period.status === 'PAID'
-            }"
-          >
-            {{ period.statusLabel }}
-          </span>
-        </div>
+            }">
+          {{ period.statusLabel }}
+        </span>
+      </div>
 
-        <div class="text-xs space-y-1 text-stone-500">
-          <div class="flex justify-between">
-            <span>Chốt số liệu:</span>
-            <strong class="text-stone-700 font-mono">{{ period.cutOffDate }}</strong>
-          </div>
-          <div class="flex justify-between">
-            <span>Dự kiến thanh toán:</span>
-            <strong class="text-stone-700 font-mono">{{ period.payDate }}</strong>
-          </div>
-          <div class="flex justify-between pt-1 border-t border-[#edf1ea]">
-            <span>Số nhà vườn liên kết:</span>
-            <strong class="text-stone-900">{{ period.vendors.length }} đơn vị</strong>
-          </div>
+      <div class="text-xs space-y-1 text-stone-500">
+        <div class="flex justify-between">
+          <span>Chốt số liệu:</span>
+          <strong class="text-stone-700 font-mono">{{ period.cutOffDate }}</strong>
+        </div>
+        <div class="flex justify-between">
+          <span>Dự kiến thanh toán:</span>
+          <strong class="text-stone-700 font-mono">{{ period.payDate }}</strong>
+        </div>
+        <div class="flex justify-between pt-1 border-t border-[#edf1ea]">
+          <span>Số nhà vườn liên kết:</span>
+          <strong class="text-stone-900">{{ period.vendors.length }} đơn vị</strong>
         </div>
       </div>
+    </div>
     }
   </div>
 
   <!-- Detail Selected Period View -->
   @if (selectedPeriod(); as period) {
-    @let totals = getTotals(period);
-    <div class="p-6 rounded-3xl bg-white border border-[#dce9e0] shadow-xs space-y-6">
-      
-      <!-- Stepper Action Header (Fix ADM-R17) -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
-        <div>
-          <span class="text-xs font-mono font-bold text-[#0d623b]">Kỳ: {{ period.id }}</span>
-          <h2 class="text-lg font-extrabold text-[#08492d]">
-            Bảng Đối Chiếu Doanh Số: {{ period.period }}
-          </h2>
-          <p class="text-xs text-stone-400 mt-0.5">Công thức chuẩn: Net Payout = GMV − Hoàn tiền − 5% Hoa hồng − 5% Dự trữ Escrow + Điều chỉnh</p>
-        </div>
+  @let totals = getTotals(period);
+  <div class="p-6 rounded-3xl bg-white border border-[#dce9e0] shadow-xs space-y-6">
 
-        <!-- 5-Step Workflow Action Buttons -->
-        @if (canManage()) {
-          <div class="flex items-center gap-2">
-            @if (period.status === 'DRAFT') {
-              <button
-                type="button"
-                (click)="onCalculate()"
-                class="px-4 py-2 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
-              >
-                1. Tính toán doanh số
-              </button>
-            } @else if (period.status === 'CALCULATED') {
-              <button
-                type="button"
-                (click)="onReview()"
-                class="px-4 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
-              >
-                2. Rà soát số liệu
-              </button>
-            } @else if (period.status === 'REVIEWED') {
-              <button
-                type="button"
-                (click)="onFinalize()"
-                class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
-              >
-                3. Chốt kỳ (Khóa sửa)
-              </button>
-            } @else if (period.status === 'FINALIZED') {
-              <button
-                type="button"
-                (click)="onPayout()"
-                class="px-5 py-2 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
-              >
-                4. Giải ngân thanh toán (Pay)
-              </button>
-            } @else {
-              <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-200">
-                <svg class="w-3.5 h-3.5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
-                <span>Kỳ đối soát đã hoàn tất thanh toán</span>
-              </span>
-            }
-          </div>
+    <!-- Stepper Action Header (Fix ADM-R17) -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
+      <div>
+        <span class="text-xs font-mono font-bold text-[#0d623b]">Kỳ: {{ period.id }}</span>
+        <h2 class="text-lg font-extrabold text-[#08492d]">
+          Bảng Đối Chiếu Doanh Số: {{ period.period }}
+        </h2>
+        <p class="text-xs text-stone-400 mt-0.5">Công thức chuẩn: Net Payout = GMV − Hoàn tiền − 5% Hoa hồng − 5% Dự trữ
+          Escrow + Điều chỉnh</p>
+      </div>
+
+      <!-- 5-Step Workflow Action Buttons -->
+      @if (canManage()) {
+      <div class="flex items-center gap-2">
+        @if (period.status === 'DRAFT') {
+        <button type="button" (click)="onCalculate()"
+          class="px-4 py-2 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold transition-all shadow-xs cursor-pointer">
+          1. Tính toán doanh số
+        </button>
+        } @else if (period.status === 'CALCULATED') {
+        <button type="button" (click)="onReview()"
+          class="px-4 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold transition-all shadow-xs cursor-pointer">
+          2. Rà soát số liệu
+        </button>
+        } @else if (period.status === 'REVIEWED') {
+        <button type="button" (click)="onFinalize()"
+          class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-all shadow-xs cursor-pointer">
+          3. Chốt kỳ (Khóa sửa)
+        </button>
+        } @else if (period.status === 'FINALIZED') {
+        <button type="button" (click)="onPayout()"
+          class="px-5 py-2 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold transition-all shadow-xs cursor-pointer">
+          4. Giải ngân thanh toán (Pay)
+        </button>
+        } @else {
+        <span
+          class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-200">
+          <svg class="w-3.5 h-3.5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+          </svg>
+          <span>Kỳ đối soát đã hoàn tất thanh toán</span>
+        </span>
         }
       </div>
-
-      <!-- Vendor Reconciliation Table (Fix ADM-23, ADM-25, ADM-R18: Accurate Net Payout & Summary Row) -->
-      <div class="overflow-x-auto rounded-2xl border border-[#dce9e0]">
-        <table class="w-full text-left text-xs">
-          <thead class="bg-[#fbfaf6] border-b border-[#edf1ea] text-stone-500 font-extrabold uppercase tracking-wider text-[11px]">
-            <tr>
-              <th class="py-3 px-4">Nhà vườn / HTX</th>
-              <th class="py-3 px-4 text-right">Gross GMV</th>
-              <th class="py-3 px-4 text-right">Hoàn tiền</th>
-              <th class="py-3 px-4 text-right">Hoa hồng (5%)</th>
-              <th class="py-3 px-4 text-right">Dự trữ Escrow (5%)</th>
-              <th class="py-3 px-4 text-right">Điều chỉnh</th>
-              <th class="py-3 px-4 text-right">Net Payout thực chi</th>
-              @if (canManage() && (period.status === 'FINALIZED' || period.status === 'PAID')) {
-                <th class="py-3 px-4 text-center">Thao tác</th>
-              }
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-[#edf1ea]">
-            @for (v of period.vendors; track v.vendorId) {
-              <tr class="hover:bg-[#fcfdfa] transition-colors">
-                <td class="py-3 px-4">
-                  <strong class="font-bold text-stone-900 block">{{ v.name }}</strong>
-                  <span class="text-[10px] text-stone-400 font-mono">{{ v.vendorId }}</span>
-                </td>
-                <td class="py-3 px-4 text-right font-mono">{{ v.grossGMV | price }}</td>
-                <td class="py-3 px-4 text-right font-mono text-amber-700">{{ v.refunds | price }}</td>
-                <td class="py-3 px-4 text-right font-mono text-stone-600">{{ v.commission | price }}</td>
-                <td class="py-3 px-4 text-right font-mono text-stone-600">{{ v.escrowReserve | price }}</td>
-                <td class="py-3 px-4 text-right font-mono" [ngClass]="v.adjustments > 0 ? 'text-emerald-700 font-bold' : 'text-stone-400'">
-                  {{ v.adjustments > 0 ? '+' : '' }}{{ v.adjustments | price }}
-                </td>
-                <td class="py-3 px-4 text-right font-mono font-extrabold text-sm text-[#0d623b]">
-                  {{ v.netPayout | price }}
-                </td>
-                @if (canManage() && (period.status === 'FINALIZED' || period.status === 'PAID')) {
-                  <td class="py-3 px-4 text-center">
-                    <button
-                      type="button"
-                      (click)="openAdjustmentModal(v)"
-                      class="px-2 py-0.5 rounded text-[11px] font-bold border border-amber-300 hover:bg-amber-50 text-amber-900 transition-all cursor-pointer"
-                    >
-                      + Điều chỉnh
-                    </button>
-                  </td>
-                }
-              </tr>
-            }
-          </tbody>
-          <!-- FIXED TOTALS ROW AT BOTTOM (Fix ADM-25, ADM-R18) -->
-          <tfoot class="bg-[#f0f7f2] border-t-2 border-[#bbd2c2] font-extrabold text-stone-900">
-            <tr>
-              <td class="py-3.5 px-4 text-xs uppercase tracking-wider text-[#08492d]">
-                Tổng Cộng Đối Soát Toàn Sàn:
-              </td>
-              <td class="py-3.5 px-4 text-right font-mono text-xs">{{ totals.gross | price }}</td>
-              <td class="py-3.5 px-4 text-right font-mono text-xs text-amber-700">{{ totals.refunds | price }}</td>
-              <td class="py-3.5 px-4 text-right font-mono text-xs">{{ totals.comm | price }}</td>
-              <td class="py-3.5 px-4 text-right font-mono text-xs">{{ totals.escrow | price }}</td>
-              <td class="py-3.5 px-4 text-right font-mono text-xs text-emerald-800">
-                +{{ period.adjustments.length > 0 ? totals.net - (totals.gross - totals.refunds - totals.comm - totals.escrow) : 0 | price }}
-              </td>
-              <td class="py-3.5 px-4 text-right font-mono font-extrabold text-base text-[#08492d]">
-                {{ totals.net | price }}
-              </td>
-              @if (canManage() && (period.status === 'FINALIZED' || period.status === 'PAID')) {
-                <td></td>
-              }
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-
-      <!-- Adjustments List if any (Fix ADM-R18) -->
-      @if (period.adjustments && period.adjustments.length > 0) {
-        <div class="space-y-2 pt-2">
-          <h4 class="text-xs font-extrabold uppercase tracking-wider text-stone-600">
-            Các Bản Ghi Điều Chỉnh Phát Sinh ({{ period.adjustments.length }})
-          </h4>
-          <div class="space-y-2">
-            @for (adj of period.adjustments; track adj.id) {
-              <div class="p-3 rounded-xl border border-amber-200 bg-amber-50/40 flex items-center justify-between text-xs">
-                <div>
-                  <div class="flex items-center gap-2">
-                    <strong class="font-bold text-stone-900">{{ adj.vendorName }}</strong>
-                    <span class="font-mono text-[10px] text-stone-400">#{{ adj.id }} • {{ adj.createdAt }}</span>
-                  </div>
-                  <p class="text-stone-600 mt-0.5">Lý do: {{ adj.reason }} (Bởi {{ adj.createdBy }})</p>
-                </div>
-                <strong class="text-[#0d623b] font-mono text-sm">+{{ adj.amount | price }}</strong>
-              </div>
-            }
-          </div>
-        </div>
       }
-
     </div>
+
+    <!-- Vendor Reconciliation Table (Fix ADM-23, ADM-25, ADM-R18: Accurate Net Payout & Summary Row) -->
+    <div class="overflow-x-auto rounded-2xl border border-[#dce9e0]">
+      <table class="w-full text-left text-xs">
+        <thead
+          class="bg-[#fbfaf6] border-b border-[#edf1ea] text-stone-500 font-extrabold uppercase tracking-wider text-[11px]">
+          <tr>
+            <th class="py-3 px-4">Nhà vườn / HTX</th>
+            <th class="py-3 px-4 text-right">Gross GMV</th>
+            <th class="py-3 px-4 text-right">Hoàn tiền</th>
+            <th class="py-3 px-4 text-right">Hoa hồng (5%)</th>
+            <th class="py-3 px-4 text-right">Dự trữ Escrow (5%)</th>
+            <th class="py-3 px-4 text-right">Điều chỉnh</th>
+            <th class="py-3 px-4 text-right">Net Payout thực chi</th>
+            @if (canManage() && (period.status === 'FINALIZED' || period.status === 'PAID')) {
+            <th class="py-3 px-4 text-center">Thao tác</th>
+            }
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#edf1ea]">
+          @for (v of period.vendors; track v.vendorId) {
+          <tr class="hover:bg-[#fcfdfa] transition-colors">
+            <td class="py-3 px-4">
+              <strong class="font-bold text-stone-900 block">{{ v.name }}</strong>
+              <span class="text-[10px] text-stone-400 font-mono">{{ v.vendorId }}</span>
+            </td>
+            <td class="py-3 px-4 text-right font-mono">{{ v.grossGMV | price }}</td>
+            <td class="py-3 px-4 text-right font-mono text-amber-700">{{ v.refunds | price }}</td>
+            <td class="py-3 px-4 text-right font-mono text-stone-600">{{ v.commission | price }}</td>
+            <td class="py-3 px-4 text-right font-mono text-stone-600">{{ v.escrowReserve | price }}</td>
+            <td class="py-3 px-4 text-right font-mono"
+              [ngClass]="v.adjustments > 0 ? 'text-emerald-700 font-bold' : 'text-stone-400'">
+              {{ v.adjustments > 0 ? '+' : '' }}{{ v.adjustments | price }}
+            </td>
+            <td class="py-3 px-4 text-right font-mono font-extrabold text-sm text-[#0d623b]">
+              {{ v.netPayout | price }}
+            </td>
+            @if (canManage() && (period.status === 'FINALIZED' || period.status === 'PAID')) {
+            <td class="py-3 px-4 text-center">
+              <button type="button" (click)="openAdjustmentModal(v)"
+                class="px-2 py-0.5 rounded text-[11px] font-bold border border-amber-300 hover:bg-amber-50 text-amber-900 transition-all cursor-pointer">
+                + Điều chỉnh
+              </button>
+            </td>
+            }
+          </tr>
+          }
+        </tbody>
+        <!-- FIXED TOTALS ROW AT BOTTOM (Fix ADM-25, ADM-R18) -->
+        <tfoot class="bg-[#f0f7f2] border-t-2 border-[#bbd2c2] font-extrabold text-stone-900">
+          <tr>
+            <td class="py-3.5 px-4 text-xs uppercase tracking-wider text-[#08492d]">
+              Tổng Cộng Đối Soát Toàn Sàn:
+            </td>
+            <td class="py-3.5 px-4 text-right font-mono text-xs">{{ totals.gross | price }}</td>
+            <td class="py-3.5 px-4 text-right font-mono text-xs text-amber-700">{{ totals.refunds | price }}</td>
+            <td class="py-3.5 px-4 text-right font-mono text-xs">{{ totals.comm | price }}</td>
+            <td class="py-3.5 px-4 text-right font-mono text-xs">{{ totals.escrow | price }}</td>
+            <td class="py-3.5 px-4 text-right font-mono text-xs text-emerald-800">
+              +{{ period.adjustments.length > 0 ? totals.net - (totals.gross - totals.refunds - totals.comm -
+              totals.escrow) : 0 | price }}
+            </td>
+            <td class="py-3.5 px-4 text-right font-mono font-extrabold text-base text-[#08492d]">
+              {{ totals.net | price }}
+            </td>
+            @if (canManage() && (period.status === 'FINALIZED' || period.status === 'PAID')) {
+            <td></td>
+            }
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Adjustments List if any (Fix ADM-R18) -->
+    @if (period.adjustments && period.adjustments.length > 0) {
+    <div class="space-y-2 pt-2">
+      <h4 class="text-xs font-extrabold uppercase tracking-wider text-stone-600">
+        Các Bản Ghi Điều Chỉnh Phát Sinh ({{ period.adjustments.length }})
+      </h4>
+      <div class="space-y-2">
+        @for (adj of period.adjustments; track adj.id) {
+        <div class="p-3 rounded-xl border border-amber-200 bg-amber-50/40 flex items-center justify-between text-xs">
+          <div>
+            <div class="flex items-center gap-2">
+              <strong class="font-bold text-stone-900">{{ adj.vendorName }}</strong>
+              <span class="font-mono text-[10px] text-stone-400">#{{ adj.id }} • {{ adj.createdAt }}</span>
+            </div>
+            <p class="text-stone-600 mt-0.5">Lý do: {{ adj.reason }} (Bởi {{ adj.createdBy }})</p>
+          </div>
+          <strong class="text-[#0d623b] font-mono text-sm">+{{ adj.amount | price }}</strong>
+        </div>
+        }
+      </div>
+    </div>
+    }
+
+  </div>
   }
 
   <!-- Adjustment Modal -->
   @if (adjustmentModalOpen()) {
-    <app-admin-reason-modal
-      title="Tạo bản ghi điều chỉnh đối soát"
-      [subtitle]="selectedVendorForAdj()?.name + ' (Kỳ ' + selectedPeriod()?.id + ')'"
-      confirmText="Lưu bản ghi điều chỉnh"
-      placeholder="Nêu rõ lý do bù cước, đền bù chênh lệch hoặc hỗ trợ bảo quản lạnh..."
-      [minLength]="10"
-      (confirm)="onAdjustmentConfirm($event)"
-      (cancel)="closeAdjustmentModal()"
-    />
+  <app-admin-reason-modal title="Tạo bản ghi điều chỉnh đối soát"
+    [subtitle]="selectedVendorForAdj()?.name + ' (Kỳ ' + selectedPeriod()?.id + ')'"
+    confirmText="Lưu bản ghi điều chỉnh"
+    placeholder="Nêu rõ lý do bù cước, đền bù chênh lệch hoặc hỗ trợ bảo quản lạnh..." [minLength]="10"
+    (confirm)="onAdjustmentConfirm($event)" (cancel)="closeAdjustmentModal()" />
   }
 
 </div>
-

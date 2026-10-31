@@ -1,5 +1,5 @@
 <div class="space-y-6">
-  
+
   <!-- Page Header -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
     <div>
@@ -7,68 +7,56 @@
         <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
           Hồ Sơ Người Bán Chờ Thẩm Định (KYC)
         </h1>
-        <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-amber-100 text-amber-900 border border-amber-300">
-          SLA 48h
-        </span>
       </div>
       <p class="text-xs text-stone-500 mt-1">
-        Xác minh pháp lý, giấy chứng nhận VietGAP/GlobalGAP và năng lực cung ứng trước khi cho phép Người bán mở gian hàng.
+        Xác minh pháp lý, giấy chứng nhận VietGAP/GlobalGAP và năng lực cung ứng trước khi cho phép Người bán mở gian
+        hàng.
       </p>
     </div>
 
     <!-- Role Permission Notice (Fix ADM-R06) -->
     @if (!canDecide()) {
-      <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 text-stone-600 text-xs font-bold border border-stone-200">
-        <svg class="w-3.5 h-3.5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-        <span>Chế độ chỉ xem (Vai trò: {{ auth.currentAdmin().roleLabel.split(' ')[0] }})</span>
-      </span>
+    <span
+      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 text-stone-600 text-xs font-bold border border-stone-200">
+      <svg class="w-3.5 h-3.5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+      </svg>
+      <span>Chế độ chỉ xem (Vai trò: {{ auth.currentAdmin().roleLabel.split(' ')[0] }})</span>
+    </span>
     }
   </div>
 
   <!-- Filters Bar -->
   <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
-    <button
-      type="button"
-      (click)="activeFilter.set('ALL')"
+    <button type="button" (click)="activeFilter.set('ALL')"
       class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
-      [ngClass]="activeFilter() === 'ALL' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600 hover:border-emerald-500'"
-    >
+      [ngClass]="activeFilter() === 'ALL' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600 hover:border-emerald-500'">
       Tất cả ({{ kycList().length }})
     </button>
 
-    <button
-      type="button"
-      (click)="activeFilter.set('PENDING')"
+    <button type="button" (click)="activeFilter.set('PENDING')"
       class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
-      [ngClass]="activeFilter() === 'PENDING' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600 hover:border-emerald-500'"
-    >
+      [ngClass]="activeFilter() === 'PENDING' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600 hover:border-emerald-500'">
       Chờ duyệt
     </button>
 
-    <button
-      type="button"
-      (click)="activeFilter.set('NEEDS_DOC')"
+    <button type="button" (click)="activeFilter.set('NEEDS_DOC')"
       class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
-      [ngClass]="activeFilter() === 'NEEDS_DOC' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600 hover:border-emerald-500'"
-    >
+      [ngClass]="activeFilter() === 'NEEDS_DOC' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600 hover:border-emerald-500'">
       Cần bổ sung tài liệu
     </button>
 
-    <button
-      type="button"
-      (click)="activeFilter.set('APPROVED')"
+    <button type="button" (click)="activeFilter.set('APPROVED')"
       class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
-      [ngClass]="activeFilter() === 'APPROVED' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600 hover:border-emerald-500'"
-    >
+      [ngClass]="activeFilter() === 'APPROVED' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600 hover:border-emerald-500'">
       Đã phê duyệt
     </button>
 
-    <button
-      type="button"
-      (click)="activeFilter.set('REJECTED')"
+    <button type="button" (click)="activeFilter.set('REJECTED')"
       class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
-      [ngClass]="activeFilter() === 'REJECTED' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600 hover:border-emerald-500'"
-    >
+      [ngClass]="activeFilter() === 'REJECTED' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600 hover:border-emerald-500'">
       Đã từ chối
     </button>
   </div>
@@ -77,10 +65,11 @@
   <div class="bg-white rounded-3xl border border-[#dce9e0] shadow-xs overflow-hidden">
     <div class="overflow-x-auto">
       <table class="w-full text-left text-xs">
-        <thead class="bg-[#fbfaf6] border-b border-[#edf1ea] text-stone-500 font-extrabold uppercase tracking-wider text-[11px]">
+        <thead
+          class="bg-[#fbfaf6] border-b border-[#edf1ea] text-stone-500 font-extrabold uppercase tracking-wider text-[11px]">
           <tr>
             <th class="py-3.5 px-4">Mã hồ sơ</th>
-            <th class="py-3.5 px-4">Đơn vị & Người đại diện</th>
+            <th class="py-3.5 px-4">Đơn vị</th>
             <th class="py-3.5 px-4">Mã số thuế</th>
             <th class="py-3.5 px-4">Thời hạn</th>
             <th class="py-3.5 px-4">Trạng thái</th>
@@ -89,59 +78,48 @@
         </thead>
         <tbody class="divide-y divide-[#edf1ea]">
           @for (item of filteredList(); track item.id) {
-            @let sla = getSlaDisplay(item);
-            <tr class="hover:bg-[#fcfdfa] transition-colors">
-              <td class="py-3.5 px-4 font-mono font-bold text-[#08492d]">
-                {{ item.id }}
-              </td>
+          <tr class="hover:bg-[#fcfdfa] transition-colors">
+            <td class="py-3.5 px-4 font-mono font-bold text-[#08492d]">
+              {{ item.id }}
+            </td>
 
-              <td class="py-3.5 px-4">
-                <strong class="font-extrabold text-stone-900 block">{{ item.vendorName }}</strong>
-                <span class="text-stone-500 text-[11px]">ĐD: {{ item.representative }} • {{ item.address }}</span>
-              </td>
+            <td class="py-3.5 px-4">
+              <strong class="font-extrabold text-stone-900 block">{{ item.vendorName }}</strong>
+            </td>
 
-              <td class="py-3.5 px-4 font-mono text-stone-700">
-                {{ item.taxCode }}
-              </td>
+            <td class="py-3.5 px-4 font-mono text-stone-700">
+              {{ item.taxCode }}
+            </td>
 
-              <!-- Thời hạn SLA (Hiển thị thời hạn & ngày tháng năm) -->
-              <td class="py-3.5 px-4">
-                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold border" [ngClass]="sla.badgeClass">
-                  {{ sla.text }}
-                </span>
-                <span class="block text-[10px] text-stone-500 font-medium mt-1">Hạn chót: {{ item.slaDeadline }}</span>
-              </td>
+            <!-- Thời hạn -->
+            <td class="py-3.5 px-4 font-mono text-stone-700">
+              {{ item.slaDeadline }}
+            </td>
 
-              <td class="py-3.5 px-4">
-                <span
-                  class="px-2 py-0.5 rounded text-[10px] font-bold"
-                  [ngClass]="{
+            <td class="py-3.5 px-4">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold" [ngClass]="{
                     'bg-amber-100 text-amber-900': item.status === 'PENDING',
                     'bg-sky-100 text-sky-900': item.status === 'NEEDS_DOC',
                     'bg-emerald-100 text-emerald-900': item.status === 'APPROVED',
                     'bg-rose-100 text-rose-900': item.status === 'REJECTED'
-                  }"
-                >
-                  {{ item.statusLabel }}
-                </span>
-              </td>
+                  }">
+                {{ item.statusLabel }}
+              </span>
+            </td>
 
-              <td class="py-3.5 px-4 text-right">
-                <button
-                  type="button"
-                  (click)="selectKyc(item)"
-                  class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#0d623b] border border-emerald-300 font-bold transition-all cursor-pointer shadow-2xs hover:shadow-xs"
-                >
-                  Xét duyệt
-                </button>
-              </td>
-            </tr>
+            <td class="py-3.5 px-4 text-right">
+              <button type="button" (click)="selectKyc(item)"
+                class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#0d623b] border border-emerald-300 font-bold transition-all cursor-pointer shadow-2xs hover:shadow-xs">
+                Xét duyệt
+              </button>
+            </td>
+          </tr>
           } @empty {
-            <tr>
-              <td colspan="7" class="py-10 text-center text-stone-400">
-                Không tìm thấy hồ sơ nào trong bộ lọc này.
-              </td>
-            </tr>
+          <tr>
+            <td colspan="7" class="py-10 text-center text-stone-400">
+              Không tìm thấy hồ sơ nào trong bộ lọc này.
+            </td>
+          </tr>
           }
         </tbody>
       </table>
@@ -150,152 +128,135 @@
 
   <!-- Detail Modal: Full KYC Inspection -->
   @if (selectedKyc(); as kyc) {
-    <div
-      (click)="closeDetail()"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/60 backdrop-blur-xs p-4 animate-fadeIn"
-    >
-      <div
-        (click)="$event.stopPropagation()"
-        class="bg-white rounded-3xl border border-[#dce9e0] shadow-2xl max-w-2xl w-full p-6 sm:p-7 space-y-6 max-h-[90vh] overflow-y-auto"
-      >
-        <div class="flex items-start justify-between pb-3 border-b border-[#edf1ea]">
-          <div>
-            <span class="text-xs font-mono text-[#0d623b] font-bold">{{ kyc.id }}</span>
-            <h3 class="text-lg font-extrabold text-[#08492d] mt-0.5">
-              {{ kyc.vendorName }}
-            </h3>
-            <p class="text-xs text-stone-500">Người đại diện: {{ kyc.representative }} • MST: {{ kyc.taxCode }}</p>
-          </div>
-
-          <button
-            type="button"
-            (click)="closeDetail()"
-            class="w-8 h-8 rounded-full flex items-center justify-center text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors cursor-pointer"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-          </button>
+  <div (click)="closeDetail()"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/60 backdrop-blur-xs p-4 animate-fadeIn">
+    <div (click)="$event.stopPropagation()"
+      class="bg-white rounded-3xl border border-[#dce9e0] shadow-2xl max-w-2xl w-full p-6 sm:p-7 space-y-6 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-start justify-between pb-3 border-b border-[#edf1ea]">
+        <div>
+          <span class="text-xs font-mono text-[#0d623b] font-bold">{{ kyc.id }}</span>
+          <h3 class="text-lg font-extrabold text-[#08492d] mt-0.5">
+            {{ kyc.vendorName }}
+          </h3>
+          <p class="text-xs text-stone-500">Người đại diện: {{ kyc.representative }} • MST: {{ kyc.taxCode }}</p>
         </div>
 
-        <!-- Info Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs p-4 rounded-2xl bg-[#fbfaf6] border border-[#dce9e0]">
-          <div>
-            <span class="text-stone-400 block font-medium">Địa chỉ cơ sở:</span>
-            <strong class="text-stone-800 font-bold block mt-0.5">{{ kyc.address }}</strong>
-          </div>
-          <div>
-            <span class="text-stone-400 block font-medium">Thời điểm nộp hồ sơ:</span>
-            <strong class="text-stone-800 font-bold block mt-0.5">{{ kyc.submittedAt }}</strong>
-          </div>
-          <div>
-            <span class="text-stone-400 block font-medium">Hạn định SLA (48h):</span>
-            <strong class="text-rose-700 font-bold block mt-0.5">{{ kyc.slaDeadline }}</strong>
-          </div>
-          <div>
-            <span class="text-stone-400 block font-medium">Hạng đăng ký:</span>
-            <strong class="text-emerald-800 font-bold block mt-0.5">{{ kyc.tier }} (Ưu tiên: {{ kyc.priority }})</strong>
-          </div>
-        </div>
-
-        <!-- Documents Attached -->
-        <div class="space-y-2">
-          <h4 class="text-xs font-extrabold uppercase tracking-wider text-stone-700">
-            Hồ Sơ & Chứng Nhận Đính Kèm ({{ kyc.documents.length }})
-          </h4>
-          <div class="space-y-1.5">
-            @for (doc of kyc.documents; track doc) {
-              <div class="p-2.5 rounded-xl border border-[#bbd2c2] bg-white flex items-center justify-between text-xs">
-                <div class="flex items-center gap-2">
-                  <svg class="w-4 h-4 text-stone-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                  <strong class="font-semibold text-stone-800">{{ doc }}</strong>
-                </div>
-                <span class="inline-flex items-center gap-1 text-[11px] font-bold text-[#0d623b]">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
-                  <span>Đã đối soát chữ ký số</span>
-                </span>
-              </div>
-            }
-          </div>
-        </div>
-
-        <!-- Decision History / Status callout -->
-        @if (kyc.rejectionReason) {
-          <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-xs space-y-1">
-            <strong class="font-bold block">Lý do từ chối trước đó:</strong>
-            <p>{{ kyc.rejectionReason }}</p>
-          </div>
-        }
-
-        @if (kyc.requestedDocReason) {
-          <div class="p-3.5 rounded-xl bg-sky-50 border border-sky-200 text-sky-900 text-xs space-y-1">
-            <strong class="font-bold block">Yêu cầu bổ sung tài liệu đã gửi:</strong>
-            <p>{{ kyc.requestedDocReason }}</p>
-          </div>
-        }
-
-        <!-- Decision Action Bar (Guarded - Fix ADM-R06) -->
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-[#edf1ea]">
-          <span class="text-xs text-stone-400">
-            @if (canDecide()) {
-              Mọi quyết định thẩm định sẽ được lưu vào Nhật ký kiểm toán.
-            } @else {
-              Tài khoản hiện tại chỉ có quyền xem hồ sơ.
-            }
-          </span>
-
-          <div class="flex items-center gap-2">
-            @if (canDecide() && (kyc.status === 'PENDING' || kyc.status === 'NEEDS_DOC')) {
-              <button
-                type="button"
-                (click)="openRejectModal(kyc)"
-                class="px-4 py-2 rounded-xl border border-rose-300 hover:bg-rose-50 text-rose-700 text-xs font-bold transition-all cursor-pointer"
-              >
-                Từ chối
-              </button>
-
-              <button
-                type="button"
-                (click)="openRequestDocModal(kyc)"
-                class="px-4 py-2 rounded-xl border border-amber-300 hover:bg-amber-50 text-amber-800 text-xs font-bold transition-all cursor-pointer"
-              >
-                Yêu cầu bổ sung
-              </button>
-
-              <button
-                type="button"
-                (click)="onApprove(kyc); closeDetail()"
-                class="px-5 py-2 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
-              >
-                ✓ Phê duyệt hồ sơ
-              </button>
-            } @else {
-              <button
-                type="button"
-                (click)="closeDetail()"
-                class="px-4 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition-all cursor-pointer"
-              >
-                Đóng
-              </button>
-            }
-          </div>
-        </div>
-
+        <button type="button" (click)="closeDetail()"
+          class="w-8 h-8 rounded-full flex items-center justify-center text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors cursor-pointer">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
+
+      <!-- Info Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs p-4 rounded-2xl bg-[#fbfaf6] border border-[#dce9e0]">
+        <div>
+          <span class="text-stone-400 block font-medium">Địa chỉ cơ sở:</span>
+          <strong class="text-stone-800 font-bold block mt-0.5">{{ kyc.address }}</strong>
+        </div>
+        <div>
+          <span class="text-stone-400 block font-medium">Thời điểm nộp hồ sơ:</span>
+          <strong class="text-stone-800 font-bold block mt-0.5">{{ kyc.submittedAt }}</strong>
+        </div>
+        <div>
+          <span class="text-stone-400 block font-medium">Hạn định SLA (48h):</span>
+          <strong class="text-rose-700 font-bold block mt-0.5">{{ kyc.slaDeadline }}</strong>
+        </div>
+        <div>
+          <span class="text-stone-400 block font-medium">Hạng đăng ký:</span>
+          <strong class="text-emerald-800 font-bold block mt-0.5">{{ kyc.tier }} (Ưu tiên: {{ kyc.priority }})</strong>
+        </div>
+      </div>
+
+      <!-- Documents Attached -->
+      <div class="space-y-2">
+        <h4 class="text-xs font-extrabold uppercase tracking-wider text-stone-700">
+          Hồ Sơ & Chứng Nhận Đính Kèm ({{ kyc.documents.length }})
+        </h4>
+        <div class="space-y-1.5">
+          @for (doc of kyc.documents; track doc) {
+          <div class="p-2.5 rounded-xl border border-[#bbd2c2] bg-white flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-stone-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <strong class="font-semibold text-stone-800">{{ doc }}</strong>
+            </div>
+            <span class="inline-flex items-center gap-1 text-[11px] font-bold text-[#0d623b]">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Đã đối soát chữ ký số</span>
+            </span>
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Decision History / Status callout -->
+      @if (kyc.rejectionReason) {
+      <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-xs space-y-1">
+        <strong class="font-bold block">Lý do từ chối trước đó:</strong>
+        <p>{{ kyc.rejectionReason }}</p>
+      </div>
+      }
+
+      @if (kyc.requestedDocReason) {
+      <div class="p-3.5 rounded-xl bg-sky-50 border border-sky-200 text-sky-900 text-xs space-y-1">
+        <strong class="font-bold block">Yêu cầu bổ sung tài liệu đã gửi:</strong>
+        <p>{{ kyc.requestedDocReason }}</p>
+      </div>
+      }
+
+      <!-- Decision Action Bar (Guarded - Fix ADM-R06) -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-[#edf1ea]">
+        <span class="text-xs text-stone-400">
+          @if (canDecide()) {
+          Mọi quyết định thẩm định sẽ được lưu vào Nhật ký kiểm toán.
+          } @else {
+          Tài khoản hiện tại chỉ có quyền xem hồ sơ.
+          }
+        </span>
+
+        <div class="flex items-center gap-2">
+          @if (canDecide() && (kyc.status === 'PENDING' || kyc.status === 'NEEDS_DOC')) {
+          <button type="button" (click)="openRejectModal(kyc)"
+            class="px-4 py-2 rounded-xl border border-rose-300 hover:bg-rose-50 text-rose-700 text-xs font-bold transition-all cursor-pointer">
+            Từ chối
+          </button>
+
+          <button type="button" (click)="openRequestDocModal(kyc)"
+            class="px-4 py-2 rounded-xl border border-amber-300 hover:bg-amber-50 text-amber-800 text-xs font-bold transition-all cursor-pointer">
+            Yêu cầu bổ sung
+          </button>
+
+          <button type="button" (click)="onApprove(kyc); closeDetail()"
+            class="px-5 py-2 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold transition-all shadow-xs cursor-pointer">
+            ✓ Phê duyệt hồ sơ
+          </button>
+          } @else {
+          <button type="button" (click)="closeDetail()"
+            class="px-4 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition-all cursor-pointer">
+            Đóng
+          </button>
+          }
+        </div>
+      </div>
+
     </div>
+  </div>
   }
 
   <!-- Reason Modal for Reject or Request Docs (Fix ADM-R07, ADM-R08) -->
   @if (modalAction(); as action) {
-    <app-admin-reason-modal
-      [title]="action === 'REJECT' ? 'Từ chối hồ sơ Người bán' : 'Yêu cầu bổ sung tài liệu KYC'"
-      [subtitle]="selectedKyc()?.vendorName"
-      [confirmText]="action === 'REJECT' ? 'Xác nhận từ chối' : 'Gửi yêu cầu bổ sung'"
-      [confirmButtonClass]="action === 'REJECT' ? 'bg-rose-600 hover:bg-rose-700 text-white' : 'bg-amber-600 hover:bg-amber-700 text-white'"
-      [placeholder]="action === 'REJECT' ? 'Nêu rõ lý do không đạt chuẩn (tối thiểu 10 ký tự)...' : 'Liệt kê các giấy tờ, chứng nhận VietGAP cần bổ sung...'"
-      [minLength]="10"
-      (confirm)="onModalConfirm($event)"
-      (cancel)="closeModal()"
-    />
+  <app-admin-reason-modal [title]="action === 'REJECT' ? 'Từ chối hồ sơ Người bán' : 'Yêu cầu bổ sung tài liệu KYC'"
+    [subtitle]="selectedKyc()?.vendorName"
+    [confirmText]="action === 'REJECT' ? 'Xác nhận từ chối' : 'Gửi yêu cầu bổ sung'"
+    [confirmButtonClass]="action === 'REJECT' ? 'bg-rose-600 hover:bg-rose-700 text-white' : 'bg-amber-600 hover:bg-amber-700 text-white'"
+    [placeholder]="action === 'REJECT' ? 'Nêu rõ lý do không đạt chuẩn (tối thiểu 10 ký tự)...' : 'Liệt kê các giấy tờ, chứng nhận VietGAP cần bổ sung...'"
+    [minLength]="10" (confirm)="onModalConfirm($event)" (cancel)="closeModal()" />
   }
 
 </div>
-

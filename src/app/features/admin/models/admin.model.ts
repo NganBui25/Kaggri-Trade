@@ -33,6 +33,22 @@ export interface KycRecord {
   reviewedAt?: string;
 }
 
+export interface BusinessDocument {
+  id: string;
+  name: string;
+  docNumber: string;
+  issuedBy: string;
+  issuedDate: string;
+  expiryDate?: string;
+  status: 'valid' | 'pending' | 'expired';
+  statusLabel: string;
+  fileName: string;
+  fileSize: string;
+  fileType: 'pdf' | 'img';
+  fileUrl?: string;
+  verifiedAt?: string;
+}
+
 export interface VendorAccount {
   id: string;
   company: string;
@@ -45,6 +61,19 @@ export interface VendorAccount {
   pendingOrdersCount: number;
   suspendReason?: string;
   terminatedReason?: string;
+  taxCode?: string;
+  businessType?: string;
+  representative?: string;
+  representativeRole?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  bankAccount?: {
+    bankName: string;
+    accountNumber: string;
+    accountHolder: string;
+  };
+  documents?: BusinessDocument[];
 }
 
 export interface BuyerAccount {
@@ -58,6 +87,19 @@ export interface BuyerAccount {
   creditLimit: number;
   pendingOrdersCount: number;
   suspendReason?: string;
+  taxCode?: string;
+  businessType?: string;
+  representative?: string;
+  representativeRole?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  bankAccount?: {
+    bankName: string;
+    accountNumber: string;
+    accountHolder: string;
+  };
+  documents?: BusinessDocument[];
 }
 
 export type TransactionType =

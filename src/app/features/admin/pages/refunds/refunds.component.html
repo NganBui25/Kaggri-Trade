@@ -1,176 +1,161 @@
 @if (!canAccess()) {
-  <!-- 403 Forbidden Screen for Ops Admin (Rule D2, ADM-R15) -->
-  <app-admin-forbidden moduleName="Phân hệ Thực thi hoàn tiền (Dành riêng cho Tài chính)" />
+<!-- 403 Forbidden Screen for Ops Admin (Rule D2, ADM-R15) -->
+<app-admin-forbidden moduleName="Phân hệ Thực thi hoàn tiền (Dành riêng cho Tài chính)" />
 } @else {
-  <div class="space-y-6">
-    
-    <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
-      <div>
-        <div class="flex items-center gap-2">
-          <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
-            Hàng Chờ Thực Thi Hoàn Tiền (Escrow Refunds)
-          </h1>
-          <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 text-[#08492d] border border-emerald-300">
-            Tài chính & Ngân hàng
-          </span>
-        </div>
-        <p class="text-xs text-stone-500 mt-1">
-          Quyết định D2: Đội Vận hành đã duyệt phán quyết khiếu nại. Quản trị viên Tài chính thực thi giải ngân hoàn trả tiền cho Người mua.
-        </p>
+<div class="space-y-6">
+
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
+    <div>
+      <div class="flex items-center gap-2">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
+          Hàng Chờ Thực Thi Hoàn Tiền (Escrow Refunds)
+        </h1>
       </div>
-
-      @if (!canExecute()) {
-        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 text-stone-600 text-xs font-bold border border-stone-200">
-          <svg class="w-3.5 h-3.5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-          <span>Chế độ chỉ xem</span>
-        </span>
-      }
+      <p class="text-xs text-stone-500 mt-1">
+        Quyết định D2: Đội Vận hành đã duyệt phán quyết khiếu nại. Quản trị viên Tài chính thực thi giải ngân hoàn trả
+        tiền cho Người mua.
+      </p>
     </div>
 
-    <!-- Status Tabs Bar (Fix ADM-R15) -->
-    <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
-      <button
-        type="button"
-        (click)="activeTab.set('PENDING_EXECUTION')"
-        class="px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
-        [ngClass]="activeTab() === 'PENDING_EXECUTION' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600'"
-      >
-        Chờ thực thi
-      </button>
+    @if (!canExecute()) {
+    <span
+      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 text-stone-600 text-xs font-bold border border-stone-200">
+      <svg class="w-3.5 h-3.5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+      </svg>
+      <span>Chế độ chỉ xem</span>
+    </span>
+    }
+  </div>
 
-      <button
-        type="button"
-        (click)="activeTab.set('FAILED')"
-        class="px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
-        [ngClass]="activeTab() === 'FAILED' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600'"
-      >
-        Thất bại (Cần thử lại)
-      </button>
+  <!-- Status Tabs Bar (Fix ADM-R15) -->
+  <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+    <button type="button" (click)="activeTab.set('PENDING_EXECUTION')"
+      class="px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
+      [ngClass]="activeTab() === 'PENDING_EXECUTION' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600'">
+      Chờ thực thi
+    </button>
 
-      <button
-        type="button"
-        (click)="activeTab.set('SUCCESS')"
-        class="px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
-        [ngClass]="activeTab() === 'SUCCESS' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600'"
-      >
-        Đã hoàn tất
-      </button>
+    <button type="button" (click)="activeTab.set('FAILED')"
+      class="px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
+      [ngClass]="activeTab() === 'FAILED' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600'">
+      Thất bại (Cần thử lại)
+    </button>
 
-      <button
-        type="button"
-        (click)="activeTab.set('ALL')"
-        class="px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
-        [ngClass]="activeTab() === 'ALL' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600'"
-      >
-        Tất cả lệnh ({{ refunds().length }})
-      </button>
-    </div>
+    <button type="button" (click)="activeTab.set('SUCCESS')"
+      class="px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
+      [ngClass]="activeTab() === 'SUCCESS' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600'">
+      Đã hoàn tất
+    </button>
 
-    <!-- Refunds Table -->
-    <div class="bg-white rounded-3xl border border-[#dce9e0] shadow-xs overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs">
-          <thead class="bg-[#fbfaf6] border-b border-[#edf1ea] text-stone-500 font-extrabold uppercase tracking-wider text-[11px]">
-            <tr>
-              <th class="py-3.5 px-4">Mã lệnh</th>
-              <th class="py-3.5 px-4">Tranh chấp & Đơn hàng</th>
-              <th class="py-3.5 px-4">Doanh nghiệp thụ hưởng</th>
-              <th class="py-3.5 px-4">Số tiền hoàn</th>
-              <th class="py-3.5 px-4">Cổng thanh toán</th>
-              <th class="py-3.5 px-4">Trạng thái & Lỗi</th>
-              <th class="py-3.5 px-4 text-right">Thao tác</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-[#edf1ea]">
-            @for (ref of filteredRefunds(); track ref.id) {
-              <tr class="hover:bg-[#fcfdfa] transition-colors">
-                <td class="py-3.5 px-4 font-mono font-bold text-[#08492d]">
-                  {{ ref.id }}
-                  <span class="block text-[10px] text-stone-400 font-normal mt-0.5">{{ ref.createdAt }}</span>
-                </td>
+    <button type="button" (click)="activeTab.set('ALL')"
+      class="px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
+      [ngClass]="activeTab() === 'ALL' ? 'bg-[#0d623b] text-white shadow-xs' : 'bg-white border border-[#bbd2c2] text-stone-600'">
+      Tất cả lệnh ({{ refunds().length }})
+    </button>
+  </div>
 
-                <td class="py-3.5 px-4">
-                  <span class="font-bold text-stone-900 block font-mono">{{ ref.disputeId }}</span>
-                  <span class="text-stone-500 text-[11px] font-mono">Đơn: {{ ref.orderId }}</span>
-                  @if (ref.decisionReason) {
-                    <p class="text-[11px] text-stone-500 italic mt-0.5 max-w-[260px] truncate">{{ ref.decisionReason }}</p>
-                  }
-                </td>
+  <!-- Refunds Table -->
+  <div class="bg-white rounded-3xl border border-[#dce9e0] shadow-xs overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead
+          class="bg-[#fbfaf6] border-b border-[#edf1ea] text-stone-500 font-extrabold uppercase tracking-wider text-[11px]">
+          <tr>
+            <th class="py-3.5 px-4">Mã lệnh</th>
+            <th class="py-3.5 px-4">Tranh chấp & Đơn hàng</th>
+            <th class="py-3.5 px-4">Doanh nghiệp thụ hưởng</th>
+            <th class="py-3.5 px-4">Số tiền hoàn</th>
+            <th class="py-3.5 px-4">Cổng thanh toán</th>
+            <th class="py-3.5 px-4">Trạng thái & Lỗi</th>
+            <th class="py-3.5 px-4 text-right">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#edf1ea]">
+          @for (ref of filteredRefunds(); track ref.id) {
+          <tr class="hover:bg-[#fcfdfa] transition-colors">
+            <td class="py-3.5 px-4 font-mono font-bold text-[#08492d]">
+              {{ ref.id }}
+              <span class="block text-[10px] text-stone-400 font-normal mt-0.5">{{ ref.createdAt }}</span>
+            </td>
 
-                <td class="py-3.5 px-4 space-y-0.5">
-                  <strong class="font-bold text-stone-900 block truncate max-w-[180px]">{{ ref.buyer }}</strong>
-                  <span class="text-stone-500 text-[11px] block truncate max-w-[180px]">Người bán: {{ ref.vendor }}</span>
-                </td>
+            <td class="py-3.5 px-4">
+              <span class="font-bold text-stone-900 block font-mono">{{ ref.disputeId }}</span>
+              <span class="text-stone-500 text-[11px] font-mono">Đơn: {{ ref.orderId }}</span>
+              @if (ref.decisionReason) {
+              <p class="text-[11px] text-stone-500 italic mt-0.5 max-w-[260px] truncate">{{ ref.decisionReason }}</p>
+              }
+            </td>
 
-                <td class="py-3.5 px-4 font-mono font-extrabold text-sm text-[#0d623b]">
-                  {{ ref.amount | price }}
-                </td>
+            <td class="py-3.5 px-4 space-y-0.5">
+              <strong class="font-bold text-stone-900 block truncate max-w-[180px]">{{ ref.buyer }}</strong>
+              <span class="text-stone-500 text-[11px] block truncate max-w-[180px]">Người bán: {{ ref.vendor }}</span>
+            </td>
 
-                <td class="py-3.5 px-4 text-stone-700 font-medium">
-                  {{ ref.gateway }}
-                </td>
+            <td class="py-3.5 px-4 font-mono font-extrabold text-sm text-[#0d623b]">
+              {{ ref.amount | price }}
+            </td>
 
-                <td class="py-3.5 px-4">
-                  <span
-                    class="px-2.5 py-1 rounded-full text-[10px] font-bold"
-                    [ngClass]="{
+            <td class="py-3.5 px-4 text-stone-700 font-medium">
+              {{ ref.gateway }}
+            </td>
+
+            <td class="py-3.5 px-4">
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold" [ngClass]="{
                       'bg-amber-100 text-amber-900': ref.status === 'PENDING_EXECUTION',
                       'bg-rose-100 text-rose-900': ref.status === 'FAILED',
                       'bg-emerald-100 text-emerald-900': ref.status === 'SUCCESS'
-                    }"
-                  >
-                    {{ ref.statusLabel }}
-                  </span>
+                    }">
+                {{ ref.statusLabel }}
+              </span>
 
-                  @if (ref.errorReason) {
-                    <p class="text-[10px] text-rose-600 font-semibold mt-1 max-w-[200px] leading-snug">
-                      {{ ref.errorReason }}
-                    </p>
-                    <span class="text-[10px] text-stone-400 font-mono block">Đã thử: {{ ref.retryCount }}/{{ ref.maxRetries }} lần</span>
-                  }
-                </td>
+              @if (ref.errorReason) {
+              <p class="text-[10px] text-rose-600 font-semibold mt-1 max-w-[200px] leading-snug">
+                {{ ref.errorReason }}
+              </p>
+              <span class="text-[10px] text-stone-400 font-mono block">Đã thử: {{ ref.retryCount }}/{{ ref.maxRetries }}
+                lần</span>
+              }
+            </td>
 
-                <!-- Action Button for Finance -->
-                <td class="py-3.5 px-4 text-right">
-                  @if (canExecute()) {
-                    @if (ref.status === 'PENDING_EXECUTION') {
-                      <button
-                        type="button"
-                        (click)="onExecute(ref)"
-                        class="px-3.5 py-1.5 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white font-bold transition-all shadow-xs cursor-pointer whitespace-nowrap"
-                      >
-                        Thực thi hoàn tiền
-                      </button>
-                    } @else if (ref.status === 'FAILED') {
-                      <button
-                        type="button"
-                        (click)="onRetry(ref)"
-                        class="px-3.5 py-1.5 rounded-xl border border-amber-300 hover:bg-amber-50 text-amber-800 font-bold transition-all cursor-pointer whitespace-nowrap"
-                      >
-                        Thử lại (Retry)
-                      </button>
-                    } @else {
-                      <span class="inline-flex items-center gap-1 text-[11px] text-emerald-700 font-bold">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
-                        <span>Đã chuyển</span>
-                      </span>
-                    }
-                  }
-                </td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="7" class="py-10 text-center text-stone-400">
-                  Không có lệnh hoàn tiền nào trong danh mục này.
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+            <!-- Action Button for Finance -->
+            <td class="py-3.5 px-4 text-right">
+              @if (canExecute()) {
+              @if (ref.status === 'PENDING_EXECUTION') {
+              <button type="button" (click)="onExecute(ref)"
+                class="px-3.5 py-1.5 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white font-bold transition-all shadow-xs cursor-pointer whitespace-nowrap">
+                Thực thi hoàn tiền
+              </button>
+              } @else if (ref.status === 'FAILED') {
+              <button type="button" (click)="onRetry(ref)"
+                class="px-3.5 py-1.5 rounded-xl border border-amber-300 hover:bg-amber-50 text-amber-800 font-bold transition-all cursor-pointer whitespace-nowrap">
+                Thử lại (Retry)
+              </button>
+              } @else {
+              <span class="inline-flex items-center gap-1 text-[11px] text-emerald-700 font-bold">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Đã chuyển</span>
+              </span>
+              }
+              }
+            </td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="7" class="py-10 text-center text-stone-400">
+              Không có lệnh hoàn tiền nào trong danh mục này.
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
     </div>
-
   </div>
-}
 
+</div>
+}

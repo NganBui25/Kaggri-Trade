@@ -1,246 +1,511 @@
 <div class="space-y-6">
-  
-  <!-- Header -->
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
-    <div>
-      <div class="flex items-center gap-2">
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
-          Quản Lý Tài Khoản Người Mua (Buyer)
-        </h1>
-        <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 text-[#08492d] border border-emerald-300">
-          {{ filteredBuyers().length }} Doanh nghiệp
-        </span>
+
+  <!-- ============================================================== -->
+  <!-- VIEW 1: DANH SÁCH TÀI KHOẢN NGƯỜI MUA (BUYER)                  -->
+  <!-- ============================================================== -->
+  @if (!selectedBuyer()) {
+    <!-- Page Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-[#08492d]">
+            Quản Lý Tài Khoản Người Mua (Buyer)
+          </h1>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 text-[#08492d] border border-emerald-200">
+            {{ filteredBuyers().length }} Doanh nghiệp / Chuỗi F&B
+          </span>
+        </div>
+        <p class="text-xs text-stone-500 mt-1">
+          Theo dõi hạn mức công nợ, hồ sơ giấy tờ pháp lý và tiến độ đối soát Escrow của chuỗi siêu thị, F&B.
+        </p>
       </div>
-      <p class="text-xs text-stone-500 mt-1">
-        Theo dõi hạn mức công nợ, tiến độ đối soát Escrow và tình trạng kích hoạt tài khoản của chuỗi siêu thị, F&B.
-      </p>
+
+      @if (!canSuspend()) {
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 text-stone-600 text-xs font-bold border border-stone-200">
+          <svg class="w-3.5 h-3.5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          <span>Chế độ chỉ xem (Vai trò: {{ auth.currentAdmin().roleLabel.split(' ')[0] }})</span>
+        </span>
+      }
     </div>
 
-    @if (!canSuspend()) {
-      <span class="px-3 py-1.5 rounded-xl bg-stone-100 text-stone-600 text-xs font-bold border border-stone-200 inline-flex items-center gap-1.5">
-        <svg class="w-3.5 h-3.5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-        <span>Chế độ chỉ xem (Vai trò: {{ auth.currentAdmin().roleLabel.split(' ')[0] }})</span>
-      </span>
-    }
-  </div>
+    <!-- Filters & Search Bar -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="relative flex-1 max-w-md">
+        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <input
+          type="text"
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)"
+          placeholder="Tìm doanh nghiệp, mã BUY, địa phương..."
+          class="w-full pl-10 pr-4 py-2 rounded-xl border border-[#bbd2c2] bg-white text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder:text-stone-400"
+        />
+      </div>
 
-  <!-- Search & Filter Controls -->
-  <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-xs">
-    <div class="relative flex-1 max-w-md">
-      <input
-        type="text"
-        [ngModel]="searchTerm()"
-        (ngModelChange)="searchTerm.set($event)"
-        placeholder="Tìm doanh nghiệp, mã BUY, địa phương..."
-        class="w-full pl-9 pr-4 py-2 rounded-xl border border-[#bbd2c2] bg-white focus:outline-none focus:border-[#0d623b] text-xs"
-      />
-      <span class="absolute left-3 top-2.5 text-stone-400 pointer-events-none">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-      </span>
+      <!-- Status Filters Tabs -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+        <button
+          type="button"
+          (click)="statusFilter.set('ALL')"
+          class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
+          [ngClass]="statusFilter() === 'ALL' ? 'bg-[#0d623b] text-white' : 'bg-white border border-[#bbd2c2] text-stone-600 hover:border-emerald-500'"
+        >
+          Tất cả
+        </button>
+
+        <button
+          type="button"
+          (click)="statusFilter.set('active')"
+          class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
+          [ngClass]="statusFilter() === 'active' ? 'bg-[#0d623b] text-white' : 'bg-white border border-[#bbd2c2] text-stone-600 hover:border-emerald-500'"
+        >
+          Đang hoạt động
+        </button>
+
+        <button
+          type="button"
+          (click)="statusFilter.set('suspended')"
+          class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap"
+          [ngClass]="statusFilter() === 'suspended' ? 'bg-[#0d623b] text-white' : 'bg-white border border-[#bbd2c2] text-stone-600 hover:border-emerald-500'"
+        >
+          Đang tạm khóa
+        </button>
+      </div>
     </div>
 
-    <div class="flex items-center gap-2">
-      <button
-        type="button"
-        (click)="statusFilter.set('ALL')"
-        class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer"
-        [ngClass]="statusFilter() === 'ALL' ? 'bg-[#0d623b] text-white' : 'bg-white border border-[#bbd2c2] text-stone-600'"
-      >
-        Tất cả
-      </button>
-
-      <button
-        type="button"
-        (click)="statusFilter.set('active')"
-        class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer"
-        [ngClass]="statusFilter() === 'active' ? 'bg-[#0d623b] text-white' : 'bg-white border border-[#bbd2c2] text-stone-600'"
-      >
-        Đang hoạt động
-      </button>
-
-      <button
-        type="button"
-        (click)="statusFilter.set('suspended')"
-        class="px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer"
-        [ngClass]="statusFilter() === 'suspended' ? 'bg-[#0d623b] text-white' : 'bg-white border border-[#bbd2c2] text-stone-600'"
-      >
-        Đang tạm khóa
-      </button>
-    </div>
-  </div>
-
-  <!-- Buyers Table -->
-  <div class="bg-white rounded-3xl border border-[#dce9e0] shadow-xs overflow-hidden">
-    <div class="overflow-x-auto">
-      <table class="w-full text-left text-xs">
-        <thead class="bg-[#fbfaf6] border-b border-[#edf1ea] text-stone-500 font-extrabold uppercase tracking-wider text-[11px]">
-          <tr>
-            <th class="py-3.5 px-4">Mã</th>
-            <th class="py-3.5 px-4">Tên doanh nghiệp</th>
-            <th class="py-3.5 px-4">Mô hình kinh doanh</th>
-            <th class="py-3.5 px-4">Hạn mức công nợ</th>
-            <th class="py-3.5 px-4">Khu vực</th>
-            <th class="py-3.5 px-4">Trạng thái</th>
-            <th class="py-3.5 px-4 text-right">Thao tác</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-[#edf1ea]">
-          @for (b of filteredBuyers(); track b.id) {
-            <tr class="hover:bg-[#fcfdfa] transition-colors">
-              <td class="py-3.5 px-4 font-mono font-bold text-[#08492d]">
-                {{ b.id }}
-              </td>
-
-              <td class="py-3.5 px-4">
-                <strong class="font-bold text-stone-900 block">{{ b.company }}</strong>
-              </td>
-
-              <td class="py-3.5 px-4 text-stone-700">
-                {{ b.type }}
-              </td>
-
-              <td class="py-3.5 px-4 font-mono font-bold text-[#0d623b]">
-                {{ b.creditLimit | price }}
-              </td>
-
-              <td class="py-3.5 px-4 text-stone-600">
-                {{ b.region }}
-              </td>
-
-              <td class="py-3.5 px-4">
-                <span
-                  class="px-2.5 py-1 rounded-full text-[10px] font-bold"
-                  [ngClass]="b.status === 'active' ? 'bg-emerald-100 text-emerald-900' : 'bg-amber-100 text-amber-900'"
-                >
-                  {{ b.status === 'active' ? 'Đang hoạt động' : 'Đang tạm khóa' }}
-                </span>
-              </td>
-
-              <!-- Action Buttons (Fix ADM-R05) -->
-              <td class="py-3.5 px-4 text-right">
-                <div class="flex items-center justify-end gap-1.5">
-                  <button
-                    type="button"
-                    (click)="openDetail(b)"
-                    class="px-2.5 py-1 rounded-lg border border-emerald-300 hover:bg-emerald-50 text-[#0d623b] font-bold transition-all cursor-pointer whitespace-nowrap"
-                  >
-                    Xem chi tiết
-                  </button>
-
-                  @if (canSuspend()) {
-                    @if (b.status === 'active') {
-                      <button
-                        type="button"
-                        (click)="openSuspendModal(b)"
-                        class="px-2.5 py-1 rounded-lg border border-amber-300 hover:bg-amber-50 text-amber-800 font-bold transition-all cursor-pointer whitespace-nowrap"
-                      >
-                        Tạm khóa
-                      </button>
-                    } @else {
-                      <button
-                        type="button"
-                        (click)="openReactivateModal(b)"
-                        class="px-2.5 py-1 rounded-lg bg-[#0d623b] hover:bg-[#08492d] text-white font-bold transition-all cursor-pointer shadow-2xs whitespace-nowrap"
-                      >
-                        Kích hoạt lại
-                      </button>
-                    }
-                  }
-                </div>
-              </td>
+    <!-- Buyers Table -->
+    <div class="bg-white rounded-3xl border border-[#dce9e0] shadow-xs overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-[#fbfaf6] border-b border-[#edf1ea] text-stone-500 font-extrabold uppercase tracking-wider text-[11px]">
+            <tr>
+              <th class="py-3.5 px-4">Mã</th>
+              <th class="py-3.5 px-4">Tên doanh nghiệp</th>
+              <th class="py-3.5 px-4">Mô hình kinh doanh</th>
+              <th class="py-3.5 px-4">Hạn mức công nợ</th>
+              <th class="py-3.5 px-4">Khu vực</th>
+              <th class="py-3.5 px-4">Trạng thái</th>
+              <th class="py-3.5 px-4 text-right">Thao tác</th>
             </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </div>
+          </thead>
+          <tbody class="divide-y divide-[#edf1ea]">
+            @for (b of filteredBuyers(); track b.id) {
+              <tr class="hover:bg-[#fcfdfa] transition-colors">
+                <td class="py-3.5 px-4 font-mono font-bold text-[#08492d]">
+                  {{ b.id }}
+                </td>
 
-  <!-- Detail Modal for Buyer -->
-  @if (detailBuyer(); as detail) {
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fadeIn">
-      <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-[#dce9e0] space-y-5">
-        <div class="flex items-start justify-between">
-          <div>
-            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-[#08492d]">
-              Hồ sơ chi tiết Bên Mua
-            </span>
-            <h3 class="text-xl font-bold text-stone-900 mt-1">
-              {{ detail.company }}
-            </h3>
-            <p class="text-xs text-stone-500 font-mono">Mã doanh nghiệp: {{ detail.id }}</p>
-          </div>
-          <button type="button" (click)="closeDetail()" class="p-2 rounded-xl text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors cursor-pointer">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                <td class="py-3.5 px-4">
+                  <strong class="font-bold text-stone-900 block">{{ b.company }}</strong>
+                </td>
+
+                <td class="py-3.5 px-4 text-stone-700">
+                  {{ b.type }}
+                </td>
+
+                <td class="py-3.5 px-4 font-mono font-bold text-[#0d623b]">
+                  {{ b.creditLimit | price }}
+                </td>
+
+                <td class="py-3.5 px-4 text-stone-600">
+                  {{ b.region }}
+                </td>
+
+                <td class="py-3.5 px-4">
+                  <span
+                    class="px-2.5 py-1 rounded-full text-[10px] font-bold"
+                    [ngClass]="b.status === 'active' ? 'bg-emerald-100 text-emerald-900 border border-emerald-200' : 'bg-amber-100 text-amber-900 border border-amber-200'"
+                  >
+                    {{ b.status === 'active' ? 'Đang hoạt động' : 'Đang tạm khóa' }}
+                  </span>
+                </td>
+
+                <!-- Single Eye Icon Action -->
+                <td class="py-3.5 px-4 text-right">
+                  <div class="flex items-center justify-end">
+                    <button
+                      type="button"
+                      (click)="viewBuyerDetail(b)"
+                      title="Xem chi tiết hồ sơ & giấy tờ"
+                      class="w-8 h-8 rounded-xl border border-emerald-300 hover:bg-emerald-50 text-[#0d623b] flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:shadow-xs"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+  <!-- ============================================================== -->
+  <!-- VIEW 2: TRANG CHI TIẾT HỒ SƠ & GIẤY TỜ PHÁP LÝ BÊN MUA (BUYER) -->
+  <!-- ============================================================== -->
+  @if (selectedBuyer(); as b) {
+    <div class="space-y-6 animate-fadeIn">
+
+      <!-- Back Navigation & Actions Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#edf1ea]">
+        <div class="flex items-center gap-3">
+          <button
+            type="button"
+            (click)="backToList()"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#dce9e0] bg-white hover:bg-[#fafbf9] text-xs font-bold text-[#08492d] transition-all cursor-pointer shadow-2xs"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span>Quay lại danh sách</span>
           </button>
+
+          <div class="flex items-center gap-1.5 text-xs text-stone-400">
+            <span>Quản lý Người mua</span>
+            <span>/</span>
+            <span class="font-bold text-[#08492d]">{{ b.company }}</span>
+          </div>
         </div>
 
-        <div class="space-y-3 bg-[#fbfaf6] p-4 rounded-2xl border border-[#edf1ea] text-xs">
-          <div class="flex justify-between py-1 border-b border-[#edf1ea]">
-            <span class="text-stone-500">Mô hình kinh doanh:</span>
-            <span class="font-bold text-[#08492d]">{{ detail.type }}</span>
-          </div>
-          <div class="flex justify-between py-1 border-b border-[#edf1ea]">
-            <span class="text-stone-500">Hạn mức công nợ:</span>
-            <span class="font-bold text-[#08492d] font-mono">{{ detail.creditLimit | price }}</span>
-          </div>
-          <div class="flex justify-between py-1 border-b border-[#edf1ea]">
-            <span class="text-stone-500">Khu vực hoạt động:</span>
-            <span class="font-bold text-stone-800">{{ detail.region }}</span>
-          </div>
-          <div class="flex justify-between py-1 border-b border-[#edf1ea]">
-            <span class="text-stone-500">Ngày gia nhập sàn:</span>
-            <span class="font-medium text-stone-800">{{ detail.createdAt }}</span>
-          </div>
-          <div class="flex justify-between py-1 border-b border-[#edf1ea]">
-            <span class="text-stone-500">Lần hoạt động gần nhất:</span>
-            <span class="font-medium text-stone-800">{{ detail.lastActive }}</span>
-          </div>
-          <div class="flex justify-between py-1">
-            <span class="text-stone-500">Trạng thái hiện tại:</span>
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold"
-              [ngClass]="detail.status === 'active' ? 'bg-emerald-100 text-emerald-900' : 'bg-amber-100 text-amber-900'">
-              {{ detail.status === 'active' ? 'Đang hoạt động' : 'Đang tạm khóa' }}
+        <!-- Management Actions -->
+        <div class="flex items-center gap-2">
+          @if (canSuspend()) {
+            @if (b.status === 'active') {
+              <button
+                type="button"
+                (click)="openSuspendModal(b)"
+                class="px-4 py-2 rounded-xl border border-amber-300 hover:bg-amber-50 text-amber-800 text-xs font-bold transition-all cursor-pointer shadow-2xs"
+              >
+                Tạm khóa tài khoản
+              </button>
+            } @else if (b.status === 'suspended') {
+              <button
+                type="button"
+                (click)="openReactivateModal(b)"
+                class="px-4 py-2 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white text-xs font-bold transition-all cursor-pointer shadow-2xs"
+              >
+                Kích hoạt lại tài khoản
+              </button>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Header Card Profile Summary -->
+      <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="space-y-1.5">
+          <div class="flex flex-wrap items-center gap-2.5">
+            <h2 class="text-xl sm:text-2xl font-extrabold text-[#08492d] tracking-tight">
+              {{ b.company }}
+            </h2>
+            <span
+              class="px-2.5 py-1 rounded-full text-[11px] font-bold"
+              [ngClass]="b.status === 'active' ? 'bg-emerald-100 text-emerald-900 border border-emerald-200' : 'bg-amber-100 text-amber-900 border border-amber-200'"
+            >
+              {{ b.status === 'active' ? 'Đang hoạt động' : 'Đang tạm khóa' }}
             </span>
           </div>
-          @if (detail.suspendReason) {
+
+          <p class="text-xs text-stone-500">
+            Mã định danh: <span class="font-mono font-bold text-[#08492d]">{{ b.id }}</span>
+            • Ngày đăng ký: <span class="font-medium text-stone-700">{{ b.createdAt }}</span>
+            • Hoạt động gần nhất: <span class="font-medium text-stone-700">{{ b.lastActive }}</span>
+          </p>
+
+          @if (b.suspendReason) {
             <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs mt-2">
-              <strong>Lý do tạm khóa:</strong> {{ detail.suspendReason }}
+              <strong>Lý do tạm khóa:</strong> {{ b.suspendReason }}
             </div>
           }
         </div>
 
-        <!-- Action buttons inside detail modal -->
-        <div class="flex items-center justify-between pt-2">
-          <button type="button" (click)="closeDetail()" class="px-4 py-2 rounded-xl text-stone-600 hover:bg-stone-100 font-bold text-xs cursor-pointer">
-            Đóng
-          </button>
-          <div class="flex items-center gap-2">
-            @if (canSuspend()) {
-              @if (detail.status === 'active') {
-                <button
-                  type="button"
-                  (click)="closeDetail(); openSuspendModal(detail)"
-                  class="px-3 py-2 rounded-xl border border-amber-300 hover:bg-amber-50 text-amber-800 font-bold text-xs cursor-pointer"
-                >
-                  Tạm khóa tài khoản
-                </button>
-              } @else {
-                <button
-                  type="button"
-                  (click)="closeDetail(); openReactivateModal(detail)"
-                  class="px-3 py-2 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white font-bold text-xs cursor-pointer shadow-xs"
-                >
-                  Kích hoạt lại
-                </button>
+        <!-- Quick Badges -->
+        <div class="flex items-center gap-3">
+          <div class="p-3 rounded-2xl bg-[#fbfaf6] border border-[#dce9e0] text-center min-w-[110px]">
+            <span class="text-[10px] uppercase font-bold text-stone-400 block">Mô hình</span>
+            <span class="text-xs font-extrabold text-[#08492d] mt-0.5 block truncate max-w-[130px]">{{ b.type }}</span>
+          </div>
+          <div class="p-3 rounded-2xl bg-[#fbfaf6] border border-[#dce9e0] text-center min-w-[110px]">
+            <span class="text-[10px] uppercase font-bold text-stone-400 block">Hạn mức công nợ</span>
+            <span class="text-xs font-extrabold font-mono text-[#0d623b] mt-0.5 block">{{ b.creditLimit | price }}</span>
+          </div>
+          <div class="p-3 rounded-2xl bg-[#fbfaf6] border border-[#dce9e0] text-center min-w-[100px]">
+            <span class="text-[10px] uppercase font-bold text-stone-400 block">Đơn đang chạy</span>
+            <span class="text-xs font-extrabold text-stone-800 mt-0.5 block">{{ b.pendingOrdersCount }} đơn</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Grid Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- Left Column: Legal Documents (8 cols) -->
+        <div class="lg:col-span-8 space-y-6">
+          <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs space-y-5">
+            <div class="flex items-center justify-between pb-3 border-b border-[#edf1ea]">
+              <div>
+                <h3 class="text-base font-bold text-[#19392d]">
+                  Hồ sơ pháp lý & Giấy tờ thẩm định hợp lệ
+                </h3>
+                <p class="text-xs text-stone-500 mt-0.5">
+                  Tài liệu pháp lý, chứng nhận vệ sinh ATTP và thỏa thuận thương mại Escrow đã xác minh.
+                </p>
+              </div>
+              <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-[#0d623b] border border-emerald-200">
+                {{ b.documents?.length || 0 }} chứng từ lưu trữ
+              </span>
+            </div>
+
+            <!-- Documents List Cards -->
+            <div class="space-y-4">
+              @for (doc of b.documents; track doc.id) {
+                <div class="p-4 rounded-2xl border border-[#dce9e0] bg-[#fafbf9] hover:bg-white hover:border-emerald-300 transition-all space-y-3">
+                  <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                    <div class="flex items-start gap-3">
+                      <!-- Doc Icon -->
+                      <div class="w-10 h-10 rounded-xl bg-emerald-100/80 text-[#08492d] flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                      </div>
+
+                      <div>
+                        <h4 class="text-sm font-bold text-stone-900 leading-snug">
+                          {{ doc.name }}
+                        </h4>
+                        <div class="flex flex-wrap items-center gap-2 text-xs text-stone-500 mt-1">
+                          <span>Số văn bản: <strong class="font-mono text-stone-800">{{ doc.docNumber }}</strong></span>
+                          <span>•</span>
+                          <span>Cơ quan cấp: <strong>{{ doc.issuedBy }}</strong></span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Status Pill -->
+                    <span
+                      class="px-2.5 py-1 rounded-full text-[10px] font-bold border flex items-center gap-1 w-fit flex-shrink-0"
+                      [ngClass]="{
+                        'bg-emerald-50 text-[#0d623b] border-emerald-200': doc.status === 'valid',
+                        'bg-amber-50 text-amber-800 border-amber-200': doc.status === 'pending',
+                        'bg-rose-50 text-rose-800 border-rose-200': doc.status === 'expired'
+                      }"
+                    >
+                      <span class="w-1.5 h-1.5 rounded-full" [ngClass]="doc.status === 'valid' ? 'bg-emerald-600' : doc.status === 'pending' ? 'bg-amber-600' : 'bg-rose-600'"></span>
+                      <span>{{ doc.statusLabel }}</span>
+                    </span>
+                  </div>
+
+                  <!-- Date Row & Attachment Card -->
+                  <div class="pt-2 border-t border-[#edf1ea] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                    <div class="flex items-center gap-3 text-stone-500 text-[11px]">
+                      <span>Ngày cấp: <strong>{{ doc.issuedDate }}</strong></span>
+                      @if (doc.expiryDate) {
+                        <span>•</span>
+                        <span>Hết hạn: <strong class="text-stone-800">{{ doc.expiryDate }}</strong></span>
+                      }
+                      @if (doc.verifiedAt) {
+                        <span>•</span>
+                        <span>Xác thực: <strong>{{ doc.verifiedAt }}</strong></span>
+                      }
+                    </div>
+
+                    <!-- File action -->
+                    <div class="flex items-center gap-2">
+                      <span class="text-[11px] font-mono text-stone-400">{{ doc.fileName }} ({{ doc.fileSize }})</span>
+                      <button
+                        type="button"
+                        (click)="previewDoc(doc)"
+                        class="px-3 py-1 rounded-lg border border-emerald-300 hover:bg-emerald-50 text-[#0d623b] font-bold text-xs transition-colors cursor-pointer"
+                      >
+                        Xem chứng từ
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              } @empty {
+                <div class="p-8 text-center text-xs text-stone-400 bg-[#fafbf9] rounded-2xl border border-dashed border-[#dce9e0]">
+                  Chưa có hồ sơ giấy tờ nào được số hóa cho doanh nghiệp này.
+                </div>
               }
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Business, Representative & Banking Details (4 cols) -->
+        <div class="lg:col-span-4 space-y-6">
+
+          <!-- Card 1: Enterprise Profile -->
+          <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs space-y-4">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-stone-800 pb-2 border-b border-[#edf1ea]">
+              Thông tin pháp nhân
+            </h3>
+
+            <div class="space-y-3 text-xs">
+              <div>
+                <span class="text-stone-400 block font-medium">Mã số thuế / MST</span>
+                <span class="font-mono font-bold text-[#08492d] text-sm mt-0.5 block">{{ b.taxCode || 'Chưa cập nhật' }}</span>
+              </div>
+
+              <div>
+                <span class="text-stone-400 block font-medium">Loại hình tổ chức</span>
+                <span class="font-bold text-stone-800 mt-0.5 block">{{ b.businessType || b.type }}</span>
+              </div>
+
+              <div>
+                <span class="text-stone-400 block font-medium">Địa chỉ trụ sở đăng ký</span>
+                <span class="text-stone-700 leading-relaxed mt-0.5 block">{{ b.address || b.region }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Legal Representative -->
+          <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs space-y-4">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-stone-800 pb-2 border-b border-[#edf1ea]">
+              Người đại diện theo pháp luật
+            </h3>
+
+            <div class="space-y-3 text-xs">
+              <div>
+                <span class="text-stone-400 block font-medium">Họ và tên</span>
+                <span class="font-bold text-stone-900 text-sm mt-0.5 block">{{ b.representative || 'Chưa cập nhật' }}</span>
+                <span class="text-stone-500 text-[11px]">{{ b.representativeRole || 'Đại diện theo pháp luật' }}</span>
+              </div>
+
+              <div>
+                <span class="text-stone-400 block font-medium">Số điện thoại liên hệ</span>
+                <span class="font-mono font-bold text-[#0d623b] mt-0.5 block">{{ b.phone || 'Chưa cập nhật' }}</span>
+              </div>
+
+              <div>
+                <span class="text-stone-400 block font-medium">Email trao đổi nghiệp vụ</span>
+                <span class="text-stone-700 mt-0.5 block">{{ b.email || 'Chưa cập nhật' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Banking & Escrow Settlement Account -->
+          <div class="bg-white rounded-3xl border border-[#dce9e0] p-6 shadow-xs space-y-4">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-stone-800 pb-2 border-b border-[#edf1ea]">
+              Tài khoản thanh toán Escrow
+            </h3>
+
+            @if (b.bankAccount) {
+              <div class="p-3.5 rounded-2xl bg-[#fbfaf6] border border-[#dce9e0] space-y-2 text-xs">
+                <div>
+                  <span class="text-stone-400 text-[11px] block">Ngân hàng</span>
+                  <strong class="text-stone-800 block">{{ b.bankAccount.bankName }}</strong>
+                </div>
+                <div>
+                  <span class="text-stone-400 text-[11px] block">Số tài khoản</span>
+                  <strong class="font-mono text-[#08492d] text-sm block">{{ b.bankAccount.accountNumber }}</strong>
+                </div>
+                <div>
+                  <span class="text-stone-400 text-[11px] block">Tên chủ tài khoản</span>
+                  <strong class="text-stone-800 uppercase block">{{ b.bankAccount.accountHolder }}</strong>
+                </div>
+              </div>
+            } @else {
+              <p class="text-xs text-stone-400 italic">Chưa liên kết tài khoản ngân hàng chính thức.</p>
             }
           </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  }
+
+  <!-- ============================================================== -->
+  <!-- MODAL: XEM CHỨNG TỪ GỐC (SIMULATED DOCUMENT VIEWER)            -->
+  <!-- ============================================================== -->
+  @if (activeDocPreview(); as doc) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn">
+      <div class="bg-white rounded-3xl border border-[#dce9e0] shadow-2xl max-w-2xl w-full p-6 sm:p-7 space-y-5 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-start justify-between pb-3 border-b border-[#edf1ea]">
+          <div class="space-y-0.5">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              Văn bản thẩm định
+            </span>
+            <h3 class="text-base font-bold text-stone-900 mt-1">
+              {{ doc.name }}
+            </h3>
+            <p class="text-xs text-stone-500 font-mono">Số: {{ doc.docNumber }} • Cơ quan cấp: {{ doc.issuedBy }}</p>
+          </div>
+          <button
+            type="button"
+            (click)="closeDocPreview()"
+            class="p-2 rounded-xl text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors cursor-pointer"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+
+        <!-- Document Viewer Frame Mock -->
+        <div class="p-8 rounded-2xl bg-[#fafbf9] border border-[#dce9e0] text-center space-y-4">
+          <div class="w-16 h-16 rounded-2xl bg-emerald-100 text-[#08492d] flex items-center justify-center mx-auto">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+
+          <div>
+            <h4 class="text-sm font-bold text-stone-900">{{ doc.fileName }}</h4>
+            <p class="text-xs text-stone-500 mt-1">Dung lượng: {{ doc.fileSize }} • Tình trạng: {{ doc.statusLabel }}</p>
+          </div>
+
+          <div class="max-w-md mx-auto p-4 rounded-xl bg-white border border-[#edf1ea] text-left text-xs space-y-1.5 text-stone-600">
+            <div class="flex justify-between">
+              <span class="text-stone-400">Số quyết định / cấp:</span>
+              <span class="font-bold text-stone-900 font-mono">{{ doc.docNumber }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-stone-400">Đơn vị cấp phép:</span>
+              <span class="font-semibold text-stone-800">{{ doc.issuedBy }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-stone-400">Ngày cấp hiệu lực:</span>
+              <span class="font-semibold text-stone-800">{{ doc.issuedDate }}</span>
+            </div>
+            @if (doc.expiryDate) {
+              <div class="flex justify-between">
+                <span class="text-stone-400">Thời hạn giá trị:</span>
+                <span class="font-semibold text-stone-800">{{ doc.expiryDate }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-2">
+          <button
+            type="button"
+            (click)="closeDocPreview()"
+            class="px-4 py-2 rounded-xl text-stone-600 hover:bg-stone-100 font-bold text-xs cursor-pointer"
+          >
+            Đóng
+          </button>
+          <a
+            href="javascript:void(0)"
+            class="px-4 py-2 rounded-xl bg-[#0d623b] hover:bg-[#08492d] text-white font-bold text-xs transition-colors shadow-2xs"
+          >
+            Tải bản sao số PDF
+          </a>
         </div>
       </div>
     </div>
   }
 
-  <!-- Reason Modal -->
+  <!-- Reason Modal for Suspend/Reactivate -->
   @if (modalAction(); as action) {
     <app-admin-reason-modal
       [title]="action === 'SUSPEND' ? 'Tạm khóa tài khoản Người mua' : 'Kích hoạt lại Người mua'"
@@ -255,4 +520,3 @@
   }
 
 </div>
-
